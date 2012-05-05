@@ -14,6 +14,7 @@ public class Model {
 	private boolean showBus = true;
 	private boolean showTrolley = true;
 	private boolean showTram = true;
+	private boolean useAutoUpdate = true;
 	private Vector stops = new Vector();
 
 	public Vector getStops() {
@@ -50,5 +51,13 @@ public class Model {
 
 	public void setShowTram(boolean showTram) {
 		this.showTram = showTram;
+	}
+
+	public boolean isUseAutoUpdate() {
+		return useAutoUpdate;
+	}
+
+	public void setUseAutoUpdate(boolean useAutoUpdate) {
+		this.useAutoUpdate = useAutoUpdate;
 	}
 }

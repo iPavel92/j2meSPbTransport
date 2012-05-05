@@ -28,6 +28,7 @@ public class Cache {
 			writer.writeBoolean(model.isShowBus());
 			writer.writeBoolean(model.isShowTrolley());
 			writer.writeBoolean(model.isShowTram());
+			writer.writeBoolean(model.isUseAutoUpdate());
 			int n = model.getStops().size();
 			writer.writeInt(n);
 			for (int i = 0; i < n; i++) {
@@ -71,6 +72,7 @@ public class Cache {
 			model.setShowBus(reader.readBoolean());
 			model.setShowTrolley(reader.readBoolean());
 			model.setShowTram(reader.readBoolean());
+			model.setUseAutoUpdate(reader.readBoolean());
 			int n = reader.readInt();
 			for (int i = 0; i < n; i++) {
 				String name = reader.readUTF();

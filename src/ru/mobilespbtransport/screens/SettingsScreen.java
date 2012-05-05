@@ -14,13 +14,14 @@ public class SettingsScreen extends Form{
 	private ChoiceGroup layers;
 
 	public SettingsScreen() {
-		super("SettingsScreen");
+		super("Settings");
 		save = new Command("Save", Command.OK, 1);
 		addCommand(save);
 		layers = new ChoiceGroup("Select Layers", Choice.MULTIPLE);
 		layers.append("bus", null);
 		layers.append("trolley", null);
 		layers.append("tram", null);
+		layers.append("auto-update", null);
 		append(layers);
 	}
 

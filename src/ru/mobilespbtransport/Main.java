@@ -19,7 +19,7 @@ public class Main extends MIDlet implements CommandListener {
 	private final MapScreen mapCanvas = new MapScreen(controller);
 	private final SettingsScreen settingsScreen = new SettingsScreen();
 
-	private final Command settings = new Command("Layers", Command.ITEM, 2);
+	private final Command settings = new Command("Settings", Command.ITEM, 2);
 	private final Command updateCommand = new Command("Update", Command.ITEM, 3);
 	private final Command viewPlacesCommand = new Command("Places", Command.ITEM, 4);
 	private final Command exitCommand = new Command("Exit", Command.EXIT, 1);
@@ -47,6 +47,7 @@ public class Main extends MIDlet implements CommandListener {
 							settingsScreen.isSelected(0),
 							settingsScreen.isSelected(1),
 							settingsScreen.isSelected(2));
+					controller.setAutoUpdate(settingsScreen.isSelected(3));
 					display.setCurrent(mapCanvas);
 				}
 			}
@@ -63,7 +64,7 @@ public class Main extends MIDlet implements CommandListener {
 			try {
 				while (true) {
 					sleep(SLEEP_INTERVAL);
-					if (display.getCurrent() == mapCanvas) {
+					if (display.getCurrent() == mapCanvas && controller.getModel().isUseAutoUpdate()) {
 						controller.loadTransportLayer();
 					}
 				}
@@ -170,6 +171,7 @@ public class Main extends MIDlet implements CommandListener {
 			settingsScreen.setValue(0, controller.getModel().isShowBus());
 			settingsScreen.setValue(1, controller.getModel().isShowTrolley());
 			settingsScreen.setValue(2, controller.getModel().isShowTram());
+			settingsScreen.setValue(3, controller.getModel().isUseAutoUpdate());
 			display.setCurrent(settingsScreen);
 		} else if (c == viewPlacesCommand) {
 			showPlaces();
