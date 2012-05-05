@@ -19,8 +19,8 @@ public class AddStopScreen extends Form {
 	public AddStopScreen() {
 		super("Add stop");
 		name = new TextField("Name:", "", 30, TextField.ANY);
-		lat = new TextField("Lat:", "", 30, TextField.ANY);
-		lon = new TextField("Lon:", "", 30, TextField.ANY);
+		lat = new TextField("Lat:", "", 30, TextField.DECIMAL);
+		lon = new TextField("Lon:", "", 30, TextField.DECIMAL);
 		ok = new Command("OK", Command.OK, 1);
 		cancel = new Command("Cancel", Command.CANCEL, 2);
 		append(name);

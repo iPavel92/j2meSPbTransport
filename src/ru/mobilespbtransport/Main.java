@@ -6,7 +6,7 @@ import ru.mobilespbtransport.model.GeoConverter;
 import ru.mobilespbtransport.model.Model;
 import ru.mobilespbtransport.network.ImageLoader;
 import ru.mobilespbtransport.screens.AddStopScreen;
-import ru.mobilespbtransport.screens.SelectStopScreen;
+import ru.mobilespbtransport.screens.PlacesList;
 import ru.mobilespbtransport.screens.MapScreen;
 import ru.mobilespbtransport.screens.SettingsScreen;
 
@@ -23,12 +23,10 @@ public class Main extends MIDlet implements CommandListener {
 
 	MapScreen mapCanvas = new MapScreen();
 	SettingsScreen settingsScreen = new SettingsScreen();
-	AddStopScreen addStopScreen = new AddStopScreen();
 
 	private Command settings = new Command("Layers", Command.ITEM, 2);
 	private Command updateCommand = new Command("Update", Command.ITEM, 3);
-	private Command addStopCommand = new Command("Add stop", Command.ITEM, 4);
-	private Command selectStopCommand = new Command("Select stop", Command.ITEM, 5);
+	private Command selectPlaceCommand = new Command("Select place", Command.ITEM, 5);
 	private Command exitCommand = new Command("Exit", Command.EXIT, 1);
 	private Display display;
 
@@ -40,8 +38,7 @@ public class Main extends MIDlet implements CommandListener {
 		mapCanvas.addCommand(exitCommand);
 		mapCanvas.addCommand(updateCommand);
 		mapCanvas.addCommand(settings);
-		mapCanvas.addCommand(addStopCommand);
-		mapCanvas.addCommand(selectStopCommand);
+		mapCanvas.addCommand(selectPlaceCommand);
 		mapCanvas.setCommandListener(this);
 
 		settingsScreen.setCommandListener(new CommandListener() {
@@ -57,24 +54,6 @@ public class Main extends MIDlet implements CommandListener {
 			}
 		});
 
-		addStopScreen.setCommandListener(new CommandListener() {
-			public void commandAction(Command command, Displayable displayable) {
-				if (command == addStopScreen.getCancel()) {
-					display.setCurrent(mapCanvas);
-				} else if (command == addStopScreen.getOk()) {
-					try {
-						double lat = Double.parseDouble(addStopScreen.getLat());
-						double lon = Double.parseDouble(addStopScreen.getLon());
-						Coordinate coordinate = new Coordinate(addStopScreen.getName(), lat, lon);
-						model.getStops().addElement(coordinate);
-						Cache.saveModel(model);
-					} catch (NumberFormatException e) {
-						e.printStackTrace();  //TODO
-					}
-					display.setCurrent(mapCanvas);
-				}
-			}
-		});
 
 		display.setCurrent(mapCanvas);
 
@@ -162,19 +141,44 @@ public class Main extends MIDlet implements CommandListener {
 			settingsScreen.setValue(1, model.isShowTrolley());
 			settingsScreen.setValue(2, model.isShowTram());
 			display.setCurrent(settingsScreen);
-		} else if (c == addStopCommand) {
-			display.setCurrent(addStopScreen);
-		} else if (c == selectStopCommand) {
-			final SelectStopScreen selectStopScreen = new SelectStopScreen(model.getStops());
+		} else if (c == selectPlaceCommand) {
+			final PlacesList selectStopScreen = new PlacesList(model.getStops());
 			selectStopScreen.setCommandListener(new CommandListener() {
 				public void commandAction(Command command, Displayable displayable) {
-					if (command == selectStopScreen.getCancel()) {
+					if (command == selectStopScreen.getBackCommand()) {
 						display.setCurrent(mapCanvas);
-					} else if (command == selectStopScreen.getSelect()) {
+					} else if (command == selectStopScreen.getSelectCommand()) {
 						model.setCoordinate((Coordinate) model.getStops().elementAt(selectStopScreen.getSelected()));
 						loadMap();
 						loadTransportLayer();
 						display.setCurrent(mapCanvas);
+					} else if (command == selectStopScreen.getAddPlaceCommand()) {
+						final AddStopScreen addStopScreen = new AddStopScreen();
+						addStopScreen.setCommandListener(new CommandListener() {
+							public void commandAction(Command command, Displayable displayable) {
+								if (command == addStopScreen.getCancel()) {
+									display.setCurrent(mapCanvas);
+								} else if (command == addStopScreen.getOk()) {
+									try {
+										double lat = Double.parseDouble(addStopScreen.getLat());
+										double lon = Double.parseDouble(addStopScreen.getLon());
+										Coordinate coordinate = new Coordinate(addStopScreen.getName(), lat, lon);
+										model.getStops().addElement(coordinate);
+										selectStopScreen.append(coordinate.getName(), null);
+										Cache.saveModel(model);
+									} catch (NumberFormatException e) {
+										e.printStackTrace();  //TODO
+									}
+									display.setCurrent(selectStopScreen);
+								}
+							}
+						});
+						display.setCurrent(addStopScreen);
+					} else if (command == selectStopScreen.getDeletePlaceCommand()) {
+						int selected = selectStopScreen.getSelected();
+						model.getStops().removeElementAt(selected);
+						selectStopScreen.delete(selected);
+						Cache.saveModel(model);
 					}
 				}
 			});
