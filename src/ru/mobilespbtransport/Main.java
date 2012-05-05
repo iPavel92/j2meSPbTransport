@@ -53,7 +53,25 @@ public class Main extends MIDlet implements CommandListener {
 		});
 
 		showPlaces();
+		updater.start();
 	}
+
+	Thread updater = new Thread() {
+		private static final int SLEEP_INTERVAL = 30 * 1000;
+
+		public void run() {
+			try {
+				while (true) {
+					sleep(SLEEP_INTERVAL);
+					if (display.getCurrent() == mapCanvas) {
+						controller.loadTransportLayer();
+					}
+				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();  //ignore
+			}
+		}
+	};
 
 	public void pauseApp() {
 	}
@@ -123,6 +141,7 @@ public class Main extends MIDlet implements CommandListener {
 												} else if (command == selectFoundScreen.getAddPlaceCommand()) {
 													Place selectedPlace = (Place) foundPlaces.elementAt(selectFoundScreen.getSelected());
 													controller.addPlace(selectedPlace);
+													selectPlaceScreen.append(selectedPlace.getName(), null);
 												}
 											}
 										});
