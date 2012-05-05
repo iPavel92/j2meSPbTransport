@@ -21,8 +21,7 @@ public class Main extends MIDlet implements CommandListener {
 
 	private final Command settings = new Command("Layers", Command.ITEM, 2);
 	private final Command updateCommand = new Command("Update", Command.ITEM, 3);
-	private final Command selectPlaceCommand = new Command("Places", Command.ITEM, 4);
-	private final Command searchPlaceCommand = new Command("Search place", Command.ITEM, 5);
+	private final Command viewPlacesCommand = new Command("Places", Command.ITEM, 4);
 	private final Command exitCommand = new Command("Exit", Command.EXIT, 1);
 	private final Display display;
 
@@ -38,8 +37,7 @@ public class Main extends MIDlet implements CommandListener {
 		mapCanvas.addCommand(exitCommand);
 		mapCanvas.addCommand(updateCommand);
 		mapCanvas.addCommand(settings);
-		mapCanvas.addCommand(selectPlaceCommand);
-		mapCanvas.addCommand(searchPlaceCommand);
+		mapCanvas.addCommand(viewPlacesCommand);
 		mapCanvas.setCommandListener(this);
 
 		settingsScreen.setCommandListener(new CommandListener() {
@@ -54,13 +52,93 @@ public class Main extends MIDlet implements CommandListener {
 			}
 		});
 
-		display.setCurrent(mapCanvas);
+		showPlaces();
 	}
 
 	public void pauseApp() {
 	}
 
 	public void destroyApp(boolean unconditional) {
+	}
+
+	public void showPlaces() {
+		final PlacesList selectPlaceScreen = new PlacesList(controller.getModel().getStops());
+		selectPlaceScreen.setCommandListener(new CommandListener() {
+			public void commandAction(Command command, Displayable displayable) {
+				if (command == selectPlaceScreen.getBackCommand()) {
+					display.setCurrent(mapCanvas);
+				} else if (command == selectPlaceScreen.getSelectCommand()) {
+					controller.selectPlace(selectPlaceScreen.getSelected());
+					display.setCurrent(mapCanvas);
+				} else if (command == selectPlaceScreen.getAddPlaceCommand()) {
+					final AddStopScreen addStopScreen = new AddStopScreen();
+					addStopScreen.setCommandListener(new CommandListener() {
+						public void commandAction(Command command, Displayable displayable) {
+							if (command == addStopScreen.getCancel()) {
+								display.setCurrent(selectPlaceScreen);
+							} else if (command == addStopScreen.getOk()) {
+								try {
+									double lat = Double.parseDouble(addStopScreen.getLat());
+									double lon = Double.parseDouble(addStopScreen.getLon());
+									Place place = new Place(addStopScreen.getName(), lat, lon);
+									controller.addPlace(place);
+									selectPlaceScreen.append(place.getName(), null);
+								} catch (NumberFormatException e) {
+									e.printStackTrace();  //TODO
+								}
+								display.setCurrent(selectPlaceScreen);
+							}
+						}
+					});
+					display.setCurrent(addStopScreen);
+				} else if (command == selectPlaceScreen.getDeletePlaceCommand()) {
+					int selected = selectPlaceScreen.getSelected();
+					controller.removePlace(selected);
+					selectPlaceScreen.delete(selected);
+				} else if (command == selectPlaceScreen.getSearchPlaceCommand()) {
+					final SearchPlaceScreen searchPlaceScreen = new SearchPlaceScreen();
+					searchPlaceScreen.setCommandListener(new CommandListener() {
+						public void commandAction(Command command, Displayable displayable) {
+							if (command == searchPlaceScreen.getOk()) {
+								new Thread() {
+									public void run() {
+										final Vector foundPlaces = Geocoder.getPlaces(searchPlaceScreen.getAddress());
+										final PlacesList selectFoundScreen = new PlacesList(foundPlaces);
+
+										//dirty hack :)  (re-using one screen class)
+										selectFoundScreen.removeCommand(selectFoundScreen.getDeletePlaceCommand());
+										selectFoundScreen.removeCommand(selectFoundScreen.getSearchPlaceCommand());
+
+										selectFoundScreen.setCommandListener(new CommandListener() {
+											public void commandAction(Command command, Displayable displayable) {
+												if (command == selectFoundScreen.getBackCommand()) {
+													display.setCurrent(selectPlaceScreen);
+												} else if (command == selectFoundScreen.getSelectCommand()) {
+													Place selectedPlace = (Place) foundPlaces.elementAt(selectFoundScreen.getSelected());
+													System.out.println(selectedPlace.getName());
+													System.out.println(selectedPlace.getLat());
+													System.out.println(selectedPlace.getLon());
+													controller.selectPlace(selectedPlace);
+													display.setCurrent(mapCanvas);
+												} else if (command == selectFoundScreen.getAddPlaceCommand()) {
+													Place selectedPlace = (Place) foundPlaces.elementAt(selectFoundScreen.getSelected());
+													controller.addPlace(selectedPlace);
+												}
+											}
+										});
+										display.setCurrent(selectFoundScreen);
+									}
+								}.start();
+							} else if (command == searchPlaceScreen.getCancel()) {
+								display.setCurrent(selectPlaceScreen);
+							}
+						}
+					});
+					display.setCurrent(searchPlaceScreen);
+				}
+			}
+		});
+		display.setCurrent(selectPlaceScreen);
 	}
 
 	public void commandAction(Command c, Displayable s) {
@@ -74,80 +152,8 @@ public class Main extends MIDlet implements CommandListener {
 			settingsScreen.setValue(1, controller.getModel().isShowTrolley());
 			settingsScreen.setValue(2, controller.getModel().isShowTram());
 			display.setCurrent(settingsScreen);
-		} else if (c == selectPlaceCommand) {
-			final PlacesList selectStopScreen = new PlacesList(controller.getModel().getStops());
-			selectStopScreen.setCommandListener(new CommandListener() {
-				public void commandAction(Command command, Displayable displayable) {
-					if (command == selectStopScreen.getBackCommand()) {
-						display.setCurrent(mapCanvas);
-					} else if (command == selectStopScreen.getSelectCommand()) {
-						controller.selectPlace(selectStopScreen.getSelected());
-						display.setCurrent(mapCanvas);
-					} else if (command == selectStopScreen.getAddPlaceCommand()) {
-						final AddStopScreen addStopScreen = new AddStopScreen();
-						addStopScreen.setCommandListener(new CommandListener() {
-							public void commandAction(Command command, Displayable displayable) {
-								if (command == addStopScreen.getCancel()) {
-									display.setCurrent(mapCanvas);
-								} else if (command == addStopScreen.getOk()) {
-									try {
-										double lat = Double.parseDouble(addStopScreen.getLat());
-										double lon = Double.parseDouble(addStopScreen.getLon());
-										Place place = new Place(addStopScreen.getName(), lat, lon);
-										controller.addPlace(place);
-										selectStopScreen.append(place.getName(), null);
-									} catch (NumberFormatException e) {
-										e.printStackTrace();  //TODO
-									}
-									display.setCurrent(selectStopScreen);
-								}
-							}
-						});
-						display.setCurrent(addStopScreen);
-					} else if (command == selectStopScreen.getDeletePlaceCommand()) {
-						int selected = selectStopScreen.getSelected();
-						controller.removePlace(selected);
-						selectStopScreen.delete(selected);
-					}
-				}
-			});
-			display.setCurrent(selectStopScreen);
-		} else if (c == searchPlaceCommand) {
-			final SearchPlaceScreen searchPlaceScreen = new SearchPlaceScreen();
-			searchPlaceScreen.setCommandListener(new CommandListener() {
-				public void commandAction(Command command, Displayable displayable) {
-					if (command == searchPlaceScreen.getOk()) {
-						new Thread() {
-							public void run() {
-								final Vector foundPlaces = Geocoder.getPlaces(searchPlaceScreen.getAddress());
-								final PlacesList selectStopScreen = new PlacesList(foundPlaces);
-								selectStopScreen.removeCommand(selectStopScreen.getDeletePlaceCommand()); //dirty hack :)
-								selectStopScreen.setCommandListener(new CommandListener() {
-									public void commandAction(Command command, Displayable displayable) {
-										if (command == selectStopScreen.getBackCommand()) {
-											display.setCurrent(mapCanvas);
-										} else if (command == selectStopScreen.getSelectCommand()) {
-											Place selectedPlace = (Place) foundPlaces.elementAt(selectStopScreen.getSelected());
-											System.out.println(selectedPlace.getName());
-											System.out.println(selectedPlace.getLat());
-											System.out.println(selectedPlace.getLon());
-											controller.selectPlace(selectedPlace);
-											display.setCurrent(mapCanvas);
-										} else if (command == selectStopScreen.getAddPlaceCommand()) {
-											Place selectedPlace = (Place) foundPlaces.elementAt(selectStopScreen.getSelected());
-											controller.addPlace(selectedPlace);
-										}
-									}
-								});
-								display.setCurrent(selectStopScreen);
-							}
-						}.start();
-					} else if (command == searchPlaceScreen.getCancel()) {
-						display.setCurrent(mapCanvas);
-					}
-				}
-			});
-			display.setCurrent(searchPlaceScreen);
+		} else if (c == viewPlacesCommand) {
+			showPlaces();
 		}
 	}
 }

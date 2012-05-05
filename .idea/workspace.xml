@@ -61,7 +61,27 @@
       <file leaf-file-name="Main.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="124" column="24" selection-start="4913" selection-end="4913" vertical-scroll-proportion="0.29752067">
+            <state line="106" column="17" selection-start="4149" selection-end="4149" vertical-scroll-proportion="0.16848485">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="URLEncoder.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/network/URLEncoder.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="20" column="10" selection-start="532" selection-end="532" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="GeoConverter.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/model/GeoConverter.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="44" column="92" selection-start="1351" selection-end="1351" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -101,7 +121,7 @@
       <file leaf-file-name="Geocoder.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/geocoder/Geocoder.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="48" column="58" selection-start="1214" selection-end="1214" vertical-scroll-proportion="0.0">
+            <state line="54" column="8" selection-start="1377" selection-end="1377" vertical-scroll-proportion="0.0">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -123,7 +143,7 @@
       <file leaf-file-name="PlacesList.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/screens/PlacesList.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="15" column="23" selection-start="366" selection-end="366" vertical-scroll-proportion="0.0">
+            <state line="60" column="44" selection-start="1560" selection-end="1560" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -158,8 +178,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/screens/SelectPlaceScreen.java" />
-        <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/screens/PlacesList.java" />
         <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/screens/URLEncoder.java" />
         <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/HttpClient.java" />
         <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/Geocoder.java" />
@@ -170,10 +188,12 @@
         <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/screens/SearchPlace.java" />
         <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/screens/SearchPlaceScreen.java" />
         <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/network/HttpClient.java" />
-        <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/Main.java" />
-        <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/geocoder/Geocoder.java" />
         <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/model/Place.java" />
         <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/Controller.java" />
+        <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/network/URLEncoder.java" />
+        <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/geocoder/Geocoder.java" />
+        <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/screens/PlacesList.java" />
+        <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/Main.java" />
       </list>
     </option>
   </component>
@@ -605,11 +625,6 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://$PROJECT_DIR$/../../../../../../Java/Java_ME_platform_SDK_3.0/lib/midp_1.0.jar!/javax/microedition/rms/RecordStore.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="45" column="16" selection-start="3433" selection-end="3433" vertical-scroll-proportion="0.81157637" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/akme/mobile/util/MathUtil.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="1" column="30" selection-start="26" selection-end="26" vertical-scroll-proportion="0.0" />
@@ -618,13 +633,6 @@
     <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/network/ImageLoader.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="37" column="62" selection-start="1089" selection-end="1089" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/model/GeoConverter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="44" column="92" selection-start="1381" selection-end="1381" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/screens/SettingsScreen.java">
@@ -645,13 +653,6 @@
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/screens/PlacesList.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="23" selection-start="366" selection-end="366" vertical-scroll-proportion="0.0">
-          <folding />
         </state>
       </provider>
     </entry>
@@ -687,15 +688,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/geocoder/Geocoder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="48" column="58" selection-start="1214" selection-end="1214" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/model/Place.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="31" column="0" selection-start="544" selection-end="544" vertical-scroll-proportion="0.0">
@@ -712,9 +704,41 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/model/GeoConverter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="44" column="92" selection-start="1351" selection-end="1351" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/network/URLEncoder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="20" column="10" selection-start="532" selection-end="532" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/geocoder/Geocoder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="54" column="8" selection-start="1377" selection-end="1377" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/screens/PlacesList.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="60" column="44" selection-start="1560" selection-end="1560" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="124" column="24" selection-start="4913" selection-end="4913" vertical-scroll-proportion="0.29752067">
+        <state line="106" column="17" selection-start="4149" selection-end="4149" vertical-scroll-proportion="0.16848485">
           <folding />
         </state>
       </provider>

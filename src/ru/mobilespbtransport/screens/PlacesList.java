@@ -14,22 +14,20 @@ import java.util.Vector;
  * To change this template use File | SettingsScreen | File Templates.
  */
 public class PlacesList extends List {
-	private Command selectCommand;
-	private Command backCommand;
-	private Command addPlaceCommand;
-	private Command deletePlaceCommand;
+	private final Command selectCommand = new Command("Select", Command.OK, 1);
+	private final Command backCommand = new Command("Back", Command.CANCEL, 2);
+	private final Command addPlaceCommand = new Command("Add place", Command.ITEM, 3);
+	private final Command deletePlaceCommand = new Command("Delete place", Command.ITEM, 4);
+	private final Command searchPlaceCommand = new Command("Search place", Command.ITEM, 5);
 
 	public PlacesList(Vector v) {
 		super("Select place", IMPLICIT);
-		selectCommand = new Command("Select", Command.OK, 1);
-		backCommand = new Command("Back", Command.CANCEL, 2);
-		addPlaceCommand = new Command("Add place", Command.ITEM, 3);
-		deletePlaceCommand = new Command("Delete place", Command.ITEM, 4);
 
 		addCommand(addPlaceCommand);
 		addCommand(deletePlaceCommand);
 		addCommand(selectCommand);
 		addCommand(backCommand);
+		addCommand(searchPlaceCommand);
 		setValues(v);
 	}
 	
@@ -58,5 +56,9 @@ public class PlacesList extends List {
 
 	public Command getDeletePlaceCommand() {
 		return deletePlaceCommand;
+	}
+
+	public Command getSearchPlaceCommand() {
+		return searchPlaceCommand;
 	}
 }
