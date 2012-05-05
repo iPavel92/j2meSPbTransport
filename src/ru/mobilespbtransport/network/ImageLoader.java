@@ -1,7 +1,7 @@
 package ru.mobilespbtransport.network;
 
 import ru.mobilespbtransport.cache.Cache;
-import ru.mobilespbtransport.model.Coordinate;
+import ru.mobilespbtransport.model.Place;
 
 import javax.microedition.io.Connector;
 import javax.microedition.io.ContentConnection;
@@ -23,12 +23,12 @@ public class ImageLoader {
 
 	//load image from cache or inet
 	//save downloaded image to cache
-	public static Image getMapImage(Coordinate coordinate, String url) throws IOException {
-		if (Cache.isImageExists(coordinate)) {
-			return Cache.loadImage(coordinate);
+	public static Image getMapImage(Place place, String url) throws IOException {
+		if (Cache.isImageExists(place)) {
+			return Cache.loadImage(place);
 		} else {
 			byte[] imageData = getImageBytesFromInet(url);
-			Cache.saveImage(coordinate, imageData);
+			Cache.saveImage(place, imageData);
 			Image im = null;
 			im = Image.createImage(imageData, 0, imageData.length);
 			return (im == null ? null : im);

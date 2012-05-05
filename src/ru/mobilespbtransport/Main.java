@@ -1,127 +1,60 @@
 package ru.mobilespbtransport;
 
 import ru.mobilespbtransport.cache.Cache;
-import ru.mobilespbtransport.model.Coordinate;
-import ru.mobilespbtransport.model.GeoConverter;
+import ru.mobilespbtransport.geocoder.Geocoder;
+import ru.mobilespbtransport.model.Place;
 import ru.mobilespbtransport.model.Model;
-import ru.mobilespbtransport.network.ImageLoader;
-import ru.mobilespbtransport.screens.AddStopScreen;
-import ru.mobilespbtransport.screens.PlacesList;
-import ru.mobilespbtransport.screens.MapScreen;
-import ru.mobilespbtransport.screens.SettingsScreen;
+import ru.mobilespbtransport.screens.*;
 
-import java.io.IOException;
+import java.util.Vector;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
-import javax.microedition.lcdui.Image;
 import javax.microedition.midlet.MIDlet;
 
 public class Main extends MIDlet implements CommandListener {
-	Model model = new Model();
+	private final Controller controller = new Controller();
 
-	MapScreen mapCanvas = new MapScreen();
-	SettingsScreen settingsScreen = new SettingsScreen();
+	private final MapScreen mapCanvas = new MapScreen(controller);
+	private final SettingsScreen settingsScreen = new SettingsScreen();
 
-	private Command settings = new Command("Layers", Command.ITEM, 2);
-	private Command updateCommand = new Command("Update", Command.ITEM, 3);
-	private Command selectPlaceCommand = new Command("Select place", Command.ITEM, 5);
-	private Command exitCommand = new Command("Exit", Command.EXIT, 1);
-	private Display display;
+	private final Command settings = new Command("Layers", Command.ITEM, 2);
+	private final Command updateCommand = new Command("Update", Command.ITEM, 3);
+	private final Command selectPlaceCommand = new Command("Places", Command.ITEM, 4);
+	private final Command searchPlaceCommand = new Command("Search place", Command.ITEM, 5);
+	private final Command exitCommand = new Command("Exit", Command.EXIT, 1);
+	private final Display display;
 
 	public Main() {
 		display = Display.getDisplay(this);
 	}
 
 	public void startApp() {
+		Model model = Cache.loadModel();
+		controller.setModel(model);
+		controller.setMapScreen(mapCanvas);
+
 		mapCanvas.addCommand(exitCommand);
 		mapCanvas.addCommand(updateCommand);
 		mapCanvas.addCommand(settings);
 		mapCanvas.addCommand(selectPlaceCommand);
+		mapCanvas.addCommand(searchPlaceCommand);
 		mapCanvas.setCommandListener(this);
 
 		settingsScreen.setCommandListener(new CommandListener() {
 			public void commandAction(Command command, Displayable displayable) {
 				if (command == settingsScreen.getSave()) {
-					model.setShowBus(settingsScreen.isSelected(0));
-					model.setShowTrolley(settingsScreen.isSelected(1));
-					model.setShowTram(settingsScreen.isSelected(2));
-					Cache.saveModel(model);
-					loadTransportLayer();
+					controller.setLayers(
+							settingsScreen.isSelected(0),
+							settingsScreen.isSelected(1),
+							settingsScreen.isSelected(2));
 					display.setCurrent(mapCanvas);
 				}
 			}
 		});
 
-
 		display.setCurrent(mapCanvas);
-
-		model = Cache.loadModel();
-		//model.getStops().addElement(new Coordinate("1", 60.0465,30.3415));
-		//loadMap();
-		//loadTransportLayer();
-	}
-
-	private void loadMap() {
-		new Thread() {
-			public void run() {
-				try {
-					if (model.getCoordinate() == null) {
-						return;
-					}
-					String url = getMapUri(model.getCoordinate(), mapCanvas.getWidth(), mapCanvas.getHeight());
-					System.out.println(url);
-					Image map = ImageLoader.getMapImage(model.getCoordinate(), url);
-					mapCanvas.setMap(map);
-					mapCanvas.repaint();
-				} catch (IOException e) {
-					e.printStackTrace();  //TODO
-				}
-			}
-		}.start();
-	}
-
-	private void loadTransportLayer() {
-		new Thread() {
-			public void run() {
-				try {
-					if (model.getCoordinate() == null) {
-						return;
-					}
-					String bBox = GeoConverter.buildBBox(model.getCoordinate(), mapCanvas.getWidth(), mapCanvas.getHeight());
-					String url = getTransportMapUrl(bBox, model.isShowBus(), model.isShowTrolley(), model.isShowTram(), mapCanvas.getWidth(), mapCanvas.getHeight());
-					System.out.println(url);
-					Image transportLayer = ImageLoader.getImageFromInet(url);
-					mapCanvas.setTransportLayer(transportLayer);
-					mapCanvas.repaint();
-				} catch (IOException e) {
-					e.printStackTrace();  //TODO
-				}
-			}
-		}.start();
-	}
-
-	private String getTransportMapUrl(String bbox, boolean showBus, boolean showTrolley, boolean showTram, int screenWidth, int screenHeight) {
-		boolean isCommaRequired = false;
-		String layers = "";
-		if (showBus) {
-			layers = layers + "vehicle_bus";
-			isCommaRequired = true;
-		}
-		if (showTrolley) {
-			layers = layers + (isCommaRequired ? "," : "") + "vehicle_trolley";
-			isCommaRequired = true;
-		}
-		if (showTram) {
-			layers = layers + (isCommaRequired ? "," : "") + "vehicle_tram";
-			isCommaRequired = true;
-		}
-		return "http://transport.orgp.spb.ru/cgi-bin/mapserv?TRANSPARENT=TRUE&FORMAT=image%2Fpng&LAYERS=" + layers + "&MAP=vehicle_typed.map&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG%3A900913&_OLSALT=0.1508798657450825&BBOX=" + bbox + "&WIDTH=" + screenWidth + "&HEIGHT=" + screenHeight;
-	}
-
-	private String getMapUri(Coordinate center, int screenWidth, int screenHeight) {
-		return "http://maps.google.com/maps/api/staticmap?zoom=13&sensor=false&size=" + screenWidth + "x" + screenHeight + "&center=" + center.getLat() + "," + center.getLon();
 	}
 
 	public void pauseApp() {
@@ -135,22 +68,20 @@ public class Main extends MIDlet implements CommandListener {
 			destroyApp(false);
 			notifyDestroyed();
 		} else if (c == updateCommand) {
-			loadTransportLayer();
+			controller.loadTransportLayer();
 		} else if (c == settings) {
-			settingsScreen.setValue(0, model.isShowBus());
-			settingsScreen.setValue(1, model.isShowTrolley());
-			settingsScreen.setValue(2, model.isShowTram());
+			settingsScreen.setValue(0, controller.getModel().isShowBus());
+			settingsScreen.setValue(1, controller.getModel().isShowTrolley());
+			settingsScreen.setValue(2, controller.getModel().isShowTram());
 			display.setCurrent(settingsScreen);
 		} else if (c == selectPlaceCommand) {
-			final PlacesList selectStopScreen = new PlacesList(model.getStops());
+			final PlacesList selectStopScreen = new PlacesList(controller.getModel().getStops());
 			selectStopScreen.setCommandListener(new CommandListener() {
 				public void commandAction(Command command, Displayable displayable) {
 					if (command == selectStopScreen.getBackCommand()) {
 						display.setCurrent(mapCanvas);
 					} else if (command == selectStopScreen.getSelectCommand()) {
-						model.setCoordinate((Coordinate) model.getStops().elementAt(selectStopScreen.getSelected()));
-						loadMap();
-						loadTransportLayer();
+						controller.selectPlace(selectStopScreen.getSelected());
 						display.setCurrent(mapCanvas);
 					} else if (command == selectStopScreen.getAddPlaceCommand()) {
 						final AddStopScreen addStopScreen = new AddStopScreen();
@@ -162,10 +93,9 @@ public class Main extends MIDlet implements CommandListener {
 									try {
 										double lat = Double.parseDouble(addStopScreen.getLat());
 										double lon = Double.parseDouble(addStopScreen.getLon());
-										Coordinate coordinate = new Coordinate(addStopScreen.getName(), lat, lon);
-										model.getStops().addElement(coordinate);
-										selectStopScreen.append(coordinate.getName(), null);
-										Cache.saveModel(model);
+										Place place = new Place(addStopScreen.getName(), lat, lon);
+										controller.addPlace(place);
+										selectStopScreen.append(place.getName(), null);
 									} catch (NumberFormatException e) {
 										e.printStackTrace();  //TODO
 									}
@@ -176,23 +106,48 @@ public class Main extends MIDlet implements CommandListener {
 						display.setCurrent(addStopScreen);
 					} else if (command == selectStopScreen.getDeletePlaceCommand()) {
 						int selected = selectStopScreen.getSelected();
-						model.getStops().removeElementAt(selected);
+						controller.removePlace(selected);
 						selectStopScreen.delete(selected);
-						Cache.saveModel(model);
 					}
 				}
 			});
 			display.setCurrent(selectStopScreen);
+		} else if (c == searchPlaceCommand) {
+			final SearchPlaceScreen searchPlaceScreen = new SearchPlaceScreen();
+			searchPlaceScreen.setCommandListener(new CommandListener() {
+				public void commandAction(Command command, Displayable displayable) {
+					if (command == searchPlaceScreen.getOk()) {
+						new Thread() {
+							public void run() {
+								final Vector foundPlaces = Geocoder.getPlaces(searchPlaceScreen.getAddress());
+								final PlacesList selectStopScreen = new PlacesList(foundPlaces);
+								selectStopScreen.removeCommand(selectStopScreen.getDeletePlaceCommand()); //dirty hack :)
+								selectStopScreen.setCommandListener(new CommandListener() {
+									public void commandAction(Command command, Displayable displayable) {
+										if (command == selectStopScreen.getBackCommand()) {
+											display.setCurrent(mapCanvas);
+										} else if (command == selectStopScreen.getSelectCommand()) {
+											Place selectedPlace = (Place) foundPlaces.elementAt(selectStopScreen.getSelected());
+											System.out.println(selectedPlace.getName());
+											System.out.println(selectedPlace.getLat());
+											System.out.println(selectedPlace.getLon());
+											controller.selectPlace(selectedPlace);
+											display.setCurrent(mapCanvas);
+										} else if (command == selectStopScreen.getAddPlaceCommand()) {
+											Place selectedPlace = (Place) foundPlaces.elementAt(selectStopScreen.getSelected());
+											controller.addPlace(selectedPlace);
+										}
+									}
+								});
+								display.setCurrent(selectStopScreen);
+							}
+						}.start();
+					} else if (command == searchPlaceScreen.getCancel()) {
+						display.setCurrent(mapCanvas);
+					}
+				}
+			});
+			display.setCurrent(searchPlaceScreen);
 		}
 	}
-
-	//TODO
-	public String getUrlForGeocoding(String adress) {
-		return
-				"http://maps.googleapis.com/maps/api/geocode/xml?" +
-						"adress=" + adress +
-						"&bounds=59.661,29.518|60.270,30.757" +  //SPB only
-						"&sensor=false";
-	}
-
 }

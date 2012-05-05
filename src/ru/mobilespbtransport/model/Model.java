@@ -10,7 +10,7 @@ import java.util.Vector;
  * To change this template use File | SettingsScreen | File Templates.
  */
 public class Model {
-	private Coordinate coordinate;
+	private Place place;
 	private boolean showBus = true;
 	private boolean showTrolley = true;
 	private boolean showTram = true;
@@ -20,12 +20,12 @@ public class Model {
 		return stops;
 	}
 
-	public Coordinate getCoordinate() {
-		return coordinate;
+	public Place getPlace() {
+		return place;
 	}
 
-	public void setCoordinate(Coordinate coordinate) {
-		this.coordinate = coordinate;
+	public void setPlace(Place place) {
+		this.place = place;
 	}
 
 	public boolean isShowBus() {

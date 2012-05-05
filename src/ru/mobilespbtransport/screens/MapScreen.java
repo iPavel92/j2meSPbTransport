@@ -1,5 +1,7 @@
 package ru.mobilespbtransport.screens;
 
+import ru.mobilespbtransport.Controller;
+
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
@@ -12,8 +14,13 @@ import javax.microedition.lcdui.Image;
  * To change this template use File | SettingsScreen | File Templates.
  */
 public class MapScreen extends Canvas {
-	Image map;
-	Image transportLayer;
+	private final Controller controller;
+	private Image map;
+	private Image transportLayer;
+
+	public MapScreen(Controller controller) {
+		this.controller = controller;
+	}
 
 	protected void paint(Graphics graphics) {
 		graphics.setColor(0xffffff);
@@ -32,6 +39,14 @@ public class MapScreen extends Canvas {
 
 	public void setTransportLayer(Image transportLayer) {
 		this.transportLayer = transportLayer;
+	}
+
+	protected void keyPressed(int i) {
+		controller.loadTransportLayer();
+	}
+
+	protected void pointerPressed(int i, int i1) {
+		controller.loadTransportLayer();
 	}
 }
 

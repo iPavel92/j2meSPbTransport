@@ -1,6 +1,6 @@
 package ru.mobilespbtransport.screens;
 
-import ru.mobilespbtransport.model.Coordinate;
+import ru.mobilespbtransport.model.Place;
 
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.List;
@@ -35,7 +35,7 @@ public class PlacesList extends List {
 	
 	public void setValues(Vector v){
 		for(int i = 0; i<v.size(); i++){
-			Coordinate c = (Coordinate)v.elementAt(i);
+			Place c = (Place)v.elementAt(i);
 			append(c.getName(), null);
 		}
 	} 

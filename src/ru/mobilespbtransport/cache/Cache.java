@@ -1,6 +1,6 @@
 package ru.mobilespbtransport.cache;
 
-import ru.mobilespbtransport.model.Coordinate;
+import ru.mobilespbtransport.model.Place;
 import ru.mobilespbtransport.model.Model;
 
 import javax.microedition.lcdui.Image;
@@ -31,7 +31,7 @@ public class Cache {
 			int n = model.getStops().size();
 			writer.writeInt(n);
 			for (int i = 0; i < n; i++) {
-				Coordinate c = (Coordinate) model.getStops().elementAt(i);
+				Place c = (Place) model.getStops().elementAt(i);
 				writer.writeUTF(c.getName());
 				writer.writeDouble(c.getLat());
 				writer.writeDouble(c.getLon());
@@ -59,7 +59,6 @@ public class Cache {
 			DataInputStream reader;
 
 			recordStore = RecordStore.openRecordStore(MODEL, true);
-			System.out.println(recordStore.getNumRecords());
 			if (recordStore.getNumRecords() == 0) {
 				return model;
 			}
@@ -77,7 +76,7 @@ public class Cache {
 				String name = reader.readUTF();
 				double lat = reader.readDouble();
 				double lon = reader.readDouble();
-				Coordinate c = new Coordinate(name, lat, lon);
+				Place c = new Place(name, lat, lon);
 				model.getStops().addElement(c);
 			}
 			recordStore.closeRecordStore();
@@ -89,12 +88,12 @@ public class Cache {
 		return model;
 	}
 
-	private static String composeImageKey(Coordinate coordinate) {
-		return "map_" + coordinate.getLat() + "_" + coordinate.getLon();
+	private static String composeImageKey(Place place) {
+		return "map_" + place.getLat() + "_" + place.getLon();
 	}
 
-	public static void saveImage(Coordinate coordinate, byte[] image) {
-		String key = composeImageKey(coordinate);
+	public static void saveImage(Place place, byte[] image) {
+		String key = composeImageKey(place);
 		try {
 			recordStore = RecordStore.openRecordStore(key, true);
 
@@ -109,8 +108,8 @@ public class Cache {
 		}
 	}
 
-	public static Image loadImage(Coordinate coordinate) {
-		String key = composeImageKey(coordinate);
+	public static Image loadImage(Place place) {
+		String key = composeImageKey(place);
 		Image image = null;
 		try {
 			ByteArrayInputStream stream;
@@ -135,8 +134,8 @@ public class Cache {
 		}
 	}
 
-	public static boolean isImageExists(Coordinate coordinate) {
-		String key = composeImageKey(coordinate);
+	public static boolean isImageExists(Place place) {
+		String key = composeImageKey(place);
 		try {
 			recordStore = RecordStore.openRecordStore(key, false);
 			recordStore.closeRecordStore();

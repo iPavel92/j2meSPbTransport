@@ -15,13 +15,13 @@ public class GeoConverter {
 	/**
 	 * Converts given lat/lon in WGS84 Datum to XY in Spherical Mercator EPSG:900913
 	 */
-	public static Coordinate fromLatLonToMeters(Coordinate src) {
+	public static Place fromLatLonToMeters(Place src) {
 		double originShift = Math.PI * 6378137; //6378137
 		double mx = src.getLon() * originShift / 180.0;
 		double my = MathUtil.log(Math.tan((90 + src.getLat()) * Math.PI / 360.0)) / (Math.PI / 180.0);
 
 		my = my * originShift / 180.0;
-		return new Coordinate(null, mx, my);
+		return new Place(null, mx, my);
 	}
 
 	//some magic numbers
@@ -35,22 +35,22 @@ public class GeoConverter {
 	private static final double LON_COEFF_FOR_ZOOM_13 = 0.01741;
 
 
-	public static String buildBBox(Coordinate coordinate, int screenWidth, int screenHeight) {
+	public static String buildBBox(Place place, int screenWidth, int screenHeight) {
 
 		int wDiff = screenWidth / 2;
 		int hDiff = screenHeight / 2;
 
 		System.out.println(screenWidth + " " + screenHeight);
 
-		double west = coordinate.getLat() + (hDiff * LAT_COEFF_FOR_ZOOM_13) / 100;
-		double east = coordinate.getLat() - (hDiff * LAT_COEFF_FOR_ZOOM_13) / 100;
-		double north = coordinate.getLon() - (wDiff * LON_COEFF_FOR_ZOOM_13) / 100;
-		double south = coordinate.getLon() + (wDiff * LON_COEFF_FOR_ZOOM_13) / 100;
+		double west = place.getLat() + (hDiff * LAT_COEFF_FOR_ZOOM_13) / 100;
+		double east = place.getLat() - (hDiff * LAT_COEFF_FOR_ZOOM_13) / 100;
+		double north = place.getLon() - (wDiff * LON_COEFF_FOR_ZOOM_13) / 100;
+		double south = place.getLon() + (wDiff * LON_COEFF_FOR_ZOOM_13) / 100;
 
 		System.out.println(west + "," + north);
 		System.out.println(east + "," + south);
-		Coordinate nw = fromLatLonToMeters(new Coordinate(null, west, north));
-		Coordinate se = fromLatLonToMeters(new Coordinate(null, east, south));
+		Place nw = fromLatLonToMeters(new Place(null, west, north));
+		Place se = fromLatLonToMeters(new Place(null, east, south));
 
 		return nw.getLat() + "," + se.getLon() + "," + se.getLat() + "," + nw.getLon();
 	}
