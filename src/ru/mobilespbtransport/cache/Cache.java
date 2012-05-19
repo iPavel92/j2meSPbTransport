@@ -29,10 +29,10 @@ public class Cache {
 			writer.writeBoolean(model.isShowTrolley());
 			writer.writeBoolean(model.isShowTram());
 			writer.writeBoolean(model.isUseAutoUpdate());
-			int n = model.getStops().size();
+			int n = model.getPlaces().size();
 			writer.writeInt(n);
 			for (int i = 0; i < n; i++) {
-				Place c = (Place) model.getStops().elementAt(i);
+				Place c = (Place) model.getPlaces().elementAt(i);
 				writer.writeUTF(c.getName());
 				writer.writeDouble(c.getLat());
 				writer.writeDouble(c.getLon());
@@ -79,7 +79,7 @@ public class Cache {
 				double lat = reader.readDouble();
 				double lon = reader.readDouble();
 				Place c = new Place(name, lat, lon);
-				model.getStops().addElement(c);
+				model.getPlaces().addElement(c);
 			}
 			recordStore.closeRecordStore();
 		} catch (RecordStoreException e) {
@@ -91,11 +91,16 @@ public class Cache {
 	}
 
 	private static String composeImageKey(Place place) {
-		return "map_" + place.getLat() + "_" + place.getLon();
+		String key = "map_" + place.getLat() + "_" + place.getLon();
+		if(key.length() > 32){
+			key = key.substring(0, 32);
+		}
+		return key;
 	}
 
 	public static void saveImage(Place place, byte[] image) {
 		String key = composeImageKey(place);
+		System.out.println(key);
 		try {
 			recordStore = RecordStore.openRecordStore(key, true);
 
@@ -120,7 +125,7 @@ public class Cache {
 			recordStore = RecordStore.openRecordStore(key, true);
 			System.out.println(recordStore.getNumRecords());
 			if (recordStore.getNumRecords() == 0) {
-				return image;
+				return null;
 			}
 
 			byte[] rec = new byte[recordStore.getRecordSize(1)];

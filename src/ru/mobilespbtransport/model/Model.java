@@ -10,23 +10,23 @@ import java.util.Vector;
  * To change this template use File | SettingsScreen | File Templates.
  */
 public class Model {
-	private Place place;
+	private Place currentPlace;
 	private boolean showBus = true;
 	private boolean showTrolley = true;
 	private boolean showTram = true;
 	private boolean useAutoUpdate = true;
-	private Vector stops = new Vector();
+	private Vector places = new Vector();
 
-	public Vector getStops() {
-		return stops;
+	public Vector getPlaces() {
+		return places;
 	}
 
-	public Place getPlace() {
-		return place;
+	public Place getCurrentPlace() {
+		return currentPlace;
 	}
 
-	public void setPlace(Place place) {
-		this.place = place;
+	public void setCurrentPlace(Place currentPlace) {
+		this.currentPlace = currentPlace;
 	}
 
 	public boolean isShowBus() {

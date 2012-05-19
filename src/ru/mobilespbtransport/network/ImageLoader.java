@@ -25,12 +25,14 @@ public class ImageLoader {
 	//save downloaded image to cache
 	public static Image getMapImage(Place place, String url) throws IOException {
 		if (Cache.isImageExists(place)) {
-			System.out.println("found in cache!");
+			System.out.println("found in cache");
 			return Cache.loadImage(place);
 		} else {
-			System.out.println("not found in cache!");
+			System.out.println("not found in cache");
 			byte[] imageData = getImageBytesFromInet(url);
+			System.out.println("image loaded");
 			Cache.saveImage(place, imageData);
+			System.out.println("image saved");
 			Image im = null;
 			im = Image.createImage(imageData, 0, imageData.length);
 			return (im == null ? null : im);

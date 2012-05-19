@@ -6,6 +6,7 @@ import ru.mobilespbtransport.model.GeoConverter;
 import ru.mobilespbtransport.model.Model;
 import ru.mobilespbtransport.network.HttpClient;
 import ru.mobilespbtransport.network.ImageLoader;
+import ru.mobilespbtransport.screens.FavouritesList;
 import ru.mobilespbtransport.screens.MapScreen;
 
 import javax.microedition.lcdui.Image;
@@ -19,22 +20,42 @@ import java.io.IOException;
  * To change this template use File | Settings | File Templates.
  */
 public class Controller {
-	private Model model;
-	private MapScreen mapScreen;
+	private static Main main; //for destroy app
+	private static Model model;
+	private static MapScreen mapScreen;
+	private static FavouritesList favouritesList;
 
-	public Model getModel() {
+	public static Main getMain() {
+		return main;
+	}
+
+	public static void setMain(Main main) {
+		Controller.main = main;
+	}
+
+	public static Model getModel() {
 		return model;
 	}
 
-	public void setModel(Model model) {
-		this.model = model;
+	public static void setModel(Model model) {
+		Controller.model = model;
 	}
 
-	public void setMapScreen(MapScreen mapScreen) {
-		this.mapScreen = mapScreen;
+	public static void setMapScreen(MapScreen mapScreen) {
+		Controller.mapScreen = mapScreen;
 	}
 
-	public void setLayers(boolean showBus, boolean showTrolley, boolean showTram) {
+	public static FavouritesList getFavouritesList() {
+		return favouritesList;
+	}
+
+	public static void setFavouritesList(FavouritesList favouritesList) {
+		Controller.favouritesList = favouritesList;
+		favouritesList.setFavourites(getModel().getPlaces());
+		favouritesList.update();
+	}
+
+	public static void setLayers(boolean showBus, boolean showTrolley, boolean showTram) {
 		model.setShowBus(showBus);
 		model.setShowTrolley(showTrolley);
 		model.setShowTram(showTram);
@@ -42,43 +63,45 @@ public class Controller {
 		loadTransportLayer();
 	}
 
-	public void setAutoUpdate(boolean isAutoUpdate) {
+	public static void setAutoUpdate(boolean isAutoUpdate) {
 		model.setUseAutoUpdate(isAutoUpdate);
 		Cache.saveModel(model);
 	}
 
-	public void selectPlace(int index) {
-		selectPlace((Place) model.getStops().elementAt(index));
-	}
-
-	public void selectPlace(Place place) {
-		model.setPlace(place);
+	public static void setCurrentPlace(Place place) {
+		model.setCurrentPlace(place);
 		loadMap();
 		loadTransportLayer();
 	}
+	
+	public static Place getCurrentPlace(){
+		return model.getCurrentPlace();
+	}
 
-	public void addPlace(Place place) {
-		if (!model.getStops().contains(place)) {
-			model.getStops().addElement(place);
+	public static void addPlace(Place place) {
+		if (!model.getPlaces().contains(place)) {
+			model.getPlaces().addElement(place);
+			favouritesList.update();
 			Cache.saveModel(model);
 		}
 	}
 
-	public void removePlace(int i) {
-		model.getStops().removeElementAt(i);
+	public static void removePlace(Place place) {
+		model.getPlaces().removeElement(place);
+		favouritesList.update();
 		Cache.saveModel(model);
 	}
 
-	public void loadMap() {
+	public static void loadMap() {
 		new Thread() {
 			public void run() {
 				try {
-					if (model.getPlace() == null) {
+					if (model.getCurrentPlace() == null) {
 						return;
 					}
-					String url = getMapUri(model.getPlace(), mapScreen.getWidth(), mapScreen.getHeight());
+					String url = getMapUri(model.getCurrentPlace(), mapScreen.getWidth(), mapScreen.getHeight());
 					System.out.println(url);
-					Image map = ImageLoader.getMapImage(model.getPlace(), url);
+					Image map = ImageLoader.getMapImage(model.getCurrentPlace(), url);
 					mapScreen.setMap(map);
 					mapScreen.repaint();
 				} catch (Exception e) {
@@ -88,14 +111,14 @@ public class Controller {
 		}.start();
 	}
 
-	public void loadTransportLayer() {
+	public static void loadTransportLayer() {
 		new Thread() {
 			public void run() {
 				try {
-					if (model.getPlace() == null) {
+					if (model.getCurrentPlace() == null) {
 						return;
 					}
-					String bBox = GeoConverter.buildBBox(model.getPlace(), mapScreen.getWidth(), mapScreen.getHeight());
+					String bBox = GeoConverter.buildBBox(model.getCurrentPlace(), mapScreen.getWidth(), mapScreen.getHeight());
 					String url = getTransportMapUrl(bBox, model.isShowBus(), model.isShowTrolley(), model.isShowTram(), mapScreen.getWidth(), mapScreen.getHeight());
 					System.out.println(url);
 					Image transportLayer = ImageLoader.getImageFromInet(url);
@@ -108,7 +131,7 @@ public class Controller {
 		}.start();
 	}
 
-	private String getTransportMapUrl(String bbox, boolean showBus, boolean showTrolley, boolean showTram, int screenWidth, int screenHeight) {
+	private static String getTransportMapUrl(String bbox, boolean showBus, boolean showTrolley, boolean showTram, int screenWidth, int screenHeight) {
 		boolean isCommaRequired = false;
 		String layers = "";
 		if (showBus) {
@@ -126,11 +149,11 @@ public class Controller {
 		return "http://transport.orgp.spb.ru/cgi-bin/mapserv?TRANSPARENT=TRUE&FORMAT=image%2Fpng&LAYERS=" + layers + "&MAP=vehicle_typed.map&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG%3A900913&_OLSALT=0.1508798657450825&BBOX=" + bbox + "&WIDTH=" + screenWidth + "&HEIGHT=" + screenHeight;
 	}
 
-	private String getMapUri(Place center, int screenWidth, int screenHeight) {
+	private static String getMapUri(Place center, int screenWidth, int screenHeight) {
 		return "http://maps.google.com/maps/api/staticmap?zoom=13&sensor=false&size=" + screenWidth + "x" + screenHeight + "&center=" + center.getLat() + "," + center.getLon();
 	}
 
-	public void doMagic() {
+	public static void doMagic() {
 		//final String url = "http://transport.orgp.spb.ru/Portal/transport/stop/16941/arriving";
 		//final String request = "sEcho=8&iColumns=4&sColumns=index%2CrouteNumber%2CtimeToArrive%2CparkNumber&iDisplayStart=0&iDisplayLength=-1&sNames=index%2CrouteNumber%2CtimeToArrive%2CparkNumber";
 		final String url = "http://transport.orgp.spb.ru/Portal/transport/stops/list";
@@ -143,12 +166,21 @@ public class Controller {
 					String response;
 					response = HttpClient.sendPost(url, request);
 					System.out.println(response);
-					mapScreen.olo = response.substring(112);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
 		}.start();
+	}
 
+	public static void exit(){
+		if(main == null){
+			throw new IllegalStateException("main midlet class not setted");
+		}
+		main.exit();
+	}
+
+	public static MapScreen getMapScreen() {
+		return mapScreen;
 	}
 }

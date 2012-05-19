@@ -11,7 +11,7 @@ import java.io.UnsupportedEncodingException;
  */
 public class Util {
 
-	//Используется для конвертации строк в UI, чтобы не писать /u100500...
+	//used to encode UI String to utf-8. Another solution is using /u100500...
 	public static String convertToUtf8(String src){
 		try {
 			return new String(src.getBytes(), "UTF-8");

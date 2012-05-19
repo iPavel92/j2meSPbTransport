@@ -1,10 +1,11 @@
 package ru.mobilespbtransport.screens;
 
+import ru.mobilespbtransport.Controller;
 import ru.mobilespbtransport.model.Place;
 import ru.mobilespbtransport.util.Util;
 
-import javax.microedition.lcdui.Command;
-import javax.microedition.lcdui.List;
+import javax.microedition.lcdui.*;
+import java.io.IOException;
 import java.util.Vector;
 
 /**
@@ -14,52 +15,43 @@ import java.util.Vector;
  * Time: 0:55
  * To change this template use File | SettingsScreen | File Templates.
  */
-public class PlacesList extends List {
-	private final Command selectCommand = new Command(Util.convertToUtf8("Выбрать"), Command.OK, 1);
+public class PlacesList extends List implements CommandListener{
 	private final Command backCommand = new Command(Util.convertToUtf8("Назад"), Command.CANCEL, 2);
-	private final Command addPlaceCommand = new Command(Util.convertToUtf8("Добавить"), Command.ITEM, 3);
-	private final Command deletePlaceCommand = new Command(Util.convertToUtf8("Удалить"), Command.ITEM, 4);
-	private final Command searchPlaceCommand = new Command(Util.convertToUtf8("Найти"), Command.ITEM, 5);
+	private final Vector places;
 
-	public PlacesList(Vector v) {
-		super("Select place", IMPLICIT);
+	public PlacesList(Vector places) {
+		super(Util.convertToUtf8("Выберите место"), IMPLICIT);
+		this.places = places;
 
-		addCommand(addPlaceCommand);
-		addCommand(deletePlaceCommand);
-		addCommand(selectCommand);
 		addCommand(backCommand);
-		addCommand(searchPlaceCommand);
-		setValues(v);
+		setPlaces(places);
+		setCommandListener(this);
 	}
 	
-	public void setValues(Vector v){
-		for(int i = 0; i<v.size(); i++){
-			Place c = (Place)v.elementAt(i);
-			append(c.getName(), null);
+	public void setPlaces(Vector places){
+		if(places == null){
+			return;
+		}
+
+		Image placeIco = null;
+		try {
+			placeIco = Image.createImage("/place.png");
+		} catch (IOException e) {
+			//TODO
+			e.printStackTrace();
+		}
+		for(int i = 0; i<places.size(); i++){
+			Place c = (Place)places.elementAt(i);
+			append(c.getName(), placeIco);
 		}
 	} 
-	
-	public int getSelected(){
-		return getSelectedIndex();
-	}
 
-	public Command getSelectCommand() {
-		return selectCommand;
-	}
-
-	public Command getBackCommand() {
-		return backCommand;
-	}
-
-	public Command getAddPlaceCommand() {
-		return addPlaceCommand;
-	}
-
-	public Command getDeletePlaceCommand() {
-		return deletePlaceCommand;
-	}
-
-	public Command getSearchPlaceCommand() {
-		return searchPlaceCommand;
+	public void commandAction(Command command, Displayable displayable) {
+		if(command == List.SELECT_COMMAND){
+			Controller.setCurrentPlace((Place) places.elementAt(getSelectedIndex()));
+			ScreenStack.push(Controller.getMapScreen());
+		} else if (command == backCommand){
+			ScreenStack.pop();
+		}
 	}
 }

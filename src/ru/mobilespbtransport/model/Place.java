@@ -8,9 +8,9 @@ package ru.mobilespbtransport.model;
  * To change this template use File | SettingsScreen | File Templates.
  */
 public class Place {
-	private final String name;
-	private final double lat;
-	private final double lon;
+	protected final String name;
+	protected final double lat;
+	protected final double lon;
 
 	public Place(String name, double lat, double lon) {
 		this.name = name;

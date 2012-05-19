@@ -50,7 +50,6 @@ public class Geocoder {
 						"&language=ru";
 	}
 
-
 	private static Vector parseResponse(String response) throws JSONException {
 		Vector result = new Vector();
 
