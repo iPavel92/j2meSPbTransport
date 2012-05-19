@@ -1,6 +1,7 @@
 package ru.mobilespbtransport.screens;
 
 import ru.mobilespbtransport.model.Place;
+import ru.mobilespbtransport.util.Util;
 
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.List;
@@ -14,11 +15,11 @@ import java.util.Vector;
  * To change this template use File | SettingsScreen | File Templates.
  */
 public class PlacesList extends List {
-	private final Command selectCommand = new Command("Select", Command.OK, 1);
-	private final Command backCommand = new Command("Back", Command.CANCEL, 2);
-	private final Command addPlaceCommand = new Command("Add place", Command.ITEM, 3);
-	private final Command deletePlaceCommand = new Command("Delete place", Command.ITEM, 4);
-	private final Command searchPlaceCommand = new Command("Search place", Command.ITEM, 5);
+	private final Command selectCommand = new Command(Util.convertToUtf8("Выбрать"), Command.OK, 1);
+	private final Command backCommand = new Command(Util.convertToUtf8("Назад"), Command.CANCEL, 2);
+	private final Command addPlaceCommand = new Command(Util.convertToUtf8("Добавить"), Command.ITEM, 3);
+	private final Command deletePlaceCommand = new Command(Util.convertToUtf8("Удалить"), Command.ITEM, 4);
+	private final Command searchPlaceCommand = new Command(Util.convertToUtf8("Найти"), Command.ITEM, 5);
 
 	public PlacesList(Vector v) {
 		super("Select place", IMPLICIT);

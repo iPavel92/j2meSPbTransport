@@ -17,6 +17,7 @@ public class MapScreen extends Canvas {
 	private final Controller controller;
 	private Image map;
 	private Image transportLayer;
+	public String olo = "";
 
 	public MapScreen(Controller controller) {
 		this.controller = controller;
@@ -31,6 +32,9 @@ public class MapScreen extends Canvas {
 		if (transportLayer != null) {
 			graphics.drawImage(transportLayer, 0, 0, Graphics.TOP | Graphics.LEFT);
 		}
+		graphics.setColor(0, 0, 255);
+		graphics.drawString(olo, 20, 50, Graphics.TOP | Graphics.LEFT);
+		System.out.println(olo);
 	}
 
 	public void setMap(Image map) {
@@ -43,6 +47,9 @@ public class MapScreen extends Canvas {
 
 	protected void keyPressed(int i) {
 		controller.loadTransportLayer();
+
+		controller.doMagic();
+
 	}
 
 	protected void pointerPressed(int i, int i1) {
