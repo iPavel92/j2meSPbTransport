@@ -1,10 +1,7 @@
-package ru.mobilespbtransport.screens;
+package ru.mobilespbtransport.view;
 
 import ru.mobilespbtransport.Controller;
-import ru.mobilespbtransport.model.Arriving;
-import ru.mobilespbtransport.model.Route;
-import ru.mobilespbtransport.model.Stop;
-import ru.mobilespbtransport.model.TransportType;
+import ru.mobilespbtransport.model.*;
 import ru.mobilespbtransport.util.Util;
 
 import javax.microedition.lcdui.*;
@@ -21,8 +18,9 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 	private final Command viewPlacesCommand = new Command(Util.convertToUtf8("Закладки"), Command.ITEM, 0);
 	private final Command addToFavourites = new Command(Util.convertToUtf8("Добавить в закладки"), Command.ITEM, 1);
 	private final Command updateCommand = new Command(Util.convertToUtf8("Обновить"), Command.ITEM, 3);
-	private final Command backCommand = new Command(Util.convertToUtf8("Назад"), Command.CANCEL, 4);
-	private final Command exitCommand = new Command(Util.convertToUtf8("Выход"), Command.EXIT, 5);
+	private final Command showOnMap = new Command(Util.convertToUtf8("На карте"), Command.ITEM, 4);
+	private final Command backCommand = new Command(Util.convertToUtf8("Назад"), Command.CANCEL, 5);
+	private final Command exitCommand = new Command(Util.convertToUtf8("Выход"), Command.EXIT, 6);
 
 	private final Stop stop;
 	private final Image arrivingImage;
@@ -35,6 +33,7 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 		addCommand(viewPlacesCommand);
 		addCommand(addToFavourites);
 		addCommand(updateCommand);
+		addCommand(showOnMap);
 		addCommand(backCommand);
 		addCommand(exitCommand);
 		setCommandListener(this);
@@ -131,6 +130,11 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 			ScreenStack.pop();
 		} else if(command == exitCommand){
 			Controller.exit();
+		} else if(command == showOnMap){
+			Place place = new Place(stop.getName(), stop.getLat(), stop.getLon());
+			Place p = GeoConverter.tileToWorldPos(stop.getLon(), stop.getLat());
+			Controller.setCurrentPlace(p);
+			ScreenStack.push(Controller.getMapScreen());
 		}
 	}
 }

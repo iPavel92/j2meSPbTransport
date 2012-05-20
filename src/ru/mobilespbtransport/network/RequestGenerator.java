@@ -1,5 +1,6 @@
 package ru.mobilespbtransport.network;
 
+import ru.mobilespbtransport.Controller;
 import ru.mobilespbtransport.model.Route;
 import ru.mobilespbtransport.model.Stop;
 
@@ -19,7 +20,7 @@ public class RequestGenerator {
 				"http://maps.googleapis.com/maps/api/geocode/json?" +
 						"address=" + encodedAddress +
 						"&bounds=59.661,29.518|60.270,30.757" +  //SPB only
-						"&sensor=false" +
+						"&sensor=" + Controller.isLocationSupported() + //fair play
 						"&language=ru";
 	}
 

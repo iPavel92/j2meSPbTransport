@@ -1,9 +1,8 @@
-package ru.mobilespbtransport.screens;
+package ru.mobilespbtransport.view;
 
 import ru.mobilespbtransport.util.Util;
 
 import javax.microedition.lcdui.*;
-import java.io.IOException;
 import java.util.Vector;
 
 /**
@@ -14,7 +13,7 @@ import java.util.Vector;
  * To change this template use File | Settings | File Templates.
  */
 public class ScreenStack {
-	//stack of the screens
+	//stack of the view
 	private static final Vector screens = new Vector(); //Vector<Displayable>
 	private static Display display;
 

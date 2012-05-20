@@ -6,12 +6,11 @@ import ru.mobilespbtransport.network.HttpClient;
 import ru.mobilespbtransport.network.ImageLoader;
 import ru.mobilespbtransport.network.RequestGenerator;
 import ru.mobilespbtransport.network.ResponseParser;
-import ru.mobilespbtransport.screens.*;
+import ru.mobilespbtransport.view.*;
 import ru.mobilespbtransport.util.Util;
 
 import javax.microedition.lcdui.Image;
 import javax.microedition.location.*;
-import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Vector;
 

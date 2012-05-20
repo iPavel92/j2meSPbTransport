@@ -2,6 +2,7 @@ package ru.mobilespbtransport.model;
 
 import akme.mobile.util.MathUtil;
 
+
 /**
  * Created by IntelliJ IDEA.
  * User: Павел
@@ -18,10 +19,24 @@ public class GeoConverter {
 	public static Place fromLatLonToMeters(Place src) {
 		double originShift = Math.PI * 6378137; //6378137
 		double mx = src.getLon() * originShift / 180.0;
+		System.out.println("tan result = " + Math.tan((90 + src.getLat())));
+		System.out.println("log result = " + MathUtil.log(Math.tan((90 + src.getLat()) * Math.PI / 360.0)));
 		double my = MathUtil.log(Math.tan((90 + src.getLat()) * Math.PI / 360.0)) / (Math.PI / 180.0);
 
 		my = my * originShift / 180.0;
 		return new Place(null, mx, my);
+	}
+
+	public static Place tileToWorldPos(double x, double y)
+	{
+		//"Converts XY point from Spherical Mercator EPSG:900913 to lat/lon in WGS84 Datum"
+		double originShift = Math.PI * 6378137;
+		double lon = (x / originShift) * 180.0;
+		double lat = (y / originShift) * 180.0;
+
+		lat = 180 / Math.PI * (2 * MathUtil.atan( MathUtil.exp( lat * Math.PI / 180.0)) - Math.PI / 2.0);
+		Place p = new Place("", lat, lon);
+		return p;
 	}
 
 	//some magic numbers
@@ -47,11 +62,15 @@ public class GeoConverter {
 		double north = place.getLon() - (wDiff * LON_COEFF_FOR_ZOOM_13) / 100;
 		double south = place.getLon() + (wDiff * LON_COEFF_FOR_ZOOM_13) / 100;
 
-		System.out.println(west + "," + north);
-		System.out.println(east + "," + south);
 		Place nw = fromLatLonToMeters(new Place(null, west, north));
+		Place p = GeoConverter.tileToWorldPos(nw.getLat(), nw.getLon());
+		System.out.println(">1: " + west + ", " + north);
+		System.out.println(">2: " + nw.getLat() + ", " + nw.getLon());
+		System.out.println(">3: " + p.getLat() + ", " + p.getLon());
 		Place se = fromLatLonToMeters(new Place(null, east, south));
 
 		return nw.getLat() + "," + se.getLon() + "," + se.getLat() + "," + nw.getLon();
 	}
 }
+
+

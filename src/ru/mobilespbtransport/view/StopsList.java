@@ -1,4 +1,4 @@
-package ru.mobilespbtransport.screens;
+package ru.mobilespbtransport.view;
 
 import ru.mobilespbtransport.Controller;
 import ru.mobilespbtransport.model.Place;

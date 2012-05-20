@@ -1,12 +1,9 @@
-package ru.mobilespbtransport.screens;
+package ru.mobilespbtransport.view;
 
 import ru.mobilespbtransport.Controller;
-import ru.mobilespbtransport.geocoder.Geocoder;
-import ru.mobilespbtransport.model.Place;
 import ru.mobilespbtransport.util.Util;
 
 import javax.microedition.lcdui.*;
-import java.util.Vector;
 
 /**
  * Created by IntelliJ IDEA.

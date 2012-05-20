@@ -2,8 +2,7 @@ package ru.mobilespbtransport;
 
 import ru.mobilespbtransport.cache.Cache;
 import ru.mobilespbtransport.model.*;
-import ru.mobilespbtransport.screens.*;
-import ru.mobilespbtransport.util.Util;
+import ru.mobilespbtransport.view.*;
 
 import javax.microedition.lcdui.Display;
 import javax.microedition.midlet.MIDlet;
