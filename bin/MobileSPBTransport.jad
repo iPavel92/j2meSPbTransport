@@ -5,6 +5,7 @@ MIDlet-Jar-Size: 56736
 MIDlet-Jar-URL: MobileSPBTransport.jar
 MIDlet-Name: MobileSPBTransport
 MIDlet-Permissions: javax.microedition.io.Connector.http
+MIDlet-Permissions-Opt: javax.microedition.location.Location
 MIDlet-Vendor: iPavel
 MIDlet-Version: 1.0
 MicroEdition-Configuration: CLDC-1.1

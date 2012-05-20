@@ -1,11 +1,10 @@
 package ru.mobilespbtransport.screens;
 
-import ru.mobilespbtransport.model.Place;
+import ru.mobilespbtransport.Controller;
 import ru.mobilespbtransport.util.Util;
 
 import javax.microedition.lcdui.*;
 import java.io.IOException;
-import java.util.Vector;
 
 /**
  * Created by IntelliJ IDEA.
@@ -45,7 +44,28 @@ public class SearchPlaceMenu extends List implements CommandListener {
 					ScreenStack.push(new SearchCoordinateScreen());
 					break;
 				case 3: //gps
-					//NOT SUPPORTED YET
+					if(Controller.isLocationSupported()){
+						Controller.locateMe();
+						ScreenStack.push(Controller.getMapScreen());
+					} else {
+						try {
+							Alert alert = new Alert(Util.convertToUtf8("Сообщение"),
+									Util.convertToUtf8("Ваш телефон не поддерживает GPS"),
+									Image.createImage("/gps.png"),
+									AlertType.ALARM);
+							alert.setTimeout(Alert.FOREVER);
+							alert.addCommand(new Command(Util.convertToUtf8("OK"), Command.BACK, 0));
+							alert.setCommandListener(new CommandListener() {
+								public void commandAction(Command command, Displayable displayable) {
+									ScreenStack.pop();
+								}
+							});
+							ScreenStack.push(alert);
+						} catch (IOException e) {
+							//TODO
+							e.printStackTrace();
+						}
+					}
 					break;
 			}
 			//TODO

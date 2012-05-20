@@ -10,6 +10,7 @@ import ru.mobilespbtransport.screens.FavouritesList;
 import ru.mobilespbtransport.screens.MapScreen;
 
 import javax.microedition.lcdui.Image;
+import javax.microedition.location.*;
 import java.io.IOException;
 
 /**
@@ -73,8 +74,8 @@ public class Controller {
 		loadMap();
 		loadTransportLayer();
 	}
-	
-	public static Place getCurrentPlace(){
+
+	public static Place getCurrentPlace() {
 		return model.getCurrentPlace();
 	}
 
@@ -159,7 +160,7 @@ public class Controller {
 		final String url = "http://transport.orgp.spb.ru/Portal/transport/stops/list";
 		final String request = "sEcho=31&iColumns=7&sColumns=id%2CtransportType%2Cname%2Cimages%2CnearestStreets%2Croutes%2ClonLat&iDisplayStart=0&iDisplayLength=25&sNames=id%2CtransportType%2Cname%2Cimages%2CnearestStreets%2Croutes%2ClonLat&iSortingCols=1&iSortCol_0=0&sSortDir_0=asc&bSortable_0=true&bSortable_1=true&bSortable_2=true&bSortable_3=false&bSortable_4=true&bSortable_5=false&bSortable_6=false&transport-type=0&transport-type=2&transport-type=1&use-bbox=true&bbox-value=3379151.668188%2C8411310.270772%2C3379587.053501%2C8411787.237829";
 		System.out.println(request);
-		
+
 		new Thread() {
 			public void run() {
 				try {
@@ -173,8 +174,8 @@ public class Controller {
 		}.start();
 	}
 
-	public static void exit(){
-		if(main == null){
+	public static void exit() {
+		if (main == null) {
 			throw new IllegalStateException("main midlet class not setted");
 		}
 		main.exit();
@@ -182,5 +183,46 @@ public class Controller {
 
 	public static MapScreen getMapScreen() {
 		return mapScreen;
+	}
+
+	public static boolean isLocationSupported() {
+		boolean isItTrue = true;
+		try {
+			Class.forName("javax.microedition.location.Location");
+		} catch (Exception e) {
+			isItTrue = false;
+		}
+		return isItTrue;
+	}
+
+	public static Place getMyLocation() {
+		if (isLocationSupported()) {
+			try {
+				Criteria cr = new Criteria();
+				cr.setHorizontalAccuracy(500);
+				LocationProvider lp = null;
+				lp = LocationProvider.getInstance(cr);
+				Location l = lp.getLocation(10);
+				QualifiedCoordinates qc = l.getQualifiedCoordinates();
+				Place place = new Place("", qc.getLatitude(), qc.getLongitude());
+				return place;
+			} catch (LocationException e) {
+				e.printStackTrace();  //TODO
+			} catch (InterruptedException e) {
+				e.printStackTrace();  //TODO
+			}
+		}
+		return null;
+	}
+	
+	public static void locateMe(){
+		new Thread(){
+			public void run() {
+				Place place = getMyLocation();
+				if(place != null){
+					setCurrentPlace(place);
+				}
+			}
+		}.start();
 	}
 }
