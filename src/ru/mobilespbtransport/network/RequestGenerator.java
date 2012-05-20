@@ -1,6 +1,7 @@
 package ru.mobilespbtransport.network;
 
 import ru.mobilespbtransport.Controller;
+import ru.mobilespbtransport.model.Place;
 import ru.mobilespbtransport.model.Route;
 import ru.mobilespbtransport.model.Stop;
 
@@ -46,5 +47,36 @@ public class RequestGenerator {
 
 	public static String getRequestForArriving() {
 		return "sEcho=2&iColumns=4&sColumns=index%2CrouteNumber%2CtimeToArrive%2CparkNumber&iDisplayStart=0&iDisplayLength=-1&sNames=index%2CrouteNumber%2CtimeToArrive%2CparkNumber";
+	}
+
+	public static String getTransportMapUrl(String bbox, boolean showBus, boolean showTrolley, boolean showTram, int screenWidth, int screenHeight) {
+		boolean isCommaRequired = false;
+		String layers = "";
+		if (showBus) {
+			layers = layers + "vehicle_bus";
+			isCommaRequired = true;
+		}
+		if (showTrolley) {
+			layers = layers + (isCommaRequired ? "," : "") + "vehicle_trolley";
+			isCommaRequired = true;
+		}
+		if (showTram) {
+			layers = layers + (isCommaRequired ? "," : "") + "vehicle_tram";
+			isCommaRequired = true;
+		}
+		return "http://transport.orgp.spb.ru/cgi-bin/mapserv?TRANSPARENT=TRUE&FORMAT=image%2Fpng&LAYERS=" + layers + "&MAP=vehicle_typed.map&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG%3A900913&_OLSALT=0.1508798657450825&BBOX=" + bbox + "&WIDTH=" + screenWidth + "&HEIGHT=" + screenHeight;
+	}
+
+	public static String getMapUrl(Place center, int screenWidth, int screenHeight, int zoom) {
+		return "http://maps.google.com/maps/api/staticmap?zoom=" + zoom +
+				"&sensor=" + Controller.isLocationSupported() +
+				"&size=" + screenWidth +
+				"x" + screenHeight +
+				"&center=" + center.getCoordinate().toWGS84().getLat() +
+				"," + center.getCoordinate().toWGS84().getLon();
+	}
+	
+	public static String getRequestForStopsOnMap(String bbox){
+		return "sEcho=31&iColumns=7&sColumns=id%2CtransportType%2Cname%2Cimages%2CnearestStreets%2Croutes%2ClonLat&iDisplayStart=0&iDisplayLength=25&sNames=id%2CtransportType%2Cname%2Cimages%2CnearestStreets%2Croutes%2ClonLat&iSortingCols=1&iSortCol_0=0&sSortDir_0=asc&bSortable_0=true&bSortable_1=true&bSortable_2=true&bSortable_3=false&bSortable_4=true&bSortable_5=false&bSortable_6=false&transport-type=0&transport-type=2&transport-type=1&use-bbox=true&bbox-value=" + bbox; //3379151.668188%2C8411310.270772%2C3379587.053501%2C8411787.237829";
 	}
 }

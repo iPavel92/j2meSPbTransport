@@ -59,4 +59,16 @@ public class TransportType {
 		}
 		return null;
 	}
+
+	public int getColor() {
+		switch (type) {
+			case BUS:
+				return 0xA2A8B1;
+			case TROLLEY:
+				return 0x7190D6;
+			case TRAM:
+				return 0xAD3F47;
+		}
+		return 0x000000;
+	}
 }

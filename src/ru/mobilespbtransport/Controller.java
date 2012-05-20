@@ -3,7 +3,6 @@ package ru.mobilespbtransport;
 import ru.mobilespbtransport.cache.Cache;
 import ru.mobilespbtransport.model.*;
 import ru.mobilespbtransport.network.HttpClient;
-import ru.mobilespbtransport.network.ImageLoader;
 import ru.mobilespbtransport.network.RequestGenerator;
 import ru.mobilespbtransport.network.ResponseParser;
 import ru.mobilespbtransport.view.*;
@@ -11,6 +10,7 @@ import ru.mobilespbtransport.util.Util;
 
 import javax.microedition.lcdui.Image;
 import javax.microedition.location.*;
+import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -26,6 +26,11 @@ public class Controller {
 	private static Model model;
 	private static MapScreen mapScreen;
 	private static FavouritesList favouritesList;
+
+	public final static int DEFAULT_ZOOM = 13;
+	public final static int SELECT_STOP_ZOOM = 16;
+	private static boolean isZoomedIn = false;
+	private static int zoom = DEFAULT_ZOOM;
 
 	public static Main getMain() {
 		return main;
@@ -73,7 +78,11 @@ public class Controller {
 	public static void setCurrentPlace(Place place) {
 		model.setCurrentPlace(place);
 		loadMap();
-		loadTransportLayer();
+		if (isZoomedIn) {
+			loadStopsToMap();
+		} else {
+			loadTransportLayer();
+		}
 	}
 
 	public static Place getCurrentPlace() {
@@ -101,9 +110,8 @@ public class Controller {
 					if (model.getCurrentPlace() == null) {
 						return;
 					}
-					String url = getMapUri(model.getCurrentPlace(), mapScreen.getWidth(), mapScreen.getHeight());
-					System.out.println(url);
-					Image map = ImageLoader.getMapImage(model.getCurrentPlace(), url);
+					String url = RequestGenerator.getMapUrl(model.getCurrentPlace(), mapScreen.getWidth(), mapScreen.getHeight(), zoom);
+					Image map = getMapImage(model.getCurrentPlace(), url, zoom);
 					mapScreen.setMap(map);
 					mapScreen.repaint();
 				} catch (Exception e) {
@@ -120,10 +128,10 @@ public class Controller {
 					if (model.getCurrentPlace() == null) {
 						return;
 					}
-					String bBox = GeoConverter.buildBBox(model.getCurrentPlace(), mapScreen.getWidth(), mapScreen.getHeight(), 13);
-					String url = getTransportMapUrl(bBox, model.isShowBus(), model.isShowTrolley(), model.isShowTram(), mapScreen.getWidth(), mapScreen.getHeight());
+					String bBox = GeoConverter.buildBBox(model.getCurrentPlace().getCoordinate(), mapScreen.getWidth(), mapScreen.getHeight(), zoom);
+					String url = RequestGenerator.getTransportMapUrl(bBox, model.isShowBus(), model.isShowTrolley(), model.isShowTram(), mapScreen.getWidth(), mapScreen.getHeight());
 					System.out.println(url);
-					Image transportLayer = ImageLoader.getImageFromInet(url);
+					Image transportLayer = HttpClient.loadImage(url);
 					mapScreen.setTransportLayer(transportLayer);
 					mapScreen.repaint();
 				} catch (Exception e) {
@@ -133,43 +141,18 @@ public class Controller {
 		}.start();
 	}
 
-	private static String getTransportMapUrl(String bbox, boolean showBus, boolean showTrolley, boolean showTram, int screenWidth, int screenHeight) {
-		boolean isCommaRequired = false;
-		String layers = "";
-		if (showBus) {
-			layers = layers + "vehicle_bus";
-			isCommaRequired = true;
-		}
-		if (showTrolley) {
-			layers = layers + (isCommaRequired ? "," : "") + "vehicle_trolley";
-			isCommaRequired = true;
-		}
-		if (showTram) {
-			layers = layers + (isCommaRequired ? "," : "") + "vehicle_tram";
-			isCommaRequired = true;
-		}
-		return "http://transport.orgp.spb.ru/cgi-bin/mapserv?TRANSPARENT=TRUE&FORMAT=image%2Fpng&LAYERS=" + layers + "&MAP=vehicle_typed.map&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG%3A900913&_OLSALT=0.1508798657450825&BBOX=" + bbox + "&WIDTH=" + screenWidth + "&HEIGHT=" + screenHeight;
-	}
-
-	private static String getMapUri(Place center, int screenWidth, int screenHeight) {
-		return "http://maps.google.com/maps/api/staticmap?zoom=13&sensor=false&size=" + screenWidth +
-				"x" + screenHeight +
-				"&center=" + center.getCoordinate().toWGS84().getLat() +
-				"," + center.getCoordinate().toWGS84().getLon();
-	}
-
-	public static void doMagic() {
-		//final String url = "http://transport.orgp.spb.ru/Portal/transport/stop/16941/arriving";
-		//final String request = "sEcho=8&iColumns=4&sColumns=index%2CrouteNumber%2CtimeToArrive%2CparkNumber&iDisplayStart=0&iDisplayLength=-1&sNames=index%2CrouteNumber%2CtimeToArrive%2CparkNumber";
-		final String url = "http://transport.orgp.spb.ru/Portal/transport/stops/list";
-		final String request = "sEcho=31&iColumns=7&sColumns=id%2CtransportType%2Cname%2Cimages%2CnearestStreets%2Croutes%2ClonLat&iDisplayStart=0&iDisplayLength=25&sNames=id%2CtransportType%2Cname%2Cimages%2CnearestStreets%2Croutes%2ClonLat&iSortingCols=1&iSortCol_0=0&sSortDir_0=asc&bSortable_0=true&bSortable_1=true&bSortable_2=true&bSortable_3=false&bSortable_4=true&bSortable_5=false&bSortable_6=false&transport-type=0&transport-type=2&transport-type=1&use-bbox=true&bbox-value=3379151.668188%2C8411310.270772%2C3379587.053501%2C8411787.237829";
-		System.out.println(request);
-
+	public static void loadStopsToMap() {
 		new Thread() {
 			public void run() {
-				String response;
-				response = HttpClient.sendPost(url, request);
-				System.out.println(response);
+				String url = "http://transport.orgp.spb.ru/Portal/transport/stops/list";
+				String bBox = GeoConverter.buildBBox(model.getCurrentPlace().getCoordinate(), mapScreen.getWidth(), mapScreen.getHeight(), zoom);
+				String request = RequestGenerator.getRequestForStopsOnMap(bBox);
+				System.out.println(request);
+				String response = HttpClient.sendPost(url, request);
+				System.out.println(">" + response);
+				Vector stops = ResponseParser.parseStopsToMap(response);
+				mapScreen.setStops(stops);
+				mapScreen.repaint();
 			}
 		}.start();
 	}
@@ -266,15 +249,15 @@ public class Controller {
 				String urlDirect = RequestGenerator.getUrlForDirectStops(route);
 				String responseDirect = HttpClient.sendPost(urlDirect, request);
 				Vector stopsDirect = ResponseParser.parseStopsByRoute(responseDirect, route.getTransportType());
-				for(Enumeration e = stopsDirect.elements(); e.hasMoreElements(); ){
-					resultScreen.addStop((Stop)e.nextElement(), true);
+				for (Enumeration e = stopsDirect.elements(); e.hasMoreElements(); ) {
+					resultScreen.addStop((Stop) e.nextElement(), true);
 				}
 
 				String urlReturn = RequestGenerator.getUrlForReturnStops(route);
 				String responseReturn = HttpClient.sendPost(urlReturn, request);
 				Vector stopsReturn = ResponseParser.parseStopsByRoute(responseReturn, route.getTransportType());
-				for(Enumeration e = stopsReturn.elements(); e.hasMoreElements(); ){
-					resultScreen.addStop((Stop)e.nextElement(), false);
+				for (Enumeration e = stopsReturn.elements(); e.hasMoreElements(); ) {
+					resultScreen.addStop((Stop) e.nextElement(), false);
 				}
 			}
 		}.start();
@@ -296,5 +279,63 @@ public class Controller {
 				arrivingScreen.repaint();
 			}
 		}.start();
+	}
+
+	public static void zoomIn() {
+		isZoomedIn = true;
+		zoom = SELECT_STOP_ZOOM;
+		Coordinate coordinate = GeoConverter.getZoomedInCoordinate(getCurrentPlace().getCoordinate(),
+				mapScreen.getCursorX(), mapScreen.getCursorY(),
+				mapScreen.getWidth(), mapScreen.getHeight(),
+				DEFAULT_ZOOM);
+		Place zoomedPlace = new Place(Controller.getCurrentPlace().getName(), coordinate);
+		setCurrentPlace(zoomedPlace);
+	}
+
+	public static void zoomOut() {
+		isZoomedIn = false;
+		zoom = DEFAULT_ZOOM;
+	}
+
+	public static boolean isZoomedIn() {
+		return isZoomedIn;
+	}
+
+	//load image from cache or inet
+	//save downloaded image to cache
+	public static Image getMapImage(Place place, String url, int zoom) throws IOException {
+		if (Cache.isImageExists(place, zoom)) {
+			System.out.println("found in cache");
+			return Cache.loadImage(place, zoom);
+		} else {
+			System.out.println("not found in cache");
+			byte[] imageData = HttpClient.loadImageBytes(url);
+			System.out.println("image loaded");
+			Cache.saveImage(place, imageData, zoom);
+			System.out.println("image saved");
+			Image im = null;
+			im = Image.createImage(imageData, 0, imageData.length);
+			return (im == null ? null : im);
+		}
+	}
+
+	public static void moveMapLeft() {
+		setCurrentPlace(GeoConverter.moveMapLeft(getCurrentPlace(), mapScreen.getWidth(), zoom));
+	}
+
+	public static void moveMapRight() {
+		setCurrentPlace(GeoConverter.moveMapRight(getCurrentPlace(), mapScreen.getWidth(), zoom));
+	}
+
+	public static void moveMapUp() {
+		setCurrentPlace(GeoConverter.moveMapUp(getCurrentPlace(), mapScreen.getHeight(), zoom));
+	}
+
+	public static void moveMapDown() {
+		setCurrentPlace(GeoConverter.moveMapDown(getCurrentPlace(), mapScreen.getHeight(), zoom));
+	}
+
+	public static int getZoom() {
+		return zoom;
 	}
 }

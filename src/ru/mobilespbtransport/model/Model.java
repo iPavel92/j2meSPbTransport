@@ -14,7 +14,7 @@ public class Model {
 	private boolean showBus = true;
 	private boolean showTrolley = true;
 	private boolean showTram = true;
-	private boolean useAutoUpdate = true;
+	private boolean useAutoUpdate = false;
 	private Vector favourites = new Vector();
 
 	public Vector getFavourites() {

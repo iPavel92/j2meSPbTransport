@@ -54,13 +54,12 @@ public class Coordinate {
 		if (type == WGS84) {
 			return this;
 		}
-		System.out.println("BEFORE = " + lat + ", " + lon);
+
 		double newlon = (lon / ORIGIN_SHIFT) * 180.0;
 		double newlat = (lat / ORIGIN_SHIFT) * 180.0;
 
 		newlat = 180 / Math.PI * (2 * MathUtil.atan(MathUtil.exp(newlat * Math.PI / 180.0)) - Math.PI / 2.0);
 
-		System.out.println("AFTER = " + newlat + ", " + newlon);
 		return new Coordinate(newlat, newlon, WGS84);
 	}
 }

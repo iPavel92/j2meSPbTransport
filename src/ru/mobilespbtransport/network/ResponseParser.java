@@ -59,19 +59,7 @@ public class ResponseParser {
 				JSONArray record = aaData.getJSONArray(i);
 				int routeId = record.getInt(0);
 				JSONObject transportTypeJson = record.getJSONObject(1);
-				int transportTypeInt = transportTypeJson.getInt("id");
-				TransportType transportType = null;
-				switch (transportTypeInt) {
-					case 0:
-						transportType = new TransportType(TransportType.BUS);
-						break;
-					case 1:
-						transportType = new TransportType(TransportType.TROLLEY);
-						break;
-					case 2:
-						transportType = new TransportType(TransportType.TRAM);
-						break;
-				}
+				TransportType transportType = getTransportTypeFromJson(transportTypeJson);
 				String routeNumber = record.getString(2);
 				Route route = new Route(transportType, routeNumber, routeId);
 				result.addElement(route);
@@ -80,6 +68,19 @@ public class ResponseParser {
 		} catch (JSONException e) {
 			return null;
 		}
+	}
+
+	private static TransportType getTransportTypeFromJson(JSONObject transportTypeJson) throws JSONException {
+		int transportTypeInt = transportTypeJson.getInt("id");
+		switch (transportTypeInt) {
+			case 0:
+				return new TransportType(TransportType.BUS);
+			case 1:
+				return new TransportType(TransportType.TROLLEY);
+			case 2:
+				return new TransportType(TransportType.TRAM);
+		}
+		return null;
 	}
 
 	public static Vector parseStopsByRoute(String response, TransportType transportType) {
@@ -95,10 +96,6 @@ public class ResponseParser {
 
 				int id = record.getInt(0);
 				String name = record.getString(1);
-				JSONObject coordinates = record.getJSONObject(5);
-				double lat = coordinates.getDouble("lat");
-				double lon = coordinates.getDouble("lon");
-
 				Vector routes = new Vector(); //Vector<Route>
 				JSONArray routesJson = record.getJSONArray(4);
 				for (int j = 0; j < routesJson.length(); j++) {
@@ -108,7 +105,9 @@ public class ResponseParser {
 					Route route = new Route(transportType, routeNumber, routeId);
 					routes.addElement(route);
 				}
-
+				JSONObject coordinates = record.getJSONObject(5);
+				double lat = coordinates.getDouble("lat");
+				double lon = coordinates.getDouble("lon");
 				Stop stop = new Stop(name, new Coordinate(lat, lon, Coordinate.EPSG).toWGS84(), transportType, id);
 				stop.setRoutes(routes);
 				result.addElement(stop);
@@ -133,18 +132,58 @@ public class ResponseParser {
 
 				String routeNumber = record.getString(1);
 				int minutesToArrive = record.getInt(2);
-				
+
 				Route route = null;
-				for(Enumeration e = routes.elements(); e.hasMoreElements(); ){
+				for (Enumeration e = routes.elements(); e.hasMoreElements(); ) {
 					Route item = (Route) e.nextElement();
-					if(item.getRouteNumber().equals(routeNumber)){
+					if (item.getRouteNumber().equals(routeNumber)) {
 						route = item;
 						break;
 					}
 				}
-				
+
 				Arriving arriving = new Arriving(route, minutesToArrive);
 				result.addElement(arriving);
+			}
+			return result;
+		} catch (JSONException e) {
+			return null;
+		}
+	}
+
+	public static Vector parseStopsToMap(String response) {
+		try {
+			Vector result = new Vector(); //Vector<Stop>
+
+			JSONTokener jt = new JSONTokener(response);
+			JSONObject answer = new JSONObject(jt);
+
+			JSONArray aaData = answer.getJSONArray("aaData");
+			for (int i = 0; i < aaData.length(); i++) {
+				JSONArray record = aaData.getJSONArray(i);
+
+				int id = record.getInt(0);
+				JSONObject transportTypeJson = record.getJSONObject(1);
+				TransportType transportType = getTransportTypeFromJson(transportTypeJson);
+				String name = record.getString(2);
+
+				Vector routes = new Vector(); //Vector<Route>
+				JSONArray routesJson = record.getJSONArray(5);
+				for (int j = 0; j < routesJson.length(); j++) {
+					JSONObject routeJson = routesJson.getJSONObject(j);
+					int routeId = routeJson.getInt("id");
+					String routeNumber = routeJson.getString("routeNumber");
+					Route route = new Route(transportType, routeNumber, routeId);
+					routes.addElement(route);
+				}
+
+				JSONObject coordinates = record.getJSONObject(6);
+				double lat = coordinates.getDouble("lat");
+				double lon = coordinates.getDouble("lon");
+
+				Stop stop = new Stop(name, new Coordinate(lat, lon, Coordinate.EPSG).toWGS84(), transportType, id);
+				stop.setRoutes(routes);
+				result.addElement(stop);
 			}
 			return result;
 		} catch (JSONException e) {

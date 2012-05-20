@@ -109,16 +109,16 @@ public class Cache {
 		return model;
 	}
 
-	private static String composeImageKey(Place place) {
-		String key = "map_" + place.getCoordinate().toWGS84().getLat() + "_" + place.getCoordinate().toWGS84().getLon();
+	private static String composeImageKey(Place place, int zoom) {
+		String key = "map_" + zoom + "_" + place.getCoordinate().toWGS84().getLat() + "_" + place.getCoordinate().toWGS84().getLon();
 		if (key.length() > 32) {
 			key = key.substring(0, 32);
 		}
 		return key;
 	}
 
-	public static void saveImage(Place place, byte[] image) {
-		String key = composeImageKey(place);
+	public static void saveImage(Place place, byte[] image, int zoom) {
+		String key = composeImageKey(place, zoom);
 		System.out.println(key);
 		try {
 			recordStore = RecordStore.openRecordStore(key, true);
@@ -134,8 +134,8 @@ public class Cache {
 		}
 	}
 
-	public static Image loadImage(Place place) {
-		String key = composeImageKey(place);
+	public static Image loadImage(Place place, int zoom) {
+		String key = composeImageKey(place, zoom);
 		Image image = null;
 		try {
 			ByteArrayInputStream stream;
@@ -160,8 +160,8 @@ public class Cache {
 		}
 	}
 
-	public static boolean isImageExists(Place place) {
-		String key = composeImageKey(place);
+	public static boolean isImageExists(Place place, int zoom) {
+		String key = composeImageKey(place, zoom);
 		try {
 			recordStore = RecordStore.openRecordStore(key, false);
 			recordStore.closeRecordStore();

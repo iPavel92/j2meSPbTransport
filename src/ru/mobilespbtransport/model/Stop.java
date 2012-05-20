@@ -34,10 +34,6 @@ public class Stop extends Place{
 		this.routes = routes;
 	}
 
-	public Vector getArriving() {
-		return arriving;
-	}
-
 	public void setArriving(Vector arriving) {
 		this.arriving = arriving;
 	}

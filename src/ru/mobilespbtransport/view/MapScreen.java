@@ -1,12 +1,13 @@
 package ru.mobilespbtransport.view;
 
 import ru.mobilespbtransport.Controller;
-import ru.mobilespbtransport.model.GeoConverter;
-import ru.mobilespbtransport.model.Place;
+import ru.mobilespbtransport.model.*;
 import ru.mobilespbtransport.util.Util;
 
 import javax.microedition.lcdui.*;
 import javax.microedition.lcdui.game.GameCanvas;
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  * Created by IntelliJ IDEA.
@@ -18,8 +19,9 @@ import javax.microedition.lcdui.game.GameCanvas;
 public class MapScreen extends GameCanvas implements CommandListener {
 	private Image map;
 	private Image transportLayer;
+	private Vector stops; //Vector<Stop>
 
-	private final Command viewPlacesCommand = new Command(Util.convertToUtf8("Закладки"), Command.ITEM, 0);
+	private final Command viewFavouritesCommand = new Command(Util.convertToUtf8("Закладки"), Command.ITEM, 0);
 	private final Command addToFavourites = new Command(Util.convertToUtf8("Добавить в закладки"), Command.ITEM, 1);
 	private final Command settings = new Command(Util.convertToUtf8("Настройки"), Command.ITEM, 2);
 	private final Command updateCommand = new Command(Util.convertToUtf8("Обновить"), Command.ITEM, 3);
@@ -27,17 +29,32 @@ public class MapScreen extends GameCanvas implements CommandListener {
 	private final Command exitCommand = new Command(Util.convertToUtf8("Выход"), Command.EXIT, 5);
 
 	private final static String LOADING = Util.convertToUtf8("Загрузка...");
+	private final static int CURSOR_DELTA = 4;
+	private final static int CROSS_SISE = 10;
+	private final static int STOP_RADIUS = 6;
+	private final static int SELECTED_STOP_RADIUS = 10;
+	private final static int MAX_RADIUS_TO_SELECT_STOP = 15;
+
+	private Stop selectedStop = null;
+	private int cursorX;
+	private int cursorY;
 
 	public MapScreen() {
 		super(false);
 		setFullScreenMode(true);
-		addCommand(viewPlacesCommand);
+		addCommand(viewFavouritesCommand);
 		addCommand(addToFavourites);
 		addCommand(settings);
 		addCommand(updateCommand);
 		addCommand(backCommand);
 		addCommand(exitCommand);
 		setCommandListener(this);
+		cursorX = getWidth() / 2;
+		cursorY = getHeight() / 2;
+	}
+
+	public void setStops(Vector stops) {
+		this.stops = stops;
 	}
 
 	public void paint(Graphics graphics) {
@@ -50,8 +67,54 @@ public class MapScreen extends GameCanvas implements CommandListener {
 		if (map != null) {
 			graphics.drawImage(map, 0, 0, Graphics.TOP | Graphics.LEFT);
 		}
-		if (transportLayer != null) {
-			graphics.drawImage(transportLayer, 0, 0, Graphics.TOP | Graphics.LEFT);
+
+		if (Controller.isZoomedIn()) {
+			if (stops != null) {
+				selectedStop = null; //yes, logic in paint o_O get mad!!!
+				for (Enumeration e = stops.elements(); e.hasMoreElements(); ) {
+					Stop stop = (Stop) e.nextElement();
+
+					//pixel coordinates
+					final int stopX = GeoConverter.getXPixelFromCoordinate(Controller.getCurrentPlace().getCoordinate(),
+							stop.getCoordinate(),
+							getWidth(),
+							Controller.getZoom());
+					final int stopY = GeoConverter.getYPixelFromCoordinate(Controller.getCurrentPlace().getCoordinate(),
+							stop.getCoordinate(),
+							getHeight(),
+							Controller.getZoom());
+
+					//selection
+					int difX = cursorX - stopX;
+					int difY = cursorY - stopY;
+					if (Math.sqrt(difX * difX + difY * difY) < MAX_RADIUS_TO_SELECT_STOP && selectedStop == null) {
+						selectedStop = stop;
+						graphics.setColor(0x000000);
+						graphics.fillArc(stopX - SELECTED_STOP_RADIUS, stopY - SELECTED_STOP_RADIUS, 2 * SELECTED_STOP_RADIUS, 2 * SELECTED_STOP_RADIUS, 0, 360);
+					}
+
+					//border
+					graphics.setColor(0x000000);
+					graphics.fillArc(stopX - STOP_RADIUS - 1, stopY - STOP_RADIUS - 1, 2 * STOP_RADIUS + 2, 2 * STOP_RADIUS + 2, 0, 360);
+
+					//filling
+					graphics.setColor(stop.getTransportType().getColor());
+					graphics.fillArc(stopX - STOP_RADIUS, stopY - STOP_RADIUS, 2 * STOP_RADIUS, 2 * STOP_RADIUS, 0, 360);
+				}
+			}
+
+			graphics.setColor(0x000000);
+			graphics.drawLine(cursorX - CROSS_SISE, cursorY, cursorX + CROSS_SISE, cursorY);
+			graphics.drawLine(cursorX, cursorY - CROSS_SISE, cursorX, cursorY + CROSS_SISE);
+		} else {
+			if (transportLayer != null) {
+				graphics.drawImage(transportLayer, 0, 0, Graphics.TOP | Graphics.LEFT);
+			}
+
+			graphics.setColor(0x000000);
+			int borderWidth = GeoConverter.getBorderWidth(getWidth(), Controller.DEFAULT_ZOOM, Controller.SELECT_STOP_ZOOM);
+			int borderHeight = GeoConverter.getBorderHeight(getHeight(), Controller.DEFAULT_ZOOM, Controller.SELECT_STOP_ZOOM);
+			graphics.drawRect(cursorX - borderWidth / 2, cursorY - borderHeight / 2, borderWidth, borderHeight);
 		}
 	}
 
@@ -66,26 +129,86 @@ public class MapScreen extends GameCanvas implements CommandListener {
 	protected void keyPressed(int keyCode) {
 		switch (keyCode) {
 			case KEY_NUM2:
-				Controller.setCurrentPlace(GeoConverter.moveMapUp(Controller.getCurrentPlace(), getHeight(), 13));
+				Controller.moveMapUp();
 				break;
 			case KEY_NUM4:
-				Controller.setCurrentPlace(GeoConverter.moveMapLeft(Controller.getCurrentPlace(), getWidth(), 13));
+				Controller.moveMapLeft();
 				break;
 			case KEY_NUM8:
-				Controller.setCurrentPlace(GeoConverter.moveMapDown(Controller.getCurrentPlace(), getHeight(), 13));
+				Controller.moveMapDown();
 				break;
 			case KEY_NUM6:
-				Controller.setCurrentPlace(GeoConverter.moveMapRight(Controller.getCurrentPlace(), getWidth(), 13));
+				Controller.moveMapRight();
 				break;
 			case KEY_NUM5:
 				update();
 				break;
 		}
+		int gameAction = getGameAction(keyCode);
+		switch (gameAction) {
+			case FIRE:
+				if (Controller.isZoomedIn()) {
+					if (selectedStop != null) {
+						ArrivingScreen arrivingScreen = new ArrivingScreen(selectedStop);
+						ScreenStack.push(arrivingScreen);
+						Controller.updateArrivingScreen(selectedStop, arrivingScreen);
+					}
+				} else {
+					Controller.zoomIn();
+				}
+				break;
+			case UP:
+				if (cursorY > 0) {
+					cursorY -= CURSOR_DELTA;
+				} else {
+					Controller.moveMapUp();
+					cursorY = getHeight();
+				}
+				break;
+			case DOWN:
+				if (cursorY < getHeight()) {
+					cursorY += CURSOR_DELTA;
+				} else {
+					Controller.moveMapDown();
+					cursorY = 0;
+				}
+				break;
+			case LEFT:
+				if (cursorX > 0) {
+					cursorX -= CURSOR_DELTA;
+				} else {
+					Controller.moveMapLeft();
+					cursorX = getWidth();
+				}
+				break;
+			case RIGHT:
+				if (cursorX < getWidth()) {
+					cursorX += CURSOR_DELTA;
+				} else {
+					Controller.moveMapRight();
+					cursorX = 0;
+				}
+				break;
+		}
+		repaint();
 	}
 
+	protected void keyRepeated(int i) {
+		keyPressed(i);
+	}
+
+	public int getCursorX() {
+		return cursorX;
+	}
+
+	public int getCursorY() {
+		return cursorY;
+	}
 
 	private void update() {
-		Controller.loadTransportLayer();
+		if (!Controller.isZoomedIn()) {
+			Controller.loadTransportLayer();
+		}
 	}
 
 	public void commandAction(Command command, Displayable displayable) {
@@ -93,15 +216,18 @@ public class MapScreen extends GameCanvas implements CommandListener {
 			ScreenStack.push(new SettingsScreen());
 		} else if (command == updateCommand) {
 			update();
-		} else if (command == viewPlacesCommand) {
+		} else if (command == viewFavouritesCommand) {
+			Controller.zoomOut();
 			ScreenStack.push(Controller.getFavouritesList());
 		} else if (command == addToFavourites) {
 			ScreenStack.push(new AddToFavouritesScreen(Controller.getCurrentPlace()));
 		} else if (command == exitCommand) {
 			Controller.exit();
 		} else if (command == backCommand) {
+			Controller.zoomOut();
 			ScreenStack.pop();
 		}
 	}
 }
+
 

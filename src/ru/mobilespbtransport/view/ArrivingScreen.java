@@ -52,18 +52,7 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 		graphics.fillRect(0, 0, getWidth(), getHeight());
 
 		//transport type image
-		TransportType stopType = stop.getTransportType();
-		switch (stopType.getType()) {
-			case TransportType.BUS:
-				graphics.setColor(0xA2A8B1);
-				break;
-			case TransportType.TROLLEY:
-				graphics.setColor(0x788AB2);
-				break;
-			case TransportType.TRAM:
-				graphics.setColor(0xAD3F47);
-				break;
-		}
+		graphics.setColor(stop.getTransportType().getColor());
 		graphics.fillRect(ELEMENTS_PADDING, ELEMENTS_PADDING, getWidth() - 2 * ELEMENTS_PADDING, 4 * ELEMENTS_PADDING + FONT_HEIGHT + arrivingImage.getHeight());
 		graphics.drawImage(arrivingImage, ELEMENTS_PADDING, 4 * ELEMENTS_PADDING + FONT_HEIGHT, Graphics.LEFT | Graphics.TOP);
 
