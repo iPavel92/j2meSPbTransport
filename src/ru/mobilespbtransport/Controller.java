@@ -120,7 +120,7 @@ public class Controller {
 					if (model.getCurrentPlace() == null) {
 						return;
 					}
-					String bBox = GeoConverter.buildBBox(model.getCurrentPlace(), mapScreen.getWidth(), mapScreen.getHeight());
+					String bBox = GeoConverter.buildBBox(model.getCurrentPlace(), mapScreen.getWidth(), mapScreen.getHeight(), 13);
 					String url = getTransportMapUrl(bBox, model.isShowBus(), model.isShowTrolley(), model.isShowTram(), mapScreen.getWidth(), mapScreen.getHeight());
 					System.out.println(url);
 					Image transportLayer = ImageLoader.getImageFromInet(url);

@@ -14,8 +14,8 @@ public class Coordinate {
 	private final double lon;
 	private final int type;
 
-	public static final int WGS84 = 1; //lat, lon (google)
-	public static final int EPSG = 2; //bbox (transport portal)
+	public static final int WGS84 = 0; //lat, lon (gps, google)
+	public static final int EPSG = 1; //bbox (transport portal)
 
 	private final static double ORIGIN_SHIFT = Math.PI * 6378137;
 
@@ -31,10 +31,6 @@ public class Coordinate {
 
 	public double getLon() {
 		return lon;
-	}
-
-	public int getType() {
-		return type;
 	}
 
 	/**

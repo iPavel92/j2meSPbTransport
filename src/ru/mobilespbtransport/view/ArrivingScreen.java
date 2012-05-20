@@ -26,7 +26,7 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 	private final Image arrivingImage;
 
 	public ArrivingScreen(Stop stop) {
-		super(true);
+		super(false);
 		setFullScreenMode(true);
 		this.stop = stop;
 		arrivingImage = stop.getTransportType().getArrivingImage();
@@ -113,8 +113,7 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 	}
 
 	protected void keyPressed(int i) {
-		int gameAction = getGameAction(i);
-		if(gameAction == FIRE || i == KEY_NUM5) {
+		if(i == KEY_NUM5) {
 			Controller.updateArrivingScreen(stop, this);
 		}
 	}

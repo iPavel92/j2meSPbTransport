@@ -1,6 +1,8 @@
 package ru.mobilespbtransport.view;
 
 import ru.mobilespbtransport.Controller;
+import ru.mobilespbtransport.model.GeoConverter;
+import ru.mobilespbtransport.model.Place;
 import ru.mobilespbtransport.util.Util;
 
 import javax.microedition.lcdui.*;
@@ -25,9 +27,9 @@ public class MapScreen extends GameCanvas implements CommandListener {
 	private final Command exitCommand = new Command(Util.convertToUtf8("Выход"), Command.EXIT, 5);
 
 	private final static String LOADING = Util.convertToUtf8("Загрузка...");
-	
+
 	public MapScreen() {
-		super(true);
+		super(false);
 		setFullScreenMode(true);
 		addCommand(viewPlacesCommand);
 		addCommand(addToFavourites);
@@ -41,10 +43,10 @@ public class MapScreen extends GameCanvas implements CommandListener {
 	public void paint(Graphics graphics) {
 		graphics.setColor(0xffffff);
 		graphics.fillRect(0, 0, getWidth(), getHeight());
-		
+
 		graphics.setColor(0x000000);
 		graphics.drawString(LOADING, getWidth(), getHeight(), Graphics.HCENTER | Graphics.TOP);
-		
+
 		if (map != null) {
 			graphics.drawImage(map, 0, 0, Graphics.TOP | Graphics.LEFT);
 		}
@@ -61,28 +63,43 @@ public class MapScreen extends GameCanvas implements CommandListener {
 		this.transportLayer = transportLayer;
 	}
 
-	protected void keyPressed(int i) {
-		if (i == Canvas.KEY_NUM5) {
-			update();
+	protected void keyPressed(int keyCode) {
+		switch (keyCode) {
+			case KEY_NUM2:
+				Controller.setCurrentPlace(GeoConverter.moveMapUp(Controller.getCurrentPlace(), getHeight(), 13));
+				break;
+			case KEY_NUM4:
+				Controller.setCurrentPlace(GeoConverter.moveMapLeft(Controller.getCurrentPlace(), getWidth(), 13));
+				break;
+			case KEY_NUM8:
+				Controller.setCurrentPlace(GeoConverter.moveMapDown(Controller.getCurrentPlace(), getHeight(), 13));
+				break;
+			case KEY_NUM6:
+				Controller.setCurrentPlace(GeoConverter.moveMapRight(Controller.getCurrentPlace(), getWidth(), 13));
+				break;
+			case KEY_NUM5:
+				update();
+				break;
 		}
 	}
 
-	private void update(){
+
+	private void update() {
 		Controller.loadTransportLayer();
 	}
 
 	public void commandAction(Command command, Displayable displayable) {
 		if (command == settings) {
-		   ScreenStack.push(new SettingsScreen());
+			ScreenStack.push(new SettingsScreen());
 		} else if (command == updateCommand) {
 			update();
 		} else if (command == viewPlacesCommand) {
 			ScreenStack.push(Controller.getFavouritesList());
-		} else if(command == addToFavourites){
+		} else if (command == addToFavourites) {
 			ScreenStack.push(new AddToFavouritesScreen(Controller.getCurrentPlace()));
 		} else if (command == exitCommand) {
 			Controller.exit();
-		} else if(command == backCommand){
+		} else if (command == backCommand) {
 			ScreenStack.pop();
 		}
 	}
