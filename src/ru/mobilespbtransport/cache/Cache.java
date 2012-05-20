@@ -1,9 +1,6 @@
 package ru.mobilespbtransport.cache;
 
-import ru.mobilespbtransport.model.Place;
-import ru.mobilespbtransport.model.Model;
-import ru.mobilespbtransport.model.Stop;
-import ru.mobilespbtransport.model.TransportType;
+import ru.mobilespbtransport.model.*;
 
 import javax.microedition.lcdui.Image;
 import javax.microedition.rms.RecordStore;
@@ -39,8 +36,8 @@ public class Cache {
 			for (int i = 0; i < n; i++) {
 				Place c = (Place) model.getFavourites().elementAt(i);
 				writer.writeUTF(c.getName());
-				writer.writeDouble(c.getLat());
-				writer.writeDouble(c.getLon());
+				writer.writeDouble(c.getCoordinate().toWGS84().getLat());
+				writer.writeDouble(c.getCoordinate().toWGS84().getLon());
 				if (c instanceof Stop) {
 					writer.writeInt(STOP);
 					Stop stop = (Stop) c;
@@ -92,13 +89,14 @@ public class Cache {
 				double lat = reader.readDouble();
 				double lon = reader.readDouble();
 				int type = reader.readInt();
+				Coordinate coordinate = new Coordinate(lat, lon, Coordinate.WGS84);
 				if (type == STOP) {
 					int transportType = reader.readInt();
 					int id = reader.readInt();
-					Stop stop = new Stop(name, lat, lon, new TransportType(transportType), id);
+					Stop stop = new Stop(name, coordinate, new TransportType(transportType), id);
 					model.getFavourites().addElement(stop);
 				} else {
-					Place place = new Place(name, lat, lon);
+					Place place = new Place(name, coordinate);
 					model.getFavourites().addElement(place);
 				}
 			}
@@ -112,7 +110,7 @@ public class Cache {
 	}
 
 	private static String composeImageKey(Place place) {
-		String key = "map_" + place.getLat() + "_" + place.getLon();
+		String key = "map_" + place.getCoordinate().toWGS84().getLat() + "_" + place.getCoordinate().toWGS84().getLon();
 		if (key.length() > 32) {
 			key = key.substring(0, 32);
 		}

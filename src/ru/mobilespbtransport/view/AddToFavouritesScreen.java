@@ -34,7 +34,7 @@ public class AddToFavouritesScreen extends Form implements CommandListener {
 		if (command == ok) {
 			Place placeToAdd = place;
 			if(!(place instanceof Stop)){
-				placeToAdd = new Place(placeName.getString(), place.getLat(), place.getLon());
+				placeToAdd = new Place(placeName.getString(), place.getCoordinate());
 			}
 			Controller.addFavourite(placeToAdd);
 			ScreenStack.pop();

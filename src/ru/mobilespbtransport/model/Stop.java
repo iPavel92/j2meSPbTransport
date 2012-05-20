@@ -16,8 +16,8 @@ public class Stop extends Place{
 	private Vector routes = new Vector();
 	private Vector arriving = new Vector();
 
-	public Stop(String name, double lat, double lon, TransportType transportType, int id) {
-		super(name, lat, lon);
+	public Stop(String name, Coordinate coordinate, TransportType transportType, int id) {
+		super(name, coordinate);
 		this.transportType = transportType;
 		this.id = id;
 	}

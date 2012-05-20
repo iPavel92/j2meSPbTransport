@@ -1,6 +1,7 @@
 package ru.mobilespbtransport.view;
 
 import ru.mobilespbtransport.Controller;
+import ru.mobilespbtransport.model.Coordinate;
 import ru.mobilespbtransport.model.Place;
 import ru.mobilespbtransport.util.Util;
 
@@ -38,7 +39,7 @@ public class SearchCoordinateScreen extends Form implements CommandListener{
 			try {
 				double latValue = Double.parseDouble(lat.getString());
 				double lonValue = Double.parseDouble(lon.getString());
-				Place place = new Place(name.getString(), latValue, lonValue);
+				Place place = new Place(name.getString(), new Coordinate(latValue, lonValue, Coordinate.WGS84));
 				Controller.setCurrentPlace(place);
 				ScreenStack.push(Controller.getMapScreen());
 			} catch (NumberFormatException e) {

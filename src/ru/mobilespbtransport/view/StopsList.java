@@ -72,8 +72,7 @@ public class StopsList extends List implements CommandListener{
 			Controller.updateArrivingScreen(stop, arrivingScreen);
 		} else if(command == showOnMap){
 			Stop stop = (Stop) stops.elementAt(getSelectedIndex());
-			//TODO convert coordinates
-			Place place = new Place(stop.getName(), stop.getLat(), stop.getLon());
+			Place place = new Place(stop.getName(), stop.getCoordinate());
 			Controller.setCurrentPlace(place);
 			ScreenStack.push(Controller.getMapScreen());
 		} else if (command == backCommand){

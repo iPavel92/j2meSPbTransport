@@ -131,9 +131,9 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 		} else if(command == exitCommand){
 			Controller.exit();
 		} else if(command == showOnMap){
-			Place place = new Place(stop.getName(), stop.getLat(), stop.getLon());
-			Place p = GeoConverter.tileToWorldPos(stop.getLon(), stop.getLat());
-			Controller.setCurrentPlace(p);
+			Coordinate q = stop.getCoordinate();
+			Place place = new Place(stop.getName(), stop.getCoordinate());
+			Controller.setCurrentPlace(place);
 			ScreenStack.push(Controller.getMapScreen());
 		}
 	}

@@ -152,7 +152,10 @@ public class Controller {
 	}
 
 	private static String getMapUri(Place center, int screenWidth, int screenHeight) {
-		return "http://maps.google.com/maps/api/staticmap?zoom=13&sensor=false&size=" + screenWidth + "x" + screenHeight + "&center=" + center.getLat() + "," + center.getLon();
+		return "http://maps.google.com/maps/api/staticmap?zoom=13&sensor=false&size=" + screenWidth +
+				"x" + screenHeight +
+				"&center=" + center.getCoordinate().toWGS84().getLat() +
+				"," + center.getCoordinate().toWGS84().getLon();
 	}
 
 	public static void doMagic() {
@@ -202,8 +205,7 @@ public class Controller {
 				lp = LocationProvider.getInstance(cr);
 				Location l = lp.getLocation(10);
 				QualifiedCoordinates qc = l.getQualifiedCoordinates();
-				Place place = new Place("", qc.getLatitude(), qc.getLongitude());
-				return place;
+				return new Place("", new Coordinate(qc.getLatitude(), qc.getLongitude(), Coordinate.WGS84));
 			} catch (LocationException e) {
 				ScreenStack.showAlert(Util.convertToUtf8("Не удалось получить координаты GPS"));
 				e.printStackTrace();  //TODO

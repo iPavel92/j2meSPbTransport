@@ -33,7 +33,7 @@ public class ResponseParser {
 					JSONObject location = geometry.getJSONObject("location");
 					double lat = location.getDouble("lat");
 					double lon = location.getDouble("lng");
-					Place c = new Place(name, lat, lon);
+					Place c = new Place(name, new Coordinate(lat, lon, Coordinate.WGS84));
 					result.addElement(c);
 				} catch (JSONException e) {
 					//ignoring
@@ -109,7 +109,7 @@ public class ResponseParser {
 					routes.addElement(route);
 				}
 
-				Stop stop = new Stop(name, lat, lon, transportType, id);
+				Stop stop = new Stop(name, new Coordinate(lat, lon, Coordinate.EPSG).toWGS84(), transportType, id);
 				stop.setRoutes(routes);
 				result.addElement(stop);
 			}

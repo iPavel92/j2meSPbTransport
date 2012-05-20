@@ -9,48 +9,36 @@ package ru.mobilespbtransport.model;
  */
 public class Place {
 	protected final String name;
-	protected final double lat;
-	protected final double lon;
+	protected Coordinate coordinate;
 
-	public Place(String name, double lat, double lon) {
+	public Place(String name, Coordinate coordinate) {
 		this.name = name;
-		this.lat = lat;
-		this.lon = lon;
-	}
-
-	public double getLat() {
-		return lat;
-	}
-
-	public double getLon() {
-		return lon;
+		this.coordinate = coordinate;
 	}
 
 	public String getName() {
 		return name;
 	}
 
+	public Coordinate getCoordinate() {
+		return coordinate;
+	}
+
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+		if (!(o instanceof Place)) return false;
 
 		Place place = (Place) o;
 
-		if (place.lat != lat) return false;
-		if (place.lon != lon) return false;
+		if (coordinate != null ? !coordinate.equals(place.coordinate) : place.coordinate != null) return false;
 		if (name != null ? !name.equals(place.name) : place.name != null) return false;
 
 		return true;
 	}
 
 	public int hashCode() {
-		int result;
-		long temp;
-		result = name != null ? name.hashCode() : 0;
-		temp = lat != +0.0d ? Double.doubleToLongBits(lat) : 0L;
-		result = 31 * result + (int) (temp ^ (temp >>> 32));
-		temp = lon != +0.0d ? Double.doubleToLongBits(lon) : 0L;
-		result = 31 * result + (int) (temp ^ (temp >>> 32));
+		int result = name != null ? name.hashCode() : 0;
+		result = 31 * result + (coordinate != null ? coordinate.hashCode() : 0);
 		return result;
 	}
 }
