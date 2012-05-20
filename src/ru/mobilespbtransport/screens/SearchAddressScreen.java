@@ -33,8 +33,9 @@ public class SearchAddressScreen extends Form implements CommandListener{
 		if(command == ok){
 			new Thread() {
 				public void run() {
-					final Vector foundPlaces = Geocoder.getPlaces(address.getString());
-					ScreenStack.push(new PlacesList(foundPlaces));
+					PlacesList placesList = new PlacesList();
+					ScreenStack.push(placesList);
+					Controller.findPlaces(address.getString(), placesList);
 				}
 			}.start();
 		} else if(command == cancel){

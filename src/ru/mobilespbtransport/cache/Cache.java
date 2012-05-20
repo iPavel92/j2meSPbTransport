@@ -45,6 +45,7 @@ public class Cache {
 					writer.writeInt(STOP);
 					Stop stop = (Stop) c;
 					writer.writeInt(stop.getTransportType().getType());
+					writer.writeInt(stop.getId());
 				} else {
 					writer.writeInt(PLACE);
 				}
@@ -93,7 +94,8 @@ public class Cache {
 				int type = reader.readInt();
 				if (type == STOP) {
 					int transportType = reader.readInt();
-					Stop stop = new Stop(name, lat, lon, new TransportType(transportType));
+					int id = reader.readInt();
+					Stop stop = new Stop(name, lat, lon, new TransportType(transportType), id);
 					model.getFavourites().addElement(stop);
 				} else {
 					Place place = new Place(name, lat, lon);

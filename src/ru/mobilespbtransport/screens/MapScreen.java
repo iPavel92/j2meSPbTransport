@@ -21,7 +21,8 @@ public class MapScreen extends GameCanvas implements CommandListener {
 	private final Command addToFavourites = new Command(Util.convertToUtf8("Добавить в закладки"), Command.ITEM, 1);
 	private final Command settings = new Command(Util.convertToUtf8("Настройки"), Command.ITEM, 2);
 	private final Command updateCommand = new Command(Util.convertToUtf8("Обновить"), Command.ITEM, 3);
-	private final Command exitCommand = new Command(Util.convertToUtf8("Выход"), Command.EXIT, 4);
+	private final Command backCommand = new Command(Util.convertToUtf8("Назад"), Command.CANCEL, 4);
+	private final Command exitCommand = new Command(Util.convertToUtf8("Выход"), Command.EXIT, 5);
 
 	private final static String LOADING = Util.convertToUtf8("Загрузка...");
 	
@@ -32,6 +33,7 @@ public class MapScreen extends GameCanvas implements CommandListener {
 		addCommand(addToFavourites);
 		addCommand(settings);
 		addCommand(updateCommand);
+		addCommand(backCommand);
 		addCommand(exitCommand);
 		setCommandListener(this);
 	}
@@ -80,6 +82,8 @@ public class MapScreen extends GameCanvas implements CommandListener {
 			ScreenStack.push(new AddToFavouritesScreen(Controller.getCurrentPlace()));
 		} else if (command == exitCommand) {
 			Controller.exit();
+		} else if(command == backCommand){
+			ScreenStack.pop();
 		}
 	}
 }

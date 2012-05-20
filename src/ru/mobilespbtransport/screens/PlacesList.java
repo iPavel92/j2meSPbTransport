@@ -17,18 +17,24 @@ import java.util.Vector;
  */
 public class PlacesList extends List implements CommandListener{
 	private final Command backCommand = new Command(Util.convertToUtf8("Назад"), Command.CANCEL, 2);
-	private final Vector places;
+	private Vector places;
+
+	public PlacesList() {
+		this(new Vector());
+	}
 
 	public PlacesList(Vector places) {
 		super(Util.convertToUtf8("Выберите место"), IMPLICIT);
-		this.places = places;
-
-		addCommand(backCommand);
 		setPlaces(places);
+		addCommand(backCommand);
 		setCommandListener(this);
 	}
 	
 	public void setPlaces(Vector places){
+		while(size() > 0){
+			delete(0);
+		}
+		this.places = places;
 		if(places == null){
 			return;
 		}

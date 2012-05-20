@@ -1,19 +1,19 @@
 package ru.mobilespbtransport;
 
 import ru.mobilespbtransport.cache.Cache;
-import ru.mobilespbtransport.model.Place;
-import ru.mobilespbtransport.model.GeoConverter;
-import ru.mobilespbtransport.model.Model;
+import ru.mobilespbtransport.model.*;
 import ru.mobilespbtransport.network.HttpClient;
 import ru.mobilespbtransport.network.ImageLoader;
-import ru.mobilespbtransport.screens.FavouritesList;
-import ru.mobilespbtransport.screens.MapScreen;
-import ru.mobilespbtransport.screens.ScreenStack;
+import ru.mobilespbtransport.network.RequestGenerator;
+import ru.mobilespbtransport.network.ResponseParser;
+import ru.mobilespbtransport.screens.*;
 import ru.mobilespbtransport.util.Util;
 
 import javax.microedition.lcdui.Image;
 import javax.microedition.location.*;
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  * Created by IntelliJ IDEA.
@@ -165,16 +165,13 @@ public class Controller {
 
 		new Thread() {
 			public void run() {
-				try {
-					String response;
-					response = HttpClient.sendPost(url, request);
-					System.out.println(response);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				String response;
+				response = HttpClient.sendPost(url, request);
+				System.out.println(response);
 			}
 		}.start();
 	}
+
 
 	public static void exit() {
 		if (main == null) {
@@ -218,14 +215,84 @@ public class Controller {
 		}
 		return null;
 	}
-	
-	public static void locateMe(){
-		new Thread(){
+
+	public static void locateMe() {
+		new Thread() {
 			public void run() {
 				Place place = getMyLocation();
-				if(place != null){
+				if (place != null) {
 					setCurrentPlace(place);
 				}
+			}
+		}.start();
+	}
+
+	public static void findRoutes(final String routeNumber, final RoutesList resultScreen) {
+		new Thread() {
+			public void run() {
+				String url = "http://transport.orgp.spb.ru/Portal/transport/routes/list";
+				String request = RequestGenerator.getRequestForSearchRoutes(routeNumber);
+				System.out.println(request);
+
+				String response = null;
+				response = HttpClient.sendPost(url, request);
+
+				Vector routes = ResponseParser.parseRoutes(response);
+				resultScreen.setRoutes(routes);
+			}
+		}.start();
+	}
+
+	public static void findPlaces(final String address, final PlacesList resultScreen) {
+		new Thread() {
+			public void run() {
+				String request = RequestGenerator.getUrlForGeocoding(address);
+				System.out.println(request);
+
+				String response = HttpClient.sendGET(request);
+
+				Vector places = ResponseParser.parseGeocoderResponse(response);
+				resultScreen.setPlaces(places);
+			}
+		}.start();
+	}
+
+	public static void findStops(final Route route, final StopsList resultScreen) {
+		new Thread() {
+			public void run() {
+				String request = RequestGenerator.getRequestForSearchStopsByRoute();
+
+				String urlDirect = RequestGenerator.getUrlForDirectStops(route);
+				String responseDirect = HttpClient.sendPost(urlDirect, request);
+				Vector stopsDirect = ResponseParser.parseStopsByRoute(responseDirect, route.getTransportType());
+				for(Enumeration e = stopsDirect.elements(); e.hasMoreElements(); ){
+					resultScreen.addStop((Stop)e.nextElement(), true);
+				}
+
+				String urlReturn = RequestGenerator.getUrlForReturnStops(route);
+				String responseReturn = HttpClient.sendPost(urlReturn, request);
+				Vector stopsReturn = ResponseParser.parseStopsByRoute(responseReturn, route.getTransportType());
+				for(Enumeration e = stopsReturn.elements(); e.hasMoreElements(); ){
+					resultScreen.addStop((Stop)e.nextElement(), false);
+				}
+			}
+		}.start();
+	}
+
+	public static void updateArrivingScreen(final Stop stop, final ArrivingScreen arrivingScreen) {
+		new Thread() {
+			public void run() {
+				String url = RequestGenerator.getUrlForArriving(stop);
+				String request = RequestGenerator.getRequestForArriving();
+
+				System.out.println(request);
+
+				String response = HttpClient.sendPost(url, request);
+				Vector arriving = ResponseParser.parseArriving(response, stop.getRoutes());
+
+				stop.setArriving(arriving);
+
+				arrivingScreen.repaint();
 			}
 		}.start();
 	}

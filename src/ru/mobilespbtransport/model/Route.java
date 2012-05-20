@@ -10,10 +10,12 @@ package ru.mobilespbtransport.model;
 public class Route {
 	private final TransportType transportType;
 	private final String routeNumber;
+	private final int id;
 
-	public Route(TransportType transportType, String routeNumber) {
+	public Route(TransportType transportType, String routeNumber, int id) {
 		this.transportType = transportType;
 		this.routeNumber = routeNumber;
+		this.id = id;
 	}
 
 	public TransportType getTransportType() {
@@ -24,22 +26,22 @@ public class Route {
 		return routeNumber;
 	}
 
+	public int getId() {
+		return id;
+	}
+
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+		if (!(o instanceof Route)) return false;
 
 		Route route = (Route) o;
 
-		if (routeNumber != null ? !routeNumber.equals(route.routeNumber) : route.routeNumber != null) return false;
-		if (transportType != null ? !transportType.equals(route.transportType) : route.transportType != null)
-			return false;
+		if (id != route.id) return false;
 
 		return true;
 	}
 
 	public int hashCode() {
-		int result = transportType != null ? transportType.hashCode() : 0;
-		result = 31 * result + (routeNumber != null ? routeNumber.hashCode() : 0);
-		return result;
+		return id;
 	}
 }

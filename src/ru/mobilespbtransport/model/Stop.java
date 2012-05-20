@@ -11,13 +11,15 @@ import java.util.Vector;
  * To change this template use File | Settings | File Templates.
  */
 public class Stop extends Place{
-	private TransportType transportType;
+	private final TransportType transportType;
+	private final int id;
 	private Vector routes = new Vector();
 	private Vector arriving = new Vector();
 
-	public Stop(String name, double lat, double lon, TransportType transportType) {
+	public Stop(String name, double lat, double lon, TransportType transportType, int id) {
 		super(name, lat, lon);
 		this.transportType = transportType;
+		this.id = id;
 	}
 
 	public TransportType getTransportType() {
@@ -39,7 +41,11 @@ public class Stop extends Place{
 	public void setArriving(Vector arriving) {
 		this.arriving = arriving;
 	}
-	
+
+	public int getId() {
+		return id;
+	}
+
 	public Arriving getArriving(Route route){
 		for(Enumeration e = arriving.elements(); e.hasMoreElements(); ){
 			Arriving item = (Arriving) e.nextElement();
@@ -57,15 +63,14 @@ public class Stop extends Place{
 
 		Stop stop = (Stop) o;
 
-		if (transportType != null ? !transportType.equals(stop.transportType) : stop.transportType != null)
-			return false;
+		if (id != stop.id) return false;
 
 		return true;
 	}
 
 	public int hashCode() {
 		int result = super.hashCode();
-		result = 31 * result + (transportType != null ? transportType.hashCode() : 0);
+		result = 31 * result + id;
 		return result;
 	}
 }

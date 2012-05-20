@@ -11,13 +11,13 @@ import java.io.*;
  * User: Павел
  * Date: 05.05.12
  * Time: 13:01
- *
+ * <p/>
  * Thanks to http://stackoverflow.com/questions/6745256/j2me-nokia-httpconnection
  */
 public class HttpClient {
 	public static int BUFFER_LENGTH = 1024;
 
-	public static String sendGET(String request) throws IOException {
+	public static String sendGET(String request) {
 		HttpConnection httpConn = null;
 
 		InputStream in = null;
@@ -64,17 +64,21 @@ public class HttpClient {
 			e.printStackTrace();
 			return null;
 		} finally {
-			if (in != null)
-				in.close();
-			if (os != null)
-				os.close();
-			if (httpConn != null)
-				httpConn.close();
+			try {
+				if (in != null)
+					in.close();
+				if (os != null)
+					os.close();
+				if (httpConn != null)
+					httpConn.close();
+			} catch (IOException e) {
+				//ignoring
+			}
 		}
 	}
 
 
-	public static String sendPost(String url, String message) throws IOException {
+	public static String sendPost(String url, String message) {
 		HttpConnection httpConn = null;
 		InputStream in = null;
 		OutputStream os = null;
@@ -116,15 +120,24 @@ public class HttpClient {
 			baos.close();
 			String response = new String(baos.toByteArray(), "UTF-8");
 			return response;
+		} catch (UnsupportedEncodingException e) {
+			//TODO
+			e.printStackTrace();
+		} catch (IOException e) {
+			//TODO
+			e.printStackTrace();
 		} finally {
-			if (in != null)
-				in.close();
-			if (os != null)
-				os.close();
-			if (httpConn != null)
-				httpConn.close();
+			try {
+				if (in != null)
+					in.close();
+				if (os != null)
+					os.close();
+				if (httpConn != null)
+					httpConn.close();
+			} catch (IOException e) {
+				//ignoring
+			}
 		}
+		return null;
 	}
-
-
 }

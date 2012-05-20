@@ -9,8 +9,6 @@ import ru.mobilespbtransport.util.Util;
 
 import javax.microedition.lcdui.*;
 import javax.microedition.lcdui.game.GameCanvas;
-import java.util.Enumeration;
-import java.util.Vector;
 
 /**
  * Created by IntelliJ IDEA.
@@ -23,7 +21,8 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 	private final Command viewPlacesCommand = new Command(Util.convertToUtf8("Закладки"), Command.ITEM, 0);
 	private final Command addToFavourites = new Command(Util.convertToUtf8("Добавить в закладки"), Command.ITEM, 1);
 	private final Command updateCommand = new Command(Util.convertToUtf8("Обновить"), Command.ITEM, 3);
-	private final Command exitCommand = new Command(Util.convertToUtf8("Выход"), Command.EXIT, 4);
+	private final Command backCommand = new Command(Util.convertToUtf8("Назад"), Command.CANCEL, 4);
+	private final Command exitCommand = new Command(Util.convertToUtf8("Выход"), Command.EXIT, 5);
 
 	private final Stop stop;
 	private final Image arrivingImage;
@@ -36,8 +35,13 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 		addCommand(viewPlacesCommand);
 		addCommand(addToFavourites);
 		addCommand(updateCommand);
+		addCommand(backCommand);
 		addCommand(exitCommand);
 		setCommandListener(this);
+	}
+
+	public Stop getStop() {
+		return stop;
 	}
 
 	public void paint(Graphics graphics) {
@@ -110,19 +114,22 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 	}
 
 	protected void keyPressed(int i) {
-		if (i == Canvas.KEY_NUM5) {
-			//TODO
+		int gameAction = getGameAction(i);
+		if(gameAction == FIRE || i == KEY_NUM5) {
+			Controller.updateArrivingScreen(stop, this);
 		}
 	}
 
 	public void commandAction(Command command, Displayable displayable) {
 		if (command == updateCommand) {
-			//TODO
+			Controller.updateArrivingScreen(stop, this);
 		} else if (command == viewPlacesCommand) {
 			ScreenStack.push(Controller.getFavouritesList());
 		} else if (command == addToFavourites) {
 			ScreenStack.push(new AddToFavouritesScreen(stop));
-		} else if (command == exitCommand) {
+		} else if (command == backCommand) {
+			ScreenStack.pop();
+		} else if(command == exitCommand){
 			Controller.exit();
 		}
 	}

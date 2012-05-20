@@ -1,5 +1,6 @@
 package ru.mobilespbtransport.screens;
 
+import ru.mobilespbtransport.Controller;
 import ru.mobilespbtransport.util.Util;
 
 import javax.microedition.lcdui.*;
@@ -26,7 +27,9 @@ public class SearchRouteScreen extends Form implements CommandListener{
 
 	public void commandAction(Command command, Displayable displayable) {
 		if(command == ok){
-			//TODO
+			RoutesList routesList = new RoutesList();
+			ScreenStack.push(routesList);
+			Controller.findRoutes(routeNumber.getString(), routesList);
 		} else if (command == cancel){
 			ScreenStack.pop();
 		}

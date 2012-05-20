@@ -1,5 +1,6 @@
 package ru.mobilespbtransport.screens;
 
+import ru.mobilespbtransport.Controller;
 import ru.mobilespbtransport.model.Route;
 import ru.mobilespbtransport.util.Util;
 
@@ -18,16 +19,25 @@ import java.util.Vector;
  */
 public class RoutesList extends List implements CommandListener{
 	private final Command backCommand = new Command(Util.convertToUtf8("Назад"), Command.CANCEL, 2);
-	
+	private Vector routes;
+
+	public RoutesList() {
+		this(new Vector());
+	}
+
 	public RoutesList(Vector routes) {
 		super(Util.convertToUtf8("Выберите маршрут"), IMPLICIT);
+		setRoutes(routes);
 
 		addCommand(backCommand);
-		setRoutes(routes);
 		setCommandListener(this);
 	}
 	
-	private void setRoutes(Vector routes){
+	public void setRoutes(Vector routes){
+		while(size() > 0){
+			delete(0);
+		}
+		this.routes = routes;
 		if(routes == null){
 			return;
 		}
@@ -39,7 +49,9 @@ public class RoutesList extends List implements CommandListener{
 
 	public void commandAction(Command command, Displayable displayable) {
 		if(command == List.SELECT_COMMAND){
-			//TODO
+			StopsList stopsList = new StopsList();
+			ScreenStack.push(stopsList);
+			Controller.findStops((Route)routes.elementAt(getSelectedIndex()), stopsList);
 		} else if (command == backCommand){
 			ScreenStack.pop();
 		}

@@ -2,6 +2,7 @@ package ru.mobilespbtransport.model;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * Created by IntelliJ IDEA.
@@ -30,6 +31,7 @@ public class Arriving {
 	public String getArrivingTime(){
 		Calendar c = Calendar.getInstance();
 		Date d = new Date();
+		c.setTimeZone(TimeZone.getTimeZone("GMT+3:00"));
 		d.setTime(d.getTime() + minutesToArrive * 1000 * 60);
 		c.setTime(d);
 		String time = c.get(Calendar.HOUR_OF_DAY) + ":" +c.get(Calendar.MINUTE);
