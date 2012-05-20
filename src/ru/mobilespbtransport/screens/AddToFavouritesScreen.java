@@ -1,12 +1,11 @@
 package ru.mobilespbtransport.screens;
 
 import ru.mobilespbtransport.Controller;
-import ru.mobilespbtransport.geocoder.Geocoder;
 import ru.mobilespbtransport.model.Place;
+import ru.mobilespbtransport.model.Stop;
 import ru.mobilespbtransport.util.Util;
 
 import javax.microedition.lcdui.*;
-import java.util.Vector;
 
 /**
  * Created by IntelliJ IDEA.
@@ -33,8 +32,11 @@ public class AddToFavouritesScreen extends Form implements CommandListener {
 
 	public void commandAction(Command command, Displayable displayable) {
 		if (command == ok) {
-			Place placeToAdd = new Place(placeName.getString(), place.getLat(), place.getLon());
-			Controller.addPlace(placeToAdd);
+			Place placeToAdd = place;
+			if(!(place instanceof Stop)){
+				placeToAdd = new Place(placeName.getString(), place.getLat(), place.getLon());
+			}
+			Controller.addFavourite(placeToAdd);
 			ScreenStack.pop();
 		} else if (command == cancel) {
 			ScreenStack.pop();

@@ -15,10 +15,10 @@ public class Model {
 	private boolean showTrolley = true;
 	private boolean showTram = true;
 	private boolean useAutoUpdate = true;
-	private Vector places = new Vector();
+	private Vector favourites = new Vector();
 
-	public Vector getPlaces() {
-		return places;
+	public Vector getFavourites() {
+		return favourites;
 	}
 
 	public Place getCurrentPlace() {

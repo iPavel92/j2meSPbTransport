@@ -2,6 +2,8 @@ package ru.mobilespbtransport.cache;
 
 import ru.mobilespbtransport.model.Place;
 import ru.mobilespbtransport.model.Model;
+import ru.mobilespbtransport.model.Stop;
+import ru.mobilespbtransport.model.TransportType;
 
 import javax.microedition.lcdui.Image;
 import javax.microedition.rms.RecordStore;
@@ -19,6 +21,9 @@ public class Cache {
 	private static RecordStore recordStore;
 	private static final String MODEL = "model";
 
+	private static final int PLACE = 0;
+	private static final int STOP = 1;
+
 	public static void saveModel(Model model) {
 		try {
 			recordStore = RecordStore.openRecordStore(MODEL, true);
@@ -29,13 +34,20 @@ public class Cache {
 			writer.writeBoolean(model.isShowTrolley());
 			writer.writeBoolean(model.isShowTram());
 			writer.writeBoolean(model.isUseAutoUpdate());
-			int n = model.getPlaces().size();
+			int n = model.getFavourites().size();
 			writer.writeInt(n);
 			for (int i = 0; i < n; i++) {
-				Place c = (Place) model.getPlaces().elementAt(i);
+				Place c = (Place) model.getFavourites().elementAt(i);
 				writer.writeUTF(c.getName());
 				writer.writeDouble(c.getLat());
 				writer.writeDouble(c.getLon());
+				if (c instanceof Stop) {
+					writer.writeInt(STOP);
+					Stop stop = (Stop) c;
+					writer.writeInt(stop.getTransportType().getType());
+				} else {
+					writer.writeInt(PLACE);
+				}
 			}
 			writer.flush();
 
@@ -78,8 +90,15 @@ public class Cache {
 				String name = reader.readUTF();
 				double lat = reader.readDouble();
 				double lon = reader.readDouble();
-				Place c = new Place(name, lat, lon);
-				model.getPlaces().addElement(c);
+				int type = reader.readInt();
+				if (type == STOP) {
+					int transportType = reader.readInt();
+					Stop stop = new Stop(name, lat, lon, new TransportType(transportType));
+					model.getFavourites().addElement(stop);
+				} else {
+					Place place = new Place(name, lat, lon);
+					model.getFavourites().addElement(place);
+				}
 			}
 			recordStore.closeRecordStore();
 		} catch (RecordStoreException e) {
@@ -92,7 +111,7 @@ public class Cache {
 
 	private static String composeImageKey(Place place) {
 		String key = "map_" + place.getLat() + "_" + place.getLon();
-		if(key.length() > 32){
+		if (key.length() > 32) {
 			key = key.substring(0, 32);
 		}
 		return key;

@@ -70,7 +70,9 @@ public class FavouritesList extends List implements CommandListener {
 		if (command == List.SELECT_COMMAND) {
 			Object obj = favourites.elementAt(getSelectedIndex());
 			if (obj instanceof Stop) {
+				Stop stop = (Stop) obj;
 				//TODO
+				ScreenStack.push(new ArrivingScreen(stop));
 			} else if (obj instanceof Place) {
 				Controller.setCurrentPlace((Place) obj);
 				ScreenStack.push(Controller.getMapScreen());
@@ -80,7 +82,7 @@ public class FavouritesList extends List implements CommandListener {
 		} else if (command == deletePlaceCommand) {
 			Object obj = favourites.elementAt(getSelectedIndex());
 			if (obj instanceof Place) {
-				Controller.removePlace((Place) obj);
+				Controller.removeFavourite((Place) obj);
 			}
 		} else if (command == exitCommand) {
 			Controller.exit();

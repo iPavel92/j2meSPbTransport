@@ -42,4 +42,21 @@ public class TransportType {
 		}
 		return null;
 	}
+
+	public Image getArrivingImage() {
+		try {
+			switch (type) {
+				case BUS:
+					return Image.createImage("/arriving_bus.png");
+				case TROLLEY:
+					return Image.createImage("/arriving_trolley.png");
+				case TRAM:
+					return Image.createImage("/arriving_tram.png");
+			}
+		} catch (IOException e) {
+			//TODO:
+			e.printStackTrace();
+		}
+		return null;
+	}
 }

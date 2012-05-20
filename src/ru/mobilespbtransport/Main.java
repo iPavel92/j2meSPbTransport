@@ -1,8 +1,9 @@
 package ru.mobilespbtransport;
 
 import ru.mobilespbtransport.cache.Cache;
-import ru.mobilespbtransport.model.Model;
+import ru.mobilespbtransport.model.*;
 import ru.mobilespbtransport.screens.*;
+import ru.mobilespbtransport.util.Util;
 
 import javax.microedition.lcdui.Display;
 import javax.microedition.midlet.MIDlet;
@@ -30,6 +31,19 @@ public class Main extends MIDlet {
 		updater.start();
 
 		ScreenStack.push(favouritesList);
+		Stop stop = new Stop(Util.convertToUtf8("ст. м. пр. Просвещения и Художников"), 1, 1, new TransportType(TransportType.BUS));
+		Route r1 = new Route(new TransportType(TransportType.BUS), "5");
+		Route r2 = new Route(new TransportType(TransportType.BUS), "10");
+		Route r3 = new Route(new TransportType(TransportType.BUS), "178");
+		Arriving a1 = new Arriving(r1, 2);
+		Arriving a2 = new Arriving(r3, 20);
+		stop.getRoutes().addElement(r1);
+		stop.getRoutes().addElement(r2);
+		stop.getRoutes().addElement(r3);
+		stop.getArriving().addElement(a1);
+		stop.getArriving().addElement(a2);
+		ArrivingScreen sct = new ArrivingScreen(stop);
+		ScreenStack.push(sct);
 	}
 
 	Thread updater = new Thread() {
@@ -55,3 +69,4 @@ public class Main extends MIDlet {
 	public void destroyApp(boolean unconditional) {
 	}
 }
+

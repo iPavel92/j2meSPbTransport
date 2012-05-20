@@ -4,6 +4,7 @@ import ru.mobilespbtransport.Controller;
 import ru.mobilespbtransport.util.Util;
 
 import javax.microedition.lcdui.*;
+import javax.microedition.lcdui.game.GameCanvas;
 
 /**
  * Created by IntelliJ IDEA.
@@ -12,7 +13,7 @@ import javax.microedition.lcdui.*;
  * Time: 20:44
  * To change this template use File | SettingsScreen | File Templates.
  */
-public class MapScreen extends Canvas implements CommandListener {
+public class MapScreen extends GameCanvas implements CommandListener {
 	private Image map;
 	private Image transportLayer;
 
@@ -23,6 +24,8 @@ public class MapScreen extends Canvas implements CommandListener {
 	private final Command exitCommand = new Command(Util.convertToUtf8("Выход"), Command.EXIT, 4);
 
 	public MapScreen() {
+		super(true);
+		setFullScreenMode(true);
 		addCommand(viewPlacesCommand);
 		addCommand(addToFavourites);
 		addCommand(settings);
@@ -31,9 +34,9 @@ public class MapScreen extends Canvas implements CommandListener {
 		setCommandListener(this);
 	}
 
-	protected void paint(Graphics graphics) {
+	public void paint(Graphics graphics) {
 		graphics.setColor(0xffffff);
-		graphics.fillRect(0, 0, this.getWidth(), this.getHeight());
+		graphics.fillRect(0, 0, getWidth(), getHeight());
 		if (map != null) {
 			graphics.drawImage(map, 0, 0, Graphics.TOP | Graphics.LEFT);
 		}
@@ -57,10 +60,6 @@ public class MapScreen extends Canvas implements CommandListener {
 	}
 
 	private void update(){
-		Controller.loadTransportLayer();
-	}
-
-	protected void pointerPressed(int i, int i1) {
 		Controller.loadTransportLayer();
 	}
 

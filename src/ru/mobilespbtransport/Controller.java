@@ -51,7 +51,7 @@ public class Controller {
 
 	public static void setFavouritesList(FavouritesList favouritesList) {
 		Controller.favouritesList = favouritesList;
-		favouritesList.setFavourites(getModel().getPlaces());
+		favouritesList.setFavourites(getModel().getFavourites());
 		favouritesList.update();
 	}
 
@@ -78,16 +78,16 @@ public class Controller {
 		return model.getCurrentPlace();
 	}
 
-	public static void addPlace(Place place) {
-		if (!model.getPlaces().contains(place)) {
-			model.getPlaces().addElement(place);
+	public static void addFavourite(Place place) {
+		if (!model.getFavourites().contains(place)) {
+			model.getFavourites().addElement(place);
 			favouritesList.update();
 			Cache.saveModel(model);
 		}
 	}
 
-	public static void removePlace(Place place) {
-		model.getPlaces().removeElement(place);
+	public static void removeFavourite(Place place) {
+		model.getFavourites().removeElement(place);
 		favouritesList.update();
 		Cache.saveModel(model);
 	}
