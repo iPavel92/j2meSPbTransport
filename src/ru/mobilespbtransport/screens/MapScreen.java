@@ -23,6 +23,8 @@ public class MapScreen extends GameCanvas implements CommandListener {
 	private final Command updateCommand = new Command(Util.convertToUtf8("Обновить"), Command.ITEM, 3);
 	private final Command exitCommand = new Command(Util.convertToUtf8("Выход"), Command.EXIT, 4);
 
+	private final static String LOADING = Util.convertToUtf8("Загрузка...");
+	
 	public MapScreen() {
 		super(true);
 		setFullScreenMode(true);
@@ -37,6 +39,10 @@ public class MapScreen extends GameCanvas implements CommandListener {
 	public void paint(Graphics graphics) {
 		graphics.setColor(0xffffff);
 		graphics.fillRect(0, 0, getWidth(), getHeight());
+		
+		graphics.setColor(0x000000);
+		graphics.drawString(LOADING, getWidth(), getHeight(), Graphics.HCENTER | Graphics.TOP);
+		
 		if (map != null) {
 			graphics.drawImage(map, 0, 0, Graphics.TOP | Graphics.LEFT);
 		}

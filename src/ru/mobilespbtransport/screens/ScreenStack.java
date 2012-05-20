@@ -1,7 +1,9 @@
 package ru.mobilespbtransport.screens;
 
-import javax.microedition.lcdui.Display;
-import javax.microedition.lcdui.Displayable;
+import ru.mobilespbtransport.util.Util;
+
+import javax.microedition.lcdui.*;
+import java.io.IOException;
 import java.util.Vector;
 
 /**
@@ -20,27 +22,42 @@ public class ScreenStack {
 		ScreenStack.display = display;
 	}
 
-	public static void push(Displayable screen){
+	public static void push(Displayable screen) {
 		screens.addElement(screen);
 		updateCurrentScreen();
 	}
-	
-	public static Displayable peek(){
-		return (Displayable)screens.elementAt(screens.size() - 1);
+
+	public static Displayable peek() {
+		return (Displayable) screens.elementAt(screens.size() - 1);
 	}
-	
-	public static void pop(){
-		if(screens.size() == 1){
+
+	public static void pop() {
+		if (screens.size() == 1) {
 			throw new IllegalStateException("Empty screen stack.");
 		}
 		screens.removeElementAt(screens.size() - 1);
 		updateCurrentScreen();
 	}
 
-	private static void updateCurrentScreen(){
-		if(display == null){
+	private static void updateCurrentScreen() {
+		if (display == null) {
 			throw new IllegalStateException("Display not setted.");
 		}
 		display.setCurrent(peek());
+	}
+
+	public static void showAlert(String message) {
+		Alert alert = new Alert(Util.convertToUtf8("Сообщение"),
+				message,
+				null,
+				AlertType.INFO);
+		alert.setTimeout(Alert.FOREVER);
+		alert.addCommand(new Command(Util.convertToUtf8("OK"), Command.BACK, 0));
+		alert.setCommandListener(new CommandListener() {
+			public void commandAction(Command command, Displayable displayable) {
+				ScreenStack.pop();
+			}
+		});
+		ScreenStack.push(alert);
 	}
 }

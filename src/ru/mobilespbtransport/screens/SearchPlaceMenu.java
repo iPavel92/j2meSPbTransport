@@ -48,23 +48,7 @@ public class SearchPlaceMenu extends List implements CommandListener {
 						Controller.locateMe();
 						ScreenStack.push(Controller.getMapScreen());
 					} else {
-						try {
-							Alert alert = new Alert(Util.convertToUtf8("Сообщение"),
-									Util.convertToUtf8("Ваш телефон не поддерживает GPS"),
-									Image.createImage("/gps.png"),
-									AlertType.ALARM);
-							alert.setTimeout(Alert.FOREVER);
-							alert.addCommand(new Command(Util.convertToUtf8("OK"), Command.BACK, 0));
-							alert.setCommandListener(new CommandListener() {
-								public void commandAction(Command command, Displayable displayable) {
-									ScreenStack.pop();
-								}
-							});
-							ScreenStack.push(alert);
-						} catch (IOException e) {
-							//TODO
-							e.printStackTrace();
-						}
+						ScreenStack.showAlert(Util.convertToUtf8("Ваш телефон не поддерживает GPS"));
 					}
 					break;
 			}

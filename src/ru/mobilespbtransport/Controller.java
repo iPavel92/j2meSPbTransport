@@ -8,6 +8,8 @@ import ru.mobilespbtransport.network.HttpClient;
 import ru.mobilespbtransport.network.ImageLoader;
 import ru.mobilespbtransport.screens.FavouritesList;
 import ru.mobilespbtransport.screens.MapScreen;
+import ru.mobilespbtransport.screens.ScreenStack;
+import ru.mobilespbtransport.util.Util;
 
 import javax.microedition.lcdui.Image;
 import javax.microedition.location.*;
@@ -207,8 +209,10 @@ public class Controller {
 				Place place = new Place("", qc.getLatitude(), qc.getLongitude());
 				return place;
 			} catch (LocationException e) {
+				ScreenStack.showAlert(Util.convertToUtf8("Не удалось получить координаты GPS"));
 				e.printStackTrace();  //TODO
 			} catch (InterruptedException e) {
+				ScreenStack.showAlert(Util.convertToUtf8("Не удалось получить координаты GPS"));
 				e.printStackTrace();  //TODO
 			}
 		}
