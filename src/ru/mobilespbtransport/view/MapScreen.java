@@ -43,6 +43,8 @@ public class MapScreen extends GameCanvas implements CommandListener {
 	private long lastClickTime;
 	private static final long MAX_DOUBLECLICK_TIME = 600;
 
+	private final static int TOUCH_BORDER_TO_SLIDE = 50;
+
 	public MapScreen() {
 		super(false);
 		setFullScreenMode(true);
@@ -223,6 +225,15 @@ public class MapScreen extends GameCanvas implements CommandListener {
 				lastClickTime = System.currentTimeMillis();
 				repaint();
 			}
+		}
+		if (x < TOUCH_BORDER_TO_SLIDE) {
+			Controller.moveMapLeft();
+		} else if (x > getWidth() - TOUCH_BORDER_TO_SLIDE) {
+			Controller.moveMapRight();
+		} else if (y < TOUCH_BORDER_TO_SLIDE) {
+			Controller.moveMapUp();
+		} else if (y > getHeight() - TOUCH_BORDER_TO_SLIDE) {
+			Controller.moveMapDown();
 		}
 	}
 
