@@ -1,8 +1,8 @@
 package ru.mobilespbtransport.view;
 
-import ru.mobilespbtransport.Controller;
+import ru.mobilespbtransport.controller.Controller;
 import ru.mobilespbtransport.model.Place;
-import ru.mobilespbtransport.util.Util;
+
 
 import javax.microedition.lcdui.*;
 import java.io.IOException;
@@ -16,18 +16,25 @@ import java.util.Vector;
  * To change this template use File | SettingsScreen | File Templates.
  */
 public class PlacesList extends List implements CommandListener{
-	private final Command backCommand = new Command(Util.convertToUtf8("Назад"), Command.CANCEL, 2);
+	private final Command backCommand = new Command("Назад", Command.CANCEL, 2);
 	private Vector places;
-
+	private boolean isLoaded = false;
+	
 	public PlacesList() {
 		this(new Vector());
 	}
 
 	public PlacesList(Vector places) {
-		super(Util.convertToUtf8("Выберите место"), IMPLICIT);
+		super("Выберите место", IMPLICIT);
 		setPlaces(places);
 		addCommand(backCommand);
 		setCommandListener(this);
+
+		try {
+			append("Загрузка...", Image.createImage("/autoupdate.png"));
+		} catch (IOException e) {
+			//ignoring
+		}
 	}
 	
 	public void setPlaces(Vector places){
@@ -38,7 +45,7 @@ public class PlacesList extends List implements CommandListener{
 		if(places == null){
 			return;
 		}
-
+		isLoaded = true;
 		Image placeIco = null;
 		try {
 			placeIco = Image.createImage("/place.png");
@@ -53,7 +60,7 @@ public class PlacesList extends List implements CommandListener{
 	} 
 
 	public void commandAction(Command command, Displayable displayable) {
-		if(command == List.SELECT_COMMAND){
+		if(command == List.SELECT_COMMAND && isLoaded){
 			Controller.setCurrentPlace((Place) places.elementAt(getSelectedIndex()));
 			ScreenStack.push(Controller.getMapScreen());
 		} else if (command == backCommand){

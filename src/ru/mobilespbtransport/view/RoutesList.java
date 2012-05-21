@@ -1,13 +1,11 @@
 package ru.mobilespbtransport.view;
 
-import ru.mobilespbtransport.Controller;
+import ru.mobilespbtransport.controller.Controller;
 import ru.mobilespbtransport.model.Route;
-import ru.mobilespbtransport.util.Util;
 
-import javax.microedition.lcdui.Command;
-import javax.microedition.lcdui.CommandListener;
-import javax.microedition.lcdui.Displayable;
-import javax.microedition.lcdui.List;
+
+import javax.microedition.lcdui.*;
+import java.io.IOException;
 import java.util.Vector;
 
 /**
@@ -18,19 +16,26 @@ import java.util.Vector;
  * To change this template use File | SettingsScreen | File Templates.
  */
 public class RoutesList extends List implements CommandListener{
-	private final Command backCommand = new Command(Util.convertToUtf8("Назад"), Command.CANCEL, 2);
+	private final Command backCommand = new Command("Назад", Command.CANCEL, 2);
 	private Vector routes;
+	private boolean isLoaded = false;
 
 	public RoutesList() {
 		this(new Vector());
 	}
 
 	public RoutesList(Vector routes) {
-		super(Util.convertToUtf8("Выберите маршрут"), IMPLICIT);
+		super("Выберите маршрут", IMPLICIT);
 		setRoutes(routes);
 
 		addCommand(backCommand);
 		setCommandListener(this);
+
+		try {
+			append("Загрузка...", Image.createImage("/autoupdate.png"));
+		} catch (IOException e) {
+			//ignoring
+		}
 	}
 	
 	public void setRoutes(Vector routes){
@@ -41,6 +46,7 @@ public class RoutesList extends List implements CommandListener{
 		if(routes == null){
 			return;
 		}
+		isLoaded = true;
 		for(int i = 0; i<routes.size(); i++){
 			Route transport = (Route)routes.elementAt(i);
 			append(transport.getRouteNumber(), transport.getTransportType().getIcon());
@@ -48,10 +54,10 @@ public class RoutesList extends List implements CommandListener{
 	} 
 
 	public void commandAction(Command command, Displayable displayable) {
-		if(command == List.SELECT_COMMAND){
+		if(command == List.SELECT_COMMAND && isLoaded){
 			StopsList stopsList = new StopsList();
 			ScreenStack.push(stopsList);
-			Controller.findStops((Route)routes.elementAt(getSelectedIndex()), stopsList);
+			Controller.findStops((Route) routes.elementAt(getSelectedIndex()), stopsList);
 		} else if (command == backCommand){
 			ScreenStack.pop();
 		}

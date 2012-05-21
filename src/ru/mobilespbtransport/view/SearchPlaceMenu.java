@@ -1,7 +1,7 @@
 package ru.mobilespbtransport.view;
 
-import ru.mobilespbtransport.Controller;
-import ru.mobilespbtransport.util.Util;
+import ru.mobilespbtransport.controller.Controller;
+
 
 import javax.microedition.lcdui.*;
 import java.io.IOException;
@@ -14,15 +14,15 @@ import java.io.IOException;
  * To change this template use File | SettingsScreen | File Templates.
  */
 public class SearchPlaceMenu extends List implements CommandListener {
-	private final Command backCommand = new Command(Util.convertToUtf8("Назад"), Command.CANCEL, 2);
+	private final Command backCommand = new Command("Назад", Command.CANCEL, 2);
 
 	public SearchPlaceMenu() {
-		super(Util.convertToUtf8("Поиск"), IMPLICIT);
+		super("Поиск", IMPLICIT);
 		try{
-			append(Util.convertToUtf8("по адресу"), Image.createImage("/address.png"));
-			append(Util.convertToUtf8("по № маршрута"), Image.createImage("/transport.png"));
-			append(Util.convertToUtf8("по координатам"), Image.createImage("/place.png"));
-			append(Util.convertToUtf8("моё расположение (GPS)"), Image.createImage("/gps.png"));
+			append("по адресу", Image.createImage("/address.png"));
+			append("по № маршрута", Image.createImage("/transport.png"));
+			append("по координатам", Image.createImage("/place.png"));
+			append("моё расположение (GPS)", Image.createImage("/gps.png"));
 		} catch (IOException e) {
 			//TODO
 			e.printStackTrace();
@@ -48,7 +48,7 @@ public class SearchPlaceMenu extends List implements CommandListener {
 						Controller.locateMe();
 						ScreenStack.push(Controller.getMapScreen());
 					} else {
-						ScreenStack.showAlert(Util.convertToUtf8("Ваш телефон не поддерживает GPS"));
+						ScreenStack.showAlert("Ваш телефон не поддерживает GPS");
 					}
 					break;
 			}

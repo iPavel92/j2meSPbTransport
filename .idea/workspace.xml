@@ -61,86 +61,64 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="Controller.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/Controller.java">
+      <file leaf-file-name="JSONArray.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/org/json/me/JSONArray.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="32" column="48" selection-start="1019" selection-end="1019" vertical-scroll-proportion="0.0">
+            <state line="815" column="23" selection-start="26594" selection-end="26594" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ResponseParser.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/network/ResponseParser.java">
+      <file leaf-file-name="JSONObject.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/org/json/me/JSONObject.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="189" column="29" selection-start="6056" selection-end="6056" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Coordinate.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/model/Coordinate.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="51" column="39" selection-start="1181" selection-end="1181" vertical-scroll-proportion="0.0">
+            <state line="1140" column="19" selection-start="37348" selection-end="37348" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="GeoConverter.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/model/GeoConverter.java">
+      <file leaf-file-name="JSONWriter.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/org/json/me/JSONWriter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="29" column="61" selection-start="818" selection-end="818" vertical-scroll-proportion="0.0">
+            <state line="236" column="17" selection-start="7760" selection-end="7760" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MapScreen.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/view/MapScreen.java">
+      <file leaf-file-name="XML.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/org/json/me/util/XML.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="228" column="70" selection-start="6835" selection-end="6835" vertical-scroll-proportion="0.68342644">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Model.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/model/Model.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="22" column="45" selection-start="514" selection-end="514" vertical-scroll-proportion="0.0">
+            <state line="378" column="18" selection-start="12116" selection-end="12116" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ArrivingScreen.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/view/ArrivingScreen.java">
+      <file leaf-file-name="PlacesList.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/view/PlacesList.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="54" column="62" selection-start="1820" selection-end="1874" vertical-scroll-proportion="0.0">
+            <state line="33" column="71" selection-start="850" selection-end="850" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Stop.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/model/Stop.java">
+      <file leaf-file-name="SearchPlaceMenu.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/view/SearchPlaceMenu.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="35" column="4" selection-start="786" selection-end="786" vertical-scroll-proportion="0.0">
+            <state line="21" column="66" selection-start="580" selection-end="580" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TransportType.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/model/TransportType.java">
+      <file leaf-file-name="SettingsScreen.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/view/SettingsScreen.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="62" column="23" selection-start="1213" selection-end="1221" vertical-scroll-proportion="0.0">
+            <state line="28" column="68" selection-start="858" selection-end="858" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -149,7 +127,25 @@
       <file leaf-file-name="StopsList.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/view/StopsList.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="71" column="66" selection-start="1741" selection-end="1893" vertical-scroll-proportion="0.0">
+            <state line="45" column="43" selection-start="1101" selection-end="1101" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ArrivingScreen.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/view/ArrivingScreen.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="26" column="4" selection-start="1000" selection-end="1000" vertical-scroll-proportion="0.43272728">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RoutesList.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/view/RoutesList.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="35" column="90" selection-start="881" selection-end="881" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -173,22 +169,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/view/AddToFavouritesScreen.java" />
-        <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/view/SearchCoordinateScreen.java" />
-        <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/view/StopsList.java" />
-        <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/network/ImageLoader.java" />
-        <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/network/HttpClient.java" />
-        <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/cache/Cache.java" />
-        <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/network/RequestGenerator.java" />
-        <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/model/Model.java" />
-        <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/model/Coordinate.java" />
-        <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/model/GeoConverter.java" />
-        <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/Controller.java" />
         <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/model/Stop.java" />
         <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/model/TransportType.java" />
-        <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/view/ArrivingScreen.java" />
         <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/network/ResponseParser.java" />
         <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/view/MapScreen.java" />
+        <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/cache/Cache.java" />
+        <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/util/Util.java" />
+        <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/network/HttpClient.java" />
+        <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/view/AddToFavouritesScreen.java" />
+        <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/Controller.java" />
+        <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/controller/GeoConverter.java" />
+        <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/view/RoutesList.java" />
+        <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/view/PlacesList.java" />
+        <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/view/SearchPlaceMenu.java" />
+        <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/view/SettingsScreen.java" />
+        <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/view/StopsList.java" />
+        <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/view/ArrivingScreen.java" />
       </list>
     </option>
   </component>
@@ -244,7 +240,6 @@
     </navigator>
     <panes>
       <pane id="PackagesPane" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -321,28 +316,6 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="util" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="MobileSPBTransport" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="MobileSPBTransport" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mobilespbtransport" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
               <option name="myItemId" value="network" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -387,6 +360,28 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="controller" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MobileSPBTransport" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MobileSPBTransport" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="mobilespbtransport" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="cache" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -407,6 +402,7 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -423,8 +419,8 @@
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="options.searchVisible" value="true" />
     <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
   </component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
@@ -554,13 +550,13 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-4" y="-4" width="1688" height="1028" extended-state="6" />
+    <frame x="-4" y="-4" width="1688" height="1028" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Statistic" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.6597938" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32951945" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32951945" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
@@ -630,121 +626,117 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/view/AddToFavouritesScreen.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="35" column="54" selection-start="1159" selection-end="1159" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/view/SearchCoordinateScreen.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="25" selection-start="612" selection-end="612" vertical-scroll-proportion="0.0">
+        <state line="22" column="32" selection-start="591" selection-end="591" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/network/HttpClient.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="153" column="10" selection-start="4361" selection-end="4361" vertical-scroll-proportion="0.0">
+        <state line="65" column="34" selection-start="2019" selection-end="2056" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/cache/Cache.java">
+    <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/view/AddToFavouritesScreen.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="136" column="28" selection-start="4132" selection-end="4132" vertical-scroll-proportion="0.0">
+        <state line="4" column="40" selection-start="171" selection-end="171" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/model/Place.java">
+    <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/view/FavouritesList.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="63" selection-start="429" selection-end="429" vertical-scroll-proportion="0.0">
+        <state line="5" column="0" selection-start="172" selection-end="172" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/network/RequestGenerator.java">
+    <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/controller/Controller.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="78" column="48" selection-start="3627" selection-end="3650" vertical-scroll-proportion="0.0">
+        <state line="12" column="37" selection-start="430" selection-end="430" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/controller/GeoConverter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="103" column="44" selection-start="3539" selection-end="3539" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/model/Model.java">
+    <entry file="file://$PROJECT_DIR$/src/org/json/me/JSONArray.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="45" selection-start="514" selection-end="514" vertical-scroll-proportion="0.0">
+        <state line="815" column="23" selection-start="26594" selection-end="26594" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/model/GeoConverter.java">
+    <entry file="file://$PROJECT_DIR$/src/org/json/me/JSONObject.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="29" column="61" selection-start="818" selection-end="818" vertical-scroll-proportion="0.0">
+        <state line="1140" column="19" selection-start="37348" selection-end="37348" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/model/Coordinate.java">
+    <entry file="file://$PROJECT_DIR$/src/org/json/me/JSONWriter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="51" column="39" selection-start="1181" selection-end="1181" vertical-scroll-proportion="0.0">
+        <state line="236" column="17" selection-start="7760" selection-end="7760" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/Controller.java">
+    <entry file="file://$PROJECT_DIR$/src/org/json/me/util/XML.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="32" column="48" selection-start="1019" selection-end="1019" vertical-scroll-proportion="0.0">
+        <state line="378" column="18" selection-start="12116" selection-end="12116" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/model/Stop.java">
+    <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/view/RoutesList.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="35" column="4" selection-start="786" selection-end="786" vertical-scroll-proportion="0.0">
+        <state line="35" column="90" selection-start="881" selection-end="881" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/model/TransportType.java">
+    <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/view/PlacesList.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="62" column="23" selection-start="1213" selection-end="1221" vertical-scroll-proportion="0.0">
+        <state line="33" column="71" selection-start="850" selection-end="850" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/view/ArrivingScreen.java">
+    <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/view/SearchPlaceMenu.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="54" column="62" selection-start="1820" selection-end="1874" vertical-scroll-proportion="0.0">
+        <state line="21" column="66" selection-start="580" selection-end="580" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/view/SettingsScreen.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="28" column="68" selection-start="858" selection-end="858" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/view/StopsList.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="71" column="66" selection-start="1741" selection-end="1893" vertical-scroll-proportion="0.0">
+        <state line="45" column="43" selection-start="1101" selection-end="1101" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/network/ResponseParser.java">
+    <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/view/ArrivingScreen.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="189" column="29" selection-start="6056" selection-end="6056" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/view/MapScreen.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="228" column="70" selection-start="6835" selection-end="6835" vertical-scroll-proportion="0.68342644">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state line="26" column="4" selection-start="1000" selection-end="1000" vertical-scroll-proportion="0.43272728">
+          <folding />
         </state>
       </provider>
     </entry>

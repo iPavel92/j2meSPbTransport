@@ -1,9 +1,9 @@
 package ru.mobilespbtransport.view;
 
-import ru.mobilespbtransport.Controller;
+import ru.mobilespbtransport.controller.Controller;
 import ru.mobilespbtransport.model.Place;
 import ru.mobilespbtransport.model.Stop;
-import ru.mobilespbtransport.util.Util;
+
 
 import javax.microedition.lcdui.*;
 import java.io.IOException;
@@ -17,14 +17,14 @@ import java.util.Vector;
  * To change this template use File | SettingsScreen | File Templates.
  */
 public class FavouritesList extends List implements CommandListener {
-	private final Command searchCommand = new Command(Util.convertToUtf8("Поиск места"), Command.ITEM, 0);
-	private final Command deletePlaceCommand = new Command(Util.convertToUtf8("Удалить"), Command.ITEM, 1);
-	private final Command exitCommand = new Command(Util.convertToUtf8("Выход"), Command.EXIT, 2);
+	private final Command searchCommand = new Command("Поиск места", Command.ITEM, 0);
+	private final Command deletePlaceCommand = new Command("Удалить", Command.ITEM, 1);
+	private final Command exitCommand = new Command("Выход", Command.EXIT, 2);
 
 	private Vector favourites;
 
 	public FavouritesList() {
-		super(Util.convertToUtf8("Закладки"), IMPLICIT);
+		super("Закладки", IMPLICIT);
 
 		addCommand(searchCommand);
 		addCommand(deletePlaceCommand);

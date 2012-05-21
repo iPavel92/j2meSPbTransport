@@ -1,6 +1,6 @@
 package ru.mobilespbtransport.view;
 
-import ru.mobilespbtransport.util.Util;
+
 
 import javax.microedition.lcdui.*;
 import java.util.Vector;
@@ -46,12 +46,12 @@ public class ScreenStack {
 	}
 
 	public static void showAlert(String message) {
-		Alert alert = new Alert(Util.convertToUtf8("Сообщение"),
+		Alert alert = new Alert("Сообщение",
 				message,
 				null,
 				AlertType.INFO);
 		alert.setTimeout(Alert.FOREVER);
-		alert.addCommand(new Command(Util.convertToUtf8("OK"), Command.BACK, 0));
+		alert.addCommand(new Command("OK", Command.BACK, 0));
 		alert.setCommandListener(new CommandListener() {
 			public void commandAction(Command command, Displayable displayable) {
 				ScreenStack.pop();

@@ -1,5 +1,8 @@
 package ru.mobilespbtransport.network;
 
+
+import ru.mobilespbtransport.view.ScreenStack;
+
 import javax.microedition.io.Connector;
 import javax.microedition.io.ContentConnection;
 import javax.microedition.io.HttpConnection;
@@ -8,7 +11,7 @@ import java.io.*;
 
 /**
  * Created by IntelliJ IDEA.
- * User: Павел
+ * User: �����
  * Date: 05.05.12
  * Time: 13:01
  * <p/>
@@ -56,11 +59,15 @@ public class HttpClient {
 				String response = new String(baos.toByteArray(), "UTF-8");
 				return response;
 			} else {
-				//TODO
+				//ignoring
 				return null;
 			}
-		} catch (Exception e) {
-			//TODO
+		} catch (IOException e) {
+			ScreenStack.showAlert("Не удалось подключиться к Интернету");
+			e.printStackTrace();
+			return null;
+		} catch (SecurityException e){
+			ScreenStack.showAlert("Для работы нужен Интернет. Пожалуйста, дайте разрешите доступ к сети");
 			e.printStackTrace();
 			return null;
 		} finally {
@@ -121,10 +128,13 @@ public class HttpClient {
 			String response = new String(baos.toByteArray(), "UTF-8");
 			return response;
 		} catch (UnsupportedEncodingException e) {
-			//TODO
+			//ignoring
 			e.printStackTrace();
 		} catch (IOException e) {
-			//TODO
+			ScreenStack.showAlert("Не удалось подключиться к Интернету");
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			ScreenStack.showAlert("Для работы нужен Интернет. Пожалуйста, дайте разрешите доступ к сети");
 			e.printStackTrace();
 		} finally {
 			try {
@@ -151,17 +161,18 @@ public class HttpClient {
 	/*--------------------------------------------------
 		  * Open connection and download png into a byte array.
 		  *-------------------------------------------------*/
-	public static byte[] loadImageBytes(String url) throws IOException {
-		ContentConnection connection = (ContentConnection) Connector.open(url);
-
-		// * There is a bug in MIDP 1.0.3 in which read() sometimes returns
-		//   an invalid length. To work around this, I have changed the
-		//   stream to DataInputStream and called readFully() instead of read()
-		DataInputStream iStrm = connection.openDataInputStream();
-
+	public static byte[] loadImageBytes(String url) {
+		ContentConnection connection = null;
+		DataInputStream iStrm = null;
 		ByteArrayOutputStream bStrm = null;
-
 		try {
+			connection = (ContentConnection) Connector.open(url);
+
+			// * There is a bug in MIDP 1.0.3 in which read() sometimes returns
+			//   an invalid length. To work around this, I have changed the
+			//   stream to DataInputStream and called readFully() instead of read()
+			iStrm = connection.openDataInputStream();
+
 			// ContentConnection includes a length method
 			byte imageData[];
 			int length = (int) connection.getLength();
@@ -182,14 +193,24 @@ public class HttpClient {
 				bStrm.close();
 			}
 			return imageData;
+		} catch (IOException e) {
+			ScreenStack.showAlert("Не удалось подключиться к Интернету");
+			return null;
+		} catch (SecurityException e) {
+			ScreenStack.showAlert("Для работы нужен Интернет. Пожалуйста, дайте разрешите доступ к сети");
+			return null;
 		} finally {
-			// Clean up
-			if (iStrm != null)
-				iStrm.close();
-			if (connection != null)
-				connection.close();
-			if (bStrm != null)
-				bStrm.close();
+			try {
+				// Clean up
+				if (iStrm != null)
+					iStrm.close();
+				if (connection != null)
+					connection.close();
+				if (bStrm != null)
+					bStrm.close();
+			} catch (IOException e) {
+				//ignoring
+			}
 		}
 	}
 }

@@ -1,8 +1,8 @@
 package ru.mobilespbtransport.view;
 
-import ru.mobilespbtransport.Controller;
+import ru.mobilespbtransport.controller.Controller;
 import ru.mobilespbtransport.model.*;
-import ru.mobilespbtransport.util.Util;
+
 
 import javax.microedition.lcdui.*;
 import javax.microedition.lcdui.game.GameCanvas;
@@ -15,12 +15,12 @@ import javax.microedition.lcdui.game.GameCanvas;
  * To change this template use File | SettingsScreen | File Templates.
  */
 public class ArrivingScreen extends GameCanvas implements CommandListener {
-	private final Command viewPlacesCommand = new Command(Util.convertToUtf8("Закладки"), Command.ITEM, 0);
-	private final Command addToFavourites = new Command(Util.convertToUtf8("Добавить в закладки"), Command.ITEM, 1);
-	private final Command updateCommand = new Command(Util.convertToUtf8("Обновить"), Command.ITEM, 3);
-	private final Command showOnMap = new Command(Util.convertToUtf8("На карте"), Command.ITEM, 4);
-	private final Command backCommand = new Command(Util.convertToUtf8("Назад"), Command.CANCEL, 5);
-	private final Command exitCommand = new Command(Util.convertToUtf8("Выход"), Command.EXIT, 6);
+	private final Command viewPlacesCommand = new Command("Закладки", Command.ITEM, 0);
+	private final Command addToFavourites = new Command("Добавить в закладки", Command.ITEM, 1);
+	private final Command updateCommand = new Command("Обновить", Command.ITEM, 3);
+	private final Command showOnMap = new Command("На карте", Command.ITEM, 4);
+	private final Command backCommand = new Command("Назад", Command.CANCEL, 5);
+	private final Command exitCommand = new Command("Выход", Command.EXIT, 6);
 
 	private final Stop stop;
 	private final Image arrivingImage;
@@ -79,7 +79,7 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 		final int ARRIVING_Y = 5 * ELEMENTS_PADDING + FONT_HEIGHT + arrivingImage.getHeight();
 		
 		if(stop.getRoutes() == null){
-			graphics.drawString(Util.convertToUtf8("Загрузка..."), getWidth()/2, getHeight()/2, Graphics.HCENTER | Graphics.TOP);
+			graphics.drawString("Загрузка...", getWidth()/2, getHeight()/2, Graphics.HCENTER | Graphics.TOP);
 			return;
 		}
 
@@ -92,7 +92,7 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 
 			String routeNumber = route.getRouteNumber();
 			String arrivingTime = arriving == null ? "  -" : arriving.getArrivingTime();
-			String delay = arriving == null ? "  -" : Util.convertToUtf8("(через " + arriving.getMinutesToArrive() + " мин.)");
+			String delay = arriving == null ? "  -" : "(через " + arriving.getMinutesToArrive() + " мин.)";
 
 			int y = ARRIVING_Y + i * (FONT_HEIGHT + ELEMENTS_PADDING);
 			graphics.drawString(routeNumber, ARRIVING_X_COL2 / 2, y, Graphics.HCENTER | Graphics.TOP);

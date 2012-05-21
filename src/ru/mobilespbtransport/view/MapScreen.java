@@ -1,8 +1,9 @@
 package ru.mobilespbtransport.view;
 
-import ru.mobilespbtransport.Controller;
+import ru.mobilespbtransport.controller.Controller;
+import ru.mobilespbtransport.controller.GeoConverter;
 import ru.mobilespbtransport.model.*;
-import ru.mobilespbtransport.util.Util;
+
 
 import javax.microedition.lcdui.*;
 import javax.microedition.lcdui.game.GameCanvas;
@@ -21,14 +22,14 @@ public class MapScreen extends GameCanvas implements CommandListener {
 	private Image transportLayer;
 	private Vector stops; //Vector<Stop>
 
-	private final Command viewFavouritesCommand = new Command(Util.convertToUtf8("Закладки"), Command.ITEM, 0);
-	private final Command addToFavourites = new Command(Util.convertToUtf8("Добавить в закладки"), Command.ITEM, 1);
-	private final Command settings = new Command(Util.convertToUtf8("Настройки"), Command.ITEM, 2);
-	private final Command updateCommand = new Command(Util.convertToUtf8("Обновить"), Command.ITEM, 3);
-	private final Command backCommand = new Command(Util.convertToUtf8("Назад"), Command.CANCEL, 4);
-	private final Command exitCommand = new Command(Util.convertToUtf8("Выход"), Command.EXIT, 5);
+	private final Command viewFavouritesCommand = new Command("Закладки", Command.ITEM, 0);
+	private final Command addToFavourites = new Command("Добавить в закладки", Command.ITEM, 1);
+	private final Command settings = new Command("Настройки", Command.ITEM, 2);
+	private final Command updateCommand = new Command("Обновить", Command.ITEM, 3);
+	private final Command backCommand = new Command("Назад", Command.CANCEL, 4);
+	private final Command exitCommand = new Command("Выход", Command.EXIT, 5);
 
-	private final static String LOADING = Util.convertToUtf8("Загрузка...");
+	private final static String LOADING = "Загрузка...";
 	private final static int CURSOR_DELTA = 4;
 	private final static int CROSS_SISE = 10;
 	private final static int STOP_RADIUS = 6;
@@ -38,6 +39,9 @@ public class MapScreen extends GameCanvas implements CommandListener {
 	private Stop selectedStop = null;
 	private int cursorX;
 	private int cursorY;
+
+	private long lastClickTime;
+	private static final long MAX_DOUBLECLICK_TIME = 600;
 
 	public MapScreen() {
 		super(false);
@@ -195,6 +199,31 @@ public class MapScreen extends GameCanvas implements CommandListener {
 
 	protected void keyRepeated(int i) {
 		keyPressed(i);
+	}
+
+	protected void pointerPressed(int x, int y) {
+		if (!Controller.isZoomedIn()) {
+			if (System.currentTimeMillis() - lastClickTime < MAX_DOUBLECLICK_TIME) {
+				cursorX = x;
+				cursorY = y;
+				Controller.zoomIn();
+			} else {
+				lastClickTime = System.currentTimeMillis();
+			}
+		} else {
+			if (System.currentTimeMillis() - lastClickTime < MAX_DOUBLECLICK_TIME) {
+				if (selectedStop != null) {
+					ArrivingScreen arrivingScreen = new ArrivingScreen(selectedStop);
+					ScreenStack.push(arrivingScreen);
+					Controller.updateArrivingScreen(selectedStop, arrivingScreen);
+				}
+			} else {
+				cursorX = x;
+				cursorY = y;
+				lastClickTime = System.currentTimeMillis();
+				repaint();
+			}
+		}
 	}
 
 	public int getCursorX() {

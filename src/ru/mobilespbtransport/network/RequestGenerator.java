@@ -1,6 +1,6 @@
 package ru.mobilespbtransport.network;
 
-import ru.mobilespbtransport.Controller;
+import ru.mobilespbtransport.controller.Controller;
 import ru.mobilespbtransport.model.Place;
 import ru.mobilespbtransport.model.Route;
 import ru.mobilespbtransport.model.Stop;

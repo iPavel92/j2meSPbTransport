@@ -1,7 +1,7 @@
 package ru.mobilespbtransport.view;
 
-import ru.mobilespbtransport.Controller;
-import ru.mobilespbtransport.util.Util;
+import ru.mobilespbtransport.controller.Controller;
+
 
 import javax.microedition.lcdui.*;
 import java.io.IOException;
@@ -14,23 +14,23 @@ import java.io.IOException;
  * To change this template use File | SettingsScreen | File Templates.
  */
 public class SettingsScreen extends Form implements CommandListener{
-	private Command save = new Command(Util.convertToUtf8("Сохранить"), Command.OK, 1);
+	private Command save = new Command("Сохранить", Command.OK, 1);
 	private ChoiceGroup layers;
 	private ChoiceGroup settings;
                      	
 	public SettingsScreen() {
-		super(Util.convertToUtf8("Настройки"));
+		super("Настройки");
 		addCommand(save);
 
 		try {
-			layers = new ChoiceGroup(Util.convertToUtf8("Слои на карте:"), Choice.MULTIPLE);
-			layers.append(Util.convertToUtf8("Автобусы"), Image.createImage("/bus.png"));
-			layers.append(Util.convertToUtf8("Троллейбусы"), Image.createImage("/trolley.png"));
-			layers.append(Util.convertToUtf8("Трамваи"), Image.createImage("/tram.png"));
+			layers = new ChoiceGroup("Слои на карте:", Choice.MULTIPLE);
+			layers.append("Автобусы", Image.createImage("/bus.png"));
+			layers.append("Троллейбусы", Image.createImage("/trolley.png"));
+			layers.append("Трамваи", Image.createImage("/tram.png"));
 			append(layers);
 
-			settings = new ChoiceGroup(Util.convertToUtf8("Настройки:"), Choice.MULTIPLE);
-			settings.append(Util.convertToUtf8("Автообновление"), Image.createImage("/autoupdate.png"));
+			settings = new ChoiceGroup("Настройки:", Choice.MULTIPLE);
+			settings.append("Автообновление", Image.createImage("/autoupdate.png"));
 			append(settings);
 		} catch (IOException e) {
 			//TODO

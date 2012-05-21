@@ -1,9 +1,9 @@
 package ru.mobilespbtransport.view;
 
-import ru.mobilespbtransport.Controller;
+import ru.mobilespbtransport.controller.Controller;
 import ru.mobilespbtransport.model.Place;
 import ru.mobilespbtransport.model.Stop;
-import ru.mobilespbtransport.util.Util;
+
 
 import javax.microedition.lcdui.*;
 import java.io.IOException;
@@ -17,21 +17,29 @@ import java.util.Vector;
  * To change this template use File | SettingsScreen | File Templates.
  */
 public class StopsList extends List implements CommandListener{
-	private final Command backCommand = new Command(Util.convertToUtf8("Назад"), Command.CANCEL, 0);
-	private final Command showOnMap = new Command(Util.convertToUtf8("На карте"), Command.ITEM, 1);
+	private final Command backCommand = new Command("Назад", Command.CANCEL, 0);
+	private final Command showOnMap = new Command("На карте", Command.ITEM, 1);
 	private Vector stops;
+	private boolean isLoaded = false;
 
 	public StopsList() {
 		this(new Vector());
 	}
 
 	public StopsList(Vector stops) {
-		super(Util.convertToUtf8("Выберите остановку"), IMPLICIT);
+		super("Выберите остановку", IMPLICIT);
 
-		setStops(stops);
 		addCommand(backCommand);
 		addCommand(showOnMap);
 		setCommandListener(this);
+
+		setStops(stops);
+
+		try {
+			append("Загрузка...", Image.createImage("/autoupdate.png"));
+		} catch (IOException e) {
+			//ignoring
+		}
 	}
 	
 	public void setStops(Vector stops){
@@ -44,11 +52,15 @@ public class StopsList extends List implements CommandListener{
 		}
 		for(int i = 0; i<stops.size(); i++){
 			Stop stop = (Stop)stops.elementAt(i);
-			append(stop.getName(), null);
+			addStop(stop, true);
 		}
 	} 
 	
 	public void addStop(Stop stop, boolean isDirect){
+		if(!isLoaded){
+			delete(0);
+			isLoaded = true;
+		}
 		stops.addElement(stop);
 		Image image = null;
 		try {
@@ -65,7 +77,7 @@ public class StopsList extends List implements CommandListener{
 	}
 
 	public void commandAction(Command command, Displayable displayable) {
-		if(command == List.SELECT_COMMAND){
+		if(command == List.SELECT_COMMAND && isLoaded){
 			Stop stop = (Stop) stops.elementAt(getSelectedIndex());
 			ArrivingScreen arrivingScreen = new ArrivingScreen(stop);
 			ScreenStack.push(arrivingScreen);

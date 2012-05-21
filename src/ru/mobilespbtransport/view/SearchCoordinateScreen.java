@@ -1,9 +1,9 @@
 package ru.mobilespbtransport.view;
 
-import ru.mobilespbtransport.Controller;
+import ru.mobilespbtransport.controller.Controller;
 import ru.mobilespbtransport.model.Coordinate;
 import ru.mobilespbtransport.model.Place;
-import ru.mobilespbtransport.util.Util;
+
 
 import javax.microedition.lcdui.*;
 
@@ -20,12 +20,12 @@ public class SearchCoordinateScreen extends Form implements CommandListener{
 	private Command cancel;
 
 	public SearchCoordinateScreen() {
-		super(Util.convertToUtf8("Посмотреть место"));
-		name = new TextField(Util.convertToUtf8("Название"), "", 30, TextField.ANY);
-		lat = new TextField(Util.convertToUtf8("Широта (lat):"), "", 30, TextField.DECIMAL);
-		lon = new TextField(Util.convertToUtf8("Долгота (lon):"), "", 30, TextField.DECIMAL);
-		ok = new Command(Util.convertToUtf8("ОК"), Command.OK, 1);
-		cancel = new Command(Util.convertToUtf8("Назад"), Command.CANCEL, 2);
+		super("Посмотреть место");
+		name = new TextField("Название", "", 30, TextField.ANY);
+		lat = new TextField("Широта (lat):", "", 30, TextField.DECIMAL);
+		lon = new TextField("Долгота (lon):", "", 30, TextField.DECIMAL);
+		ok = new Command("ОК", Command.OK, 1);
+		cancel = new Command("Назад", Command.CANCEL, 2);
 		append(name);
 		append(lat);
 		append(lon);

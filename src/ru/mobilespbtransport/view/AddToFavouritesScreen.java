@@ -1,9 +1,8 @@
 package ru.mobilespbtransport.view;
 
-import ru.mobilespbtransport.Controller;
+import ru.mobilespbtransport.controller.Controller;
 import ru.mobilespbtransport.model.Place;
 import ru.mobilespbtransport.model.Stop;
-import ru.mobilespbtransport.util.Util;
 
 import javax.microedition.lcdui.*;
 
@@ -16,14 +15,14 @@ import javax.microedition.lcdui.*;
  */
 public class AddToFavouritesScreen extends Form implements CommandListener {
 	private TextField placeName;
-	private Command ok = new Command(Util.convertToUtf8("Добавить"), Command.OK, 1);
-	private Command cancel = new Command(Util.convertToUtf8("Назад"), Command.CANCEL, 2);
+	private Command ok = new Command("Добавить", Command.OK, 1);
+	private Command cancel = new Command("Назад", Command.CANCEL, 2);
 	private final Place place;
 
 	public AddToFavouritesScreen(Place place) {
-		super(Util.convertToUtf8("Добавить в закладки"));
+		super("Добавить в закладки");
 		this.place = place;
-		placeName = new TextField(Util.convertToUtf8("Название:"), place.getName(), 200, TextField.ANY);
+		placeName = new TextField("Название:", place.getName(), 200, TextField.ANY);
 		append(placeName);
 		addCommand(ok);
 		addCommand(cancel);

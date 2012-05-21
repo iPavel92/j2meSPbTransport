@@ -1,4 +1,7 @@
-package ru.mobilespbtransport.model;
+package ru.mobilespbtransport.controller;
+
+import ru.mobilespbtransport.model.Coordinate;
+import ru.mobilespbtransport.model.Place;
 
 import java.util.Hashtable;
 

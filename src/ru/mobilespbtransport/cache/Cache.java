@@ -119,7 +119,6 @@ public class Cache {
 
 	public static void saveImage(Place place, byte[] image, int zoom) {
 		String key = composeImageKey(place, zoom);
-		System.out.println(key);
 		try {
 			recordStore = RecordStore.openRecordStore(key, true);
 
@@ -142,7 +141,6 @@ public class Cache {
 			DataInputStream reader;
 
 			recordStore = RecordStore.openRecordStore(key, true);
-			System.out.println(recordStore.getNumRecords());
 			if (recordStore.getNumRecords() == 0) {
 				return null;
 			}

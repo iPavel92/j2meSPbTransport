@@ -1,7 +1,7 @@
 package ru.mobilespbtransport.view;
 
-import ru.mobilespbtransport.Controller;
-import ru.mobilespbtransport.util.Util;
+import ru.mobilespbtransport.controller.Controller;
+
 
 import javax.microedition.lcdui.*;
 
@@ -13,12 +13,12 @@ import javax.microedition.lcdui.*;
  * To change this template use File | Settings | File Templates.
  */
 public class SearchAddressScreen extends Form implements CommandListener{
-	private TextField address = new TextField(Util.convertToUtf8("Введите адрес:"), "", 30, TextField.ANY);
-	private Command ok = new Command(Util.convertToUtf8("Найти"), Command.OK, 1);
-	private Command cancel = new Command(Util.convertToUtf8("Назад"), Command.CANCEL, 2);
+	private TextField address = new TextField("Введите адрес:", "", 30, TextField.ANY);
+	private Command ok = new Command("Найти", Command.OK, 1);
+	private Command cancel = new Command("Назад", Command.CANCEL, 2);
 
 	public SearchAddressScreen() {
-		super(Util.convertToUtf8("Поиск места"));
+		super("Поиск места");
 
 		append(address);
 		addCommand(ok);

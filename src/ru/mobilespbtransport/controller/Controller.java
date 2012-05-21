@@ -1,16 +1,16 @@
-package ru.mobilespbtransport;
+package ru.mobilespbtransport.controller;
 
+import ru.mobilespbtransport.Main;
 import ru.mobilespbtransport.cache.Cache;
 import ru.mobilespbtransport.model.*;
 import ru.mobilespbtransport.network.HttpClient;
 import ru.mobilespbtransport.network.RequestGenerator;
 import ru.mobilespbtransport.network.ResponseParser;
 import ru.mobilespbtransport.view.*;
-import ru.mobilespbtransport.util.Util;
+
 
 import javax.microedition.lcdui.Image;
 import javax.microedition.location.*;
-import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -106,7 +106,6 @@ public class Controller {
 	public static void loadMap() {
 		new Thread() {
 			public void run() {
-				try {
 					if (model.getCurrentPlace() == null) {
 						return;
 					}
@@ -114,9 +113,6 @@ public class Controller {
 					Image map = getMapImage(model.getCurrentPlace(), url, zoom);
 					mapScreen.setMap(map);
 					mapScreen.repaint();
-				} catch (Exception e) {
-					e.printStackTrace();  //TODO
-				}
 			}
 		}.start();
 	}
@@ -130,7 +126,6 @@ public class Controller {
 					}
 					String bBox = GeoConverter.buildBBox(model.getCurrentPlace().getCoordinate(), mapScreen.getWidth(), mapScreen.getHeight(), zoom);
 					String url = RequestGenerator.getTransportMapUrl(bBox, model.isShowBus(), model.isShowTrolley(), model.isShowTram(), mapScreen.getWidth(), mapScreen.getHeight());
-					System.out.println(url);
 					Image transportLayer = HttpClient.loadImage(url);
 					mapScreen.setTransportLayer(transportLayer);
 					mapScreen.repaint();
@@ -147,9 +142,7 @@ public class Controller {
 				String url = "http://transport.orgp.spb.ru/Portal/transport/stops/list";
 				String bBox = GeoConverter.buildBBox(model.getCurrentPlace().getCoordinate(), mapScreen.getWidth(), mapScreen.getHeight(), zoom);
 				String request = RequestGenerator.getRequestForStopsOnMap(bBox);
-				System.out.println(request);
 				String response = HttpClient.sendPost(url, request);
-				System.out.println(">" + response);
 				Vector stops = ResponseParser.parseStopsToMap(response);
 				mapScreen.setStops(stops);
 				mapScreen.repaint();
@@ -190,11 +183,11 @@ public class Controller {
 				QualifiedCoordinates qc = l.getQualifiedCoordinates();
 				return new Place("", new Coordinate(qc.getLatitude(), qc.getLongitude(), Coordinate.WGS84));
 			} catch (LocationException e) {
-				ScreenStack.showAlert(Util.convertToUtf8("Не удалось получить координаты GPS"));
-				e.printStackTrace();  //TODO
+				ScreenStack.showAlert("Не удалось получить координаты GPS");
+				e.printStackTrace();
 			} catch (InterruptedException e) {
-				ScreenStack.showAlert(Util.convertToUtf8("Не удалось получить координаты GPS"));
-				e.printStackTrace();  //TODO
+				ScreenStack.showAlert("Не удалось получить координаты GPS");
+				e.printStackTrace();
 			}
 		}
 		return null;
@@ -216,10 +209,8 @@ public class Controller {
 			public void run() {
 				String url = "http://transport.orgp.spb.ru/Portal/transport/routes/list";
 				String request = RequestGenerator.getRequestForSearchRoutes(routeNumber);
-				System.out.println(request);
 
-				String response = null;
-				response = HttpClient.sendPost(url, request);
+				String response = HttpClient.sendPost(url, request);
 
 				Vector routes = ResponseParser.parseRoutes(response);
 				resultScreen.setRoutes(routes);
@@ -231,7 +222,6 @@ public class Controller {
 		new Thread() {
 			public void run() {
 				String request = RequestGenerator.getUrlForGeocoding(address);
-				System.out.println(request);
 
 				String response = HttpClient.sendGET(request);
 
@@ -269,8 +259,6 @@ public class Controller {
 				String url = RequestGenerator.getUrlForArriving(stop);
 				String request = RequestGenerator.getRequestForArriving();
 
-				System.out.println(request);
-
 				String response = HttpClient.sendPost(url, request);
 				Vector arriving = ResponseParser.parseArriving(response, stop.getRoutes());
 
@@ -303,7 +291,7 @@ public class Controller {
 
 	//load image from cache or inet
 	//save downloaded image to cache
-	public static Image getMapImage(Place place, String url, int zoom) throws IOException {
+	public static Image getMapImage(Place place, String url, int zoom) {
 		if (Cache.isImageExists(place, zoom)) {
 			System.out.println("found in cache");
 			return Cache.loadImage(place, zoom);
@@ -313,8 +301,7 @@ public class Controller {
 			System.out.println("image loaded");
 			Cache.saveImage(place, imageData, zoom);
 			System.out.println("image saved");
-			Image im = null;
-			im = Image.createImage(imageData, 0, imageData.length);
+			Image im = Image.createImage(imageData, 0, imageData.length);
 			return (im == null ? null : im);
 		}
 	}
