@@ -22,6 +22,7 @@ public class ScreenStack {
 	}
 
 	public static void push(Displayable screen) {
+		clearOldHeavyScreens(screen);
 		screens.addElement(screen);
 		updateCurrentScreen();
 	}
@@ -45,6 +46,24 @@ public class ScreenStack {
 		display.setCurrent(peek());
 	}
 
+	//deleting duplicating and heavy for memory screens from stack
+	public static void clearOldHeavyScreens(Displayable displayable){
+		for(int i = 0; i < screens.size(); ++i){
+			if(displayable instanceof MapScreen && screens.elementAt(i) instanceof MapScreen){
+				screens.removeElementAt(i);
+				return;
+			}
+			if(displayable instanceof ArrivingScreen && screens.elementAt(i) instanceof ArrivingScreen){
+				screens.removeElementAt(i);
+				return;
+			}
+			if(displayable instanceof StopsListScreen && screens.elementAt(i) instanceof StopsListScreen){
+				screens.removeElementAt(i);
+				return;
+			}
+		}
+	}
+	
 	public static void showAlert(String message) {
 		Alert alert = new Alert("Сообщение",
 				message,

@@ -18,13 +18,13 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 	private final Command addToFavourites = new Command("Добавить в закладки", Command.ITEM, 1);
 	private final Command updateCommand = new Command("Обновить", Command.ITEM, 2);
 	private final Command showOnMap = new Command("На карте", Command.ITEM, 3);
-	private final Command backCommand = new Command("Назад", Command.CANCEL, 4);
-	private final Command exitCommand = new Command("Выход", Command.EXIT, 5);
+	private final Command showRoute = new Command("Посмотреть маршрут", Command.ITEM, 4);
+	private final Command backCommand = new Command("Назад", Command.CANCEL, 5);
+	private final Command exitCommand = new Command("Выход", Command.EXIT, 6);
 
 	private final Stop stop;
 	private final Image arrivingImage;
-	private int sliderIndex = 0;
-	private boolean isSliderRequired = false;
+	private int selectedIndex = 0;
 
 	private final static int TOUCH_BORDER_TO_SLIDE = 50;
 
@@ -84,13 +84,18 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 		if (stop.getRoutes() == null) {
 			graphics.drawString("Загрузка...", getWidth() / 2, getHeight() / 2, Graphics.HCENTER | Graphics.TOP);
 			return;
+		} else {
+			//selection
+			graphics.setColor(0xD0AC4B);
+			graphics.fillRect(ARRIVING_X_COL1 - 1, ARRIVING_Y + 1, getWidth() - ARRIVING_X_COL1 - 1, FONT_HEIGHT + 2);
 		}
 
+		graphics.setColor(0x1C2125);
 		graphics.drawLine(ARRIVING_X_COL2, ARRIVING_Y + ELEMENTS_PADDING, ARRIVING_X_COL2, getHeight() - ELEMENTS_PADDING);
 		graphics.drawLine(ARRIVING_X_COL3, ARRIVING_Y + ELEMENTS_PADDING, ARRIVING_X_COL3, getHeight() - ELEMENTS_PADDING);
 
 		int yIndex = 0;
-		for (int i = sliderIndex; i < stop.getRoutes().size(); ++i, yIndex++) {
+		for (int i = selectedIndex; i < stop.getRoutes().size(); ++i, yIndex++) {
 			Route route = (Route) stop.getRoutes().elementAt(i);
 			Arriving arriving = stop.getArriving(route);
 
@@ -100,26 +105,24 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 
 			int y = ARRIVING_Y + yIndex * (FONT_HEIGHT + ELEMENTS_PADDING);
 			if (y > getHeight()) {
-				isSliderRequired = true;
 				break;
 			}
 			graphics.drawString(routeNumber, ARRIVING_X_COL2 / 2, y, Graphics.HCENTER | Graphics.TOP);
 			graphics.drawString(arrivingTime, ARRIVING_X_COL2 + ELEMENTS_PADDING, y, Graphics.LEFT | Graphics.TOP);
 			graphics.drawString(delay, ARRIVING_X_COL3 + ELEMENTS_PADDING, y, Graphics.LEFT | Graphics.TOP);
 		}
-		if (isSliderRequired) {
-			if (sliderIndex > 0) {
-				graphics.drawLine(getWidth() - 10, ARRIVING_Y + 5, getWidth() - 15, ARRIVING_Y + 10);
-				graphics.drawLine(getWidth() - 10, ARRIVING_Y + 5, getWidth() - 5, ARRIVING_Y + 10);
-				graphics.drawLine(getWidth() - 10, ARRIVING_Y + 4, getWidth() - 15, ARRIVING_Y + 9);
-				graphics.drawLine(getWidth() - 10, ARRIVING_Y + 4, getWidth() - 5, ARRIVING_Y + 9);
-			}
-			if (sliderIndex < stop.getRoutes().size()) {
-				graphics.drawLine(getWidth() - 10, getHeight() - 5, getWidth() - 15, getHeight() - 10);
-				graphics.drawLine(getWidth() - 10, getHeight() - 5, getWidth() - 5, getHeight() - 10);
-				graphics.drawLine(getWidth() - 10, getHeight() - 4, getWidth() - 15, getHeight() - 9);
-				graphics.drawLine(getWidth() - 10, getHeight() - 4, getWidth() - 5, getHeight() - 9);
-			}
+
+		if (selectedIndex > 0) {
+			graphics.drawLine(getWidth() - 10, ARRIVING_Y + 5, getWidth() - 15, ARRIVING_Y + 10);
+			graphics.drawLine(getWidth() - 10, ARRIVING_Y + 5, getWidth() - 5, ARRIVING_Y + 10);
+			graphics.drawLine(getWidth() - 10, ARRIVING_Y + 4, getWidth() - 15, ARRIVING_Y + 9);
+			graphics.drawLine(getWidth() - 10, ARRIVING_Y + 4, getWidth() - 5, ARRIVING_Y + 9);
+		}
+		if (selectedIndex < stop.getRoutes().size()) {
+			graphics.drawLine(getWidth() - 10, getHeight() - 5, getWidth() - 15, getHeight() - 10);
+			graphics.drawLine(getWidth() - 10, getHeight() - 5, getWidth() - 5, getHeight() - 10);
+			graphics.drawLine(getWidth() - 10, getHeight() - 4, getWidth() - 15, getHeight() - 9);
+			graphics.drawLine(getWidth() - 10, getHeight() - 4, getWidth() - 5, getHeight() - 9);
 		}
 	}
 
@@ -135,6 +138,11 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 			case DOWN:
 				slideDown();
 				break;
+			case FIRE:
+				if (stop.getRoutes() != null) {
+					Controller.findStops((Route) stop.getRoutes().elementAt(selectedIndex));
+				}
+				break;
 		}
 	}
 
@@ -143,23 +151,23 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 	}
 
 	protected void pointerPressed(int x, int y) {
-		if(y < TOUCH_BORDER_TO_SLIDE){
+		if (y < TOUCH_BORDER_TO_SLIDE) {
 			slideUp();
-		} else if(y > getHeight() - TOUCH_BORDER_TO_SLIDE){
+		} else if (y > getHeight() - TOUCH_BORDER_TO_SLIDE) {
 			slideDown();
 		}
 	}
 
-	private void slideUp(){
-		if (isSliderRequired && sliderIndex > 0) {
-			sliderIndex--;
+	private void slideUp() {
+		if (selectedIndex > 0) {
+			selectedIndex--;
 			repaint();
 		}
 	}
 
-	private void slideDown(){
-		if (isSliderRequired && sliderIndex < stop.getRoutes().size() - 1) {
-			sliderIndex++;
+	private void slideDown() {
+		if (selectedIndex < stop.getRoutes().size() - 1) {
+			selectedIndex++;
 			repaint();
 		}
 	}
@@ -168,7 +176,7 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 		if (command == updateCommand) {
 			Controller.updateArrivingScreen(stop, this);
 		} else if (command == viewPlacesCommand) {
-			ScreenStack.push(Controller.getFavouritesList());
+			ScreenStack.push(Controller.getFavouritesScreen());
 		} else if (command == addToFavourites) {
 			ScreenStack.push(new AddToFavouritesScreen(stop));
 		} else if (command == backCommand) {
@@ -180,6 +188,8 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 			Place place = new Place(stop.getName(), stop.getCoordinate());
 			Controller.setCurrentPlace(place);
 			ScreenStack.push(Controller.getMapScreen());
+		} else if (command == showRoute && stop.getRoutes() != null) {
+			Controller.findStops((Route) stop.getRoutes().elementAt(selectedIndex));
 		}
 	}
 }

@@ -16,17 +16,17 @@ import java.util.Vector;
  * Time: 0:55
  * To change this template use File | SettingsScreen | File Templates.
  */
-public class StopsList extends List implements CommandListener{
+public class StopsListScreen extends List implements CommandListener{
 	private final Command backCommand = new Command("Назад", Command.CANCEL, 0);
 	private final Command showOnMap = new Command("На карте", Command.ITEM, 1);
 	private Vector stops;
 	private boolean isLoaded = false;
 
-	public StopsList() {
+	public StopsListScreen() {
 		this(new Vector());
 	}
 
-	public StopsList(Vector stops) {
+	public StopsListScreen(Vector stops) {
 		super("Выберите остановку", IMPLICIT);
 
 		addCommand(backCommand);

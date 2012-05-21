@@ -30,9 +30,7 @@ public class SearchAddressScreen extends Form implements CommandListener{
 		if(command == ok){
 			new Thread() {
 				public void run() {
-					PlacesList placesList = new PlacesList();
-					ScreenStack.push(placesList);
-					Controller.findPlaces(address.getString(), placesList);
+					Controller.findPlaces(address.getString());
 				}
 			}.start();
 		} else if(command == cancel){

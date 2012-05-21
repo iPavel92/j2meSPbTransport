@@ -27,9 +27,7 @@ public class SearchRouteScreen extends Form implements CommandListener{
 
 	public void commandAction(Command command, Displayable displayable) {
 		if(command == ok){
-			RoutesList routesList = new RoutesList();
-			ScreenStack.push(routesList);
-			Controller.findRoutes(routeNumber.getString(), routesList);
+			Controller.findRoutes(routeNumber.getString());
 		} else if (command == cancel){
 			ScreenStack.pop();
 		}

@@ -1,5 +1,6 @@
 package ru.mobilespbtransport.model;
 
+import java.util.Hashtable;
 import java.util.Vector;
 
 /**
@@ -15,7 +16,9 @@ public class Model {
 	private boolean showTrolley = true;
 	private boolean showTram = true;
 	private boolean useAutoUpdate = false;
-	private Vector favourites = new Vector();
+	private Vector favourites = new Vector(); //Vector<Place, Stop>
+	private Hashtable stops = new Hashtable(); //Hashtable<Int(id)->Stop>
+	private Hashtable routes = new Hashtable(); //Hashtable<Int(id)->Route>
 
 	public Vector getFavourites() {
 		return favourites;
@@ -59,5 +62,13 @@ public class Model {
 
 	public void setUseAutoUpdate(boolean useAutoUpdate) {
 		this.useAutoUpdate = useAutoUpdate;
+	}
+
+	public Hashtable getStops() {
+		return stops;
+	}
+
+	public Hashtable getRoutes() {
+		return routes;
 	}
 }

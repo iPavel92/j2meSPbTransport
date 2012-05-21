@@ -15,16 +15,16 @@ import java.util.Vector;
  * Time: 0:55
  * To change this template use File | SettingsScreen | File Templates.
  */
-public class RoutesList extends List implements CommandListener{
+public class RoutesListScreen extends List implements CommandListener{
 	private final Command backCommand = new Command("Назад", Command.CANCEL, 2);
 	private Vector routes;
 	private boolean isLoaded = false;
 
-	public RoutesList() {
+	public RoutesListScreen() {
 		this(new Vector());
 	}
 
-	public RoutesList(Vector routes) {
+	public RoutesListScreen(Vector routes) {
 		super("Выберите маршрут", IMPLICIT);
 		setRoutes(routes);
 
@@ -55,9 +55,7 @@ public class RoutesList extends List implements CommandListener{
 
 	public void commandAction(Command command, Displayable displayable) {
 		if(command == List.SELECT_COMMAND && isLoaded){
-			StopsList stopsList = new StopsList();
-			ScreenStack.push(stopsList);
-			Controller.findStops((Route) routes.elementAt(getSelectedIndex()), stopsList);
+			Controller.findStops((Route) routes.elementAt(getSelectedIndex()));
 		} else if (command == backCommand){
 			ScreenStack.pop();
 		}

@@ -15,16 +15,16 @@ import java.util.Vector;
  * Time: 0:55
  * To change this template use File | SettingsScreen | File Templates.
  */
-public class PlacesList extends List implements CommandListener{
+public class PlacesListScreen extends List implements CommandListener{
 	private final Command backCommand = new Command("Назад", Command.CANCEL, 2);
 	private Vector places;
 	private boolean isLoaded = false;
 	
-	public PlacesList() {
+	public PlacesListScreen() {
 		this(new Vector());
 	}
 
-	public PlacesList(Vector places) {
+	public PlacesListScreen(Vector places) {
 		super("Выберите место", IMPLICIT);
 		setPlaces(places);
 		addCommand(backCommand);

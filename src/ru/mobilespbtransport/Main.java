@@ -10,7 +10,7 @@ import javax.microedition.midlet.MIDlet;
 
 public class Main extends MIDlet {
 	private final MapScreen mapCanvas = new MapScreen();
-	private final FavouritesList favouritesList = new FavouritesList();
+	private final FavouritesScreen favouritesList = new FavouritesScreen();
 
 	public Main() {
 		ScreenStack.setDisplay(Display.getDisplay(this));
@@ -26,7 +26,7 @@ public class Main extends MIDlet {
 		Controller.setModel(model);
 		Controller.setMain(this);
 		Controller.setMapScreen(mapCanvas);
-		Controller.setFavouritesList(favouritesList);
+		Controller.setFavouritesScreen(favouritesList);
 
 		updater.start();
 

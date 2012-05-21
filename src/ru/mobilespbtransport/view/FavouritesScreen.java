@@ -16,14 +16,14 @@ import java.util.Vector;
  * Time: 0:55
  * To change this template use File | SettingsScreen | File Templates.
  */
-public class FavouritesList extends List implements CommandListener {
+public class FavouritesScreen extends List implements CommandListener {
 	private final Command searchCommand = new Command("Поиск места", Command.ITEM, 0);
 	private final Command deletePlaceCommand = new Command("Удалить", Command.ITEM, 1);
 	private final Command exitCommand = new Command("Выход", Command.EXIT, 2);
 
 	private Vector favourites;
 
-	public FavouritesList() {
+	public FavouritesScreen() {
 		super("Закладки", IMPLICIT);
 
 		addCommand(searchCommand);

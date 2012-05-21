@@ -25,16 +25,12 @@ public class Controller {
 	private static Main main; //for destroy app
 	private static Model model;
 	private static MapScreen mapScreen;
-	private static FavouritesList favouritesList;
+	private static FavouritesScreen favouritesScreen;
 
 	public final static int DEFAULT_ZOOM = 13;
 	public final static int SELECT_STOP_ZOOM = 16;
 	private static boolean isZoomedIn = false;
 	private static int zoom = DEFAULT_ZOOM;
-
-	public static Main getMain() {
-		return main;
-	}
 
 	public static void setMain(Main main) {
 		Controller.main = main;
@@ -52,14 +48,38 @@ public class Controller {
 		Controller.mapScreen = mapScreen;
 	}
 
-	public static FavouritesList getFavouritesList() {
-		return favouritesList;
+	public static FavouritesScreen getFavouritesScreen() {
+		return favouritesScreen;
 	}
 
-	public static void setFavouritesList(FavouritesList favouritesList) {
-		Controller.favouritesList = favouritesList;
-		favouritesList.setFavourites(getModel().getFavourites());
-		favouritesList.update();
+	public static void setFavouritesScreen(FavouritesScreen favouritesScreen) {
+		Controller.favouritesScreen = favouritesScreen;
+		favouritesScreen.setFavourites(getModel().getFavourites());
+		favouritesScreen.update();
+	}
+
+	public static void addStop(Stop stop){
+		Integer key = new Integer(stop.getId());
+		if(!model.getStops().containsKey(key)){
+			model.getStops().put(key, stop);
+		}
+	}
+
+	public static void addRoute(Route route){
+		Integer key = new Integer(route.getId());
+		if(!model.getRoutes().containsKey(key)){
+			model.getRoutes().put(key, route);
+		}
+	}
+
+	public static Route getRoute(int id){
+		Integer key = new Integer(id);
+		return (Route)model.getRoutes().get(key);
+	}
+
+	public static Stop getStop(int id){
+		Integer key = new Integer(id);
+		return (Stop)model.getStops().get(key);
 	}
 
 	public static void setLayers(boolean showBus, boolean showTrolley, boolean showTram) {
@@ -92,14 +112,14 @@ public class Controller {
 	public static void addFavourite(Place place) {
 		if (!model.getFavourites().contains(place)) {
 			model.getFavourites().addElement(place);
-			favouritesList.update();
+			favouritesScreen.update();
 			Cache.saveModel(model);
 		}
 	}
 
 	public static void removeFavourite(Place place) {
 		model.getFavourites().removeElement(place);
-		favouritesList.update();
+		favouritesScreen.update();
 		Cache.saveModel(model);
 	}
 
@@ -204,7 +224,9 @@ public class Controller {
 		}.start();
 	}
 
-	public static void findRoutes(final String routeNumber, final RoutesList resultScreen) {
+	public static void findRoutes(final String routeNumber) {
+		final RoutesListScreen routesList = new RoutesListScreen();
+		ScreenStack.push(routesList);
 		new Thread() {
 			public void run() {
 				String url = "http://transport.orgp.spb.ru/Portal/transport/routes/list";
@@ -213,12 +235,19 @@ public class Controller {
 				String response = HttpClient.sendPost(url, request);
 
 				Vector routes = ResponseParser.parseRoutes(response);
-				resultScreen.setRoutes(routes);
+				for (Enumeration e = routes.elements(); e.hasMoreElements(); ) {
+					Route route = (Route) e.nextElement();
+					addRoute(route);
+				}
+				routesList.setRoutes(routes);
 			}
 		}.start();
 	}
 
-	public static void findPlaces(final String address, final PlacesList resultScreen) {
+	public static void findPlaces(final String address) {
+		final PlacesListScreen placesList = new PlacesListScreen();
+		ScreenStack.push(placesList);
+
 		new Thread() {
 			public void run() {
 				String request = RequestGenerator.getUrlForGeocoding(address);
@@ -226,12 +255,15 @@ public class Controller {
 				String response = HttpClient.sendGET(request);
 
 				Vector places = ResponseParser.parseGeocoderResponse(response);
-				resultScreen.setPlaces(places);
+
+				placesList.setPlaces(places);
 			}
 		}.start();
 	}
 
-	public static void findStops(final Route route, final StopsList resultScreen) {
+	public static void findStops(final Route route) {
+		final StopsListScreen stopsScreen = new StopsListScreen();
+		ScreenStack.push(stopsScreen);
 		new Thread() {
 			public void run() {
 				String request = RequestGenerator.getRequestForSearchStopsByRoute();
@@ -240,14 +272,16 @@ public class Controller {
 				String responseDirect = HttpClient.sendPost(urlDirect, request);
 				Vector stopsDirect = ResponseParser.parseStopsByRoute(responseDirect, route.getTransportType());
 				for (Enumeration e = stopsDirect.elements(); e.hasMoreElements(); ) {
-					resultScreen.addStop((Stop) e.nextElement(), true);
+					stopsScreen.addStop((Stop) e.nextElement(), true);
 				}
 
 				String urlReturn = RequestGenerator.getUrlForReturnStops(route);
 				String responseReturn = HttpClient.sendPost(urlReturn, request);
 				Vector stopsReturn = ResponseParser.parseStopsByRoute(responseReturn, route.getTransportType());
 				for (Enumeration e = stopsReturn.elements(); e.hasMoreElements(); ) {
-					resultScreen.addStop((Stop) e.nextElement(), false);
+					Stop stop = (Stop) e.nextElement();
+					addStop(stop);
+					stopsScreen.addStop(stop, false);
 				}
 			}
 		}.start();

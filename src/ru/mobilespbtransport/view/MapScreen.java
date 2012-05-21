@@ -30,7 +30,8 @@ public class MapScreen extends GameCanvas implements CommandListener {
 	private final Command exitCommand = new Command("Выход", Command.EXIT, 5);
 
 	private final static String LOADING = "Загрузка...";
-	private final static int CURSOR_DELTA = 4;
+
+	private final static int CURSOR_DELTA = 5;
 	private final static int CROSS_SISE = 10;
 	private final static int STOP_RADIUS = 6;
 	private final static int SELECTED_STOP_RADIUS = 10;
@@ -258,7 +259,7 @@ public class MapScreen extends GameCanvas implements CommandListener {
 			update();
 		} else if (command == viewFavouritesCommand) {
 			Controller.zoomOut();
-			ScreenStack.push(Controller.getFavouritesList());
+			ScreenStack.push(Controller.getFavouritesScreen());
 		} else if (command == addToFavourites) {
 			ScreenStack.push(new AddToFavouritesScreen(Controller.getCurrentPlace()));
 		} else if (command == exitCommand) {
