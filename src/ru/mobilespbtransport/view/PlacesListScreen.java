@@ -15,11 +15,11 @@ import java.util.Vector;
  * Time: 0:55
  * To change this template use File | SettingsScreen | File Templates.
  */
-public class PlacesListScreen extends List implements CommandListener{
+public class PlacesListScreen extends List implements CommandListener {
 	private final Command backCommand = new Command("Назад", Command.CANCEL, 2);
 	private Vector places;
 	private boolean isLoaded = false;
-	
+
 	public PlacesListScreen() {
 		this(new Vector());
 	}
@@ -36,13 +36,13 @@ public class PlacesListScreen extends List implements CommandListener{
 			//ignoring
 		}
 	}
-	
-	public void setPlaces(Vector places){
-		while(size() > 0){
+
+	public void setPlaces(Vector places) {
+		while (size() > 0) {
 			delete(0);
 		}
 		this.places = places;
-		if(places == null){
+		if (places == null) {
 			return;
 		}
 		isLoaded = true;
@@ -53,17 +53,20 @@ public class PlacesListScreen extends List implements CommandListener{
 			//TODO
 			e.printStackTrace();
 		}
-		for(int i = 0; i<places.size(); i++){
-			Place c = (Place)places.elementAt(i);
+		for (int i = 0; i < places.size(); i++) {
+			Place c = (Place) places.elementAt(i);
 			append(c.getName(), placeIco);
 		}
-	} 
+	}
 
 	public void commandAction(Command command, Displayable displayable) {
-		if(command == List.SELECT_COMMAND && isLoaded){
+		if (command == List.SELECT_COMMAND && isLoaded) {
+			if (getSelectedIndex() < 0) {
+				return;
+			}
 			Controller.setCurrentPlace((Place) places.elementAt(getSelectedIndex()));
 			ScreenStack.push(Controller.getMapScreen());
-		} else if (command == backCommand){
+		} else if (command == backCommand) {
 			ScreenStack.pop();
 		}
 	}

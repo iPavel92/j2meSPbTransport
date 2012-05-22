@@ -5,6 +5,8 @@ import ru.mobilespbtransport.model.*;
 
 import javax.microedition.lcdui.*;
 import javax.microedition.lcdui.game.GameCanvas;
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  * Created by IntelliJ IDEA.
@@ -23,6 +25,7 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 	private final Command exitCommand = new Command("Выход", Command.EXIT, 6);
 
 	private final Stop stop;
+	private Vector routes = new Vector();
 	private final Image arrivingImage;
 	private int selectedIndex = 0;
 
@@ -32,6 +35,7 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 		super(false);
 		setFullScreenMode(true);
 		this.stop = stop;
+		updateRoutes();
 		arrivingImage = stop.getTransportType().getArrivingImage();
 		addCommand(viewPlacesCommand);
 		addCommand(addToFavourites);
@@ -44,6 +48,11 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 
 	public Stop getStop() {
 		return stop;
+	}
+
+	public void updateRoutes(){
+		routes = Controller.getRoutes(stop);
+		repaint();
 	}
 
 	public void paint(Graphics graphics) {
@@ -81,7 +90,7 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 		final int ARRIVING_X_COL3 = ARRIVING_X_COL2 + ELEMENTS_PADDING + 50;
 		final int ARRIVING_Y = 5 * ELEMENTS_PADDING + FONT_HEIGHT + arrivingImage.getHeight();
 
-		if (stop.getRoutes() == null) {
+		if (routes == null) {
 			graphics.drawString("Загрузка...", getWidth() / 2, getHeight() / 2, Graphics.HCENTER | Graphics.TOP);
 			return;
 		} else {
@@ -95,8 +104,8 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 		graphics.drawLine(ARRIVING_X_COL3, ARRIVING_Y + ELEMENTS_PADDING, ARRIVING_X_COL3, getHeight() - ELEMENTS_PADDING);
 
 		int yIndex = 0;
-		for (int i = selectedIndex; i < stop.getRoutes().size(); ++i, yIndex++) {
-			Route route = (Route) stop.getRoutes().elementAt(i);
+		for (int i = selectedIndex; i < routes.size(); ++i, yIndex++) {
+			Route route = (Route) routes.elementAt(i);
 			Arriving arriving = stop.getArriving(route);
 
 			String routeNumber = route.getRouteNumber();
@@ -118,7 +127,7 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 			graphics.drawLine(getWidth() - 10, ARRIVING_Y + 4, getWidth() - 15, ARRIVING_Y + 9);
 			graphics.drawLine(getWidth() - 10, ARRIVING_Y + 4, getWidth() - 5, ARRIVING_Y + 9);
 		}
-		if (selectedIndex < stop.getRoutes().size()) {
+		if (selectedIndex < routes.size()) {
 			graphics.drawLine(getWidth() - 10, getHeight() - 5, getWidth() - 15, getHeight() - 10);
 			graphics.drawLine(getWidth() - 10, getHeight() - 5, getWidth() - 5, getHeight() - 10);
 			graphics.drawLine(getWidth() - 10, getHeight() - 4, getWidth() - 15, getHeight() - 9);
@@ -129,6 +138,7 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 	protected void keyPressed(int keyCode) {
 		if (keyCode == KEY_NUM5) {
 			Controller.updateArrivingScreen(stop, this);
+			return;
 		}
 		int gameAction = getGameAction(keyCode);
 		switch (gameAction) {
@@ -139,8 +149,8 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 				slideDown();
 				break;
 			case FIRE:
-				if (stop.getRoutes() != null) {
-					Controller.findStops((Route) stop.getRoutes().elementAt(selectedIndex));
+				if (routes != null) {
+					Controller.findStops(Controller.getRoute(((Route) routes.elementAt(selectedIndex)).getId()));
 				}
 				break;
 		}
@@ -166,7 +176,7 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 	}
 
 	private void slideDown() {
-		if (selectedIndex < stop.getRoutes().size() - 1) {
+		if (selectedIndex < routes.size() - 1) {
 			selectedIndex++;
 			repaint();
 		}
@@ -188,8 +198,8 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 			Place place = new Place(stop.getName(), stop.getCoordinate());
 			Controller.setCurrentPlace(place);
 			ScreenStack.push(Controller.getMapScreen());
-		} else if (command == showRoute && stop.getRoutes() != null) {
-			Controller.findStops((Route) stop.getRoutes().elementAt(selectedIndex));
+		} else if (command == showRoute && routes != null) {
+			Controller.findStops(Controller.getRoute(((Route) routes.elementAt(selectedIndex)).getId()));
 		}
 	}
 }

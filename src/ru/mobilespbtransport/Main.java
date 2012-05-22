@@ -22,11 +22,13 @@ public class Main extends MIDlet {
 	}
 
 	public void startApp() {
-		Model model = Cache.loadModel();
-		Controller.setModel(model);
 		Controller.setMain(this);
 		Controller.setMapScreen(mapCanvas);
 		Controller.setFavouritesScreen(favouritesList);
+
+		Cache.loadModel();
+		Cache.loadStops();
+		Cache.loadRoutes();
 
 		updater.start();
 

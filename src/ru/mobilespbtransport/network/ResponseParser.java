@@ -4,6 +4,7 @@ import org.json.me.JSONArray;
 import org.json.me.JSONException;
 import org.json.me.JSONObject;
 import org.json.me.JSONTokener;
+import ru.mobilespbtransport.controller.Controller;
 import ru.mobilespbtransport.model.*;
 
 import java.util.Enumeration;
@@ -94,22 +95,27 @@ public class ResponseParser {
 			for (int i = 0; i < aaData.length(); i++) {
 				JSONArray record = aaData.getJSONArray(i);
 
-				int id = record.getInt(0);
+				int stopId = record.getInt(0);
 				String name = record.getString(1);
-				Vector routes = new Vector(); //Vector<Route>
+
+				JSONObject coordinates = record.getJSONObject(5);
+				double lat = coordinates.getDouble("lat");
+				double lon = coordinates.getDouble("lon");
+
+				Stop stop = new Stop(name, new Coordinate(lat, lon, Coordinate.EPSG).toWGS84(), transportType, stopId);
+
+				//parsing inner routes for arriving screen
 				JSONArray routesJson = record.getJSONArray(4);
 				for (int j = 0; j < routesJson.length(); j++) {
 					JSONObject routeJson = routesJson.getJSONObject(j);
 					int routeId = routeJson.getInt("id");
 					String routeNumber = routeJson.getString("routeNumber");
 					Route route = new Route(transportType, routeNumber, routeId);
-					routes.addElement(route);
+
+					Controller.addRoute(route);//adding inner route
+					stop.addRouteId(routeId);//linking stop with inner routes
 				}
-				JSONObject coordinates = record.getJSONObject(5);
-				double lat = coordinates.getDouble("lat");
-				double lon = coordinates.getDouble("lon");
-				Stop stop = new Stop(name, new Coordinate(lat, lon, Coordinate.EPSG).toWGS84(), transportType, id);
-				stop.setRoutes(routes);
+
 				result.addElement(stop);
 			}
 			return result;
@@ -135,7 +141,7 @@ public class ResponseParser {
 
 				Route route = null;
 				for (Enumeration e = routes.elements(); e.hasMoreElements(); ) {
-					Route item = (Route) e.nextElement();
+					Route item = Controller.getRoute(((Integer) e.nextElement()).intValue());
 					if (item.getRouteNumber().equals(routeNumber)) {
 						route = item;
 						break;
@@ -162,27 +168,30 @@ public class ResponseParser {
 			for (int i = 0; i < aaData.length(); i++) {
 				JSONArray record = aaData.getJSONArray(i);
 
-				int id = record.getInt(0);
+				int stopId = record.getInt(0);
 				JSONObject transportTypeJson = record.getJSONObject(1);
 				TransportType transportType = getTransportTypeFromJson(transportTypeJson);
 				String name = record.getString(2);
 
-				Vector routes = new Vector(); //Vector<Route>
+				JSONObject coordinates = record.getJSONObject(6);
+				double lat = coordinates.getDouble("lat");
+				double lon = coordinates.getDouble("lon");
+
+				Stop stop = new Stop(name, new Coordinate(lat, lon, Coordinate.EPSG).toWGS84(), transportType, stopId);
+
+				//parsing inner routes for arriving screen
 				JSONArray routesJson = record.getJSONArray(5);
 				for (int j = 0; j < routesJson.length(); j++) {
 					JSONObject routeJson = routesJson.getJSONObject(j);
 					int routeId = routeJson.getInt("id");
 					String routeNumber = routeJson.getString("routeNumber");
 					Route route = new Route(transportType, routeNumber, routeId);
-					routes.addElement(route);
+					route.addStopId(stopId);
+
+					Controller.addRoute(route);//adding inner route
+					stop.addRouteId(routeId);//linking stop with inner routes
 				}
 
-				JSONObject coordinates = record.getJSONObject(6);
-				double lat = coordinates.getDouble("lat");
-				double lon = coordinates.getDouble("lon");
-
-				Stop stop = new Stop(name, new Coordinate(lat, lon, Coordinate.EPSG).toWGS84(), transportType, id);
-				stop.setRoutes(routes);
 				result.addElement(stop);
 			}
 			return result;

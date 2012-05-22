@@ -137,19 +137,19 @@ public class MapScreen extends GameCanvas implements CommandListener {
 		switch (keyCode) {
 			case KEY_NUM2:
 				Controller.moveMapUp();
-				break;
+				return;
 			case KEY_NUM4:
 				Controller.moveMapLeft();
-				break;
+				return;
 			case KEY_NUM8:
 				Controller.moveMapDown();
-				break;
+				return;
 			case KEY_NUM6:
 				Controller.moveMapRight();
-				break;
+				return;
 			case KEY_NUM5:
 				update();
-				break;
+				return;
 		}
 		int gameAction = getGameAction(keyCode);
 		switch (gameAction) {

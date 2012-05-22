@@ -68,11 +68,15 @@ public class FavouritesScreen extends List implements CommandListener {
 
 	public void commandAction(Command command, Displayable displayable) {
 		if (command == List.SELECT_COMMAND) {
+			if(getSelectedIndex() < 0){
+				return;
+			}
 			Object obj = favourites.elementAt(getSelectedIndex());
 			if (obj instanceof Stop) {
 				Stop stop = (Stop) obj;
-				//TODO
-				ScreenStack.push(new ArrivingScreen(stop));
+				ArrivingScreen arrivingScreen = new ArrivingScreen(stop);
+				ScreenStack.push(arrivingScreen);
+				Controller.updateArrivingScreen(stop, arrivingScreen);
 			} else if (obj instanceof Place) {
 				Controller.setCurrentPlace((Place) obj);
 				ScreenStack.push(Controller.getMapScreen());

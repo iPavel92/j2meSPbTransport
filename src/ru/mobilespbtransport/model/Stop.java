@@ -13,25 +13,46 @@ import java.util.Vector;
 public class Stop extends Place{
 	private final TransportType transportType;
 	private final int id;
-	private Vector routes = new Vector();
+	private Vector routesId = new Vector(); //Vector<Int(id)>
 	private Vector arriving = new Vector();
+	private boolean isDirect;
 
-	public Stop(String name, Coordinate coordinate, TransportType transportType, int id) {
+	public Stop(String name, Coordinate coordinate, TransportType transportType, int id, boolean direct) {
 		super(name, coordinate);
 		this.transportType = transportType;
 		this.id = id;
+		isDirect = direct;
+	}
+
+	public Stop(String name, Coordinate coordinate, TransportType transportType, int id) {
+		this(name, coordinate, transportType, id, false);
+	}
+
+	public void addRouteId(int routeId){
+		Integer id = new Integer(routeId);
+		if(!routesId.contains(id)){
+			routesId.addElement(id);
+		}
+	}
+
+	public void setDirect(boolean direct) {
+		isDirect = direct;
+	}
+
+	public boolean isDirect() {
+		return isDirect;
 	}
 
 	public TransportType getTransportType() {
 		return transportType;
 	}
 
-	public Vector getRoutes() {
-		return routes;
+	public Vector getRoutesId() {
+		return routesId;
 	}
 
-	public void setRoutes(Vector routes) {
-		this.routes = routes;
+	public void setRoutesId(Vector routesId) {
+		this.routesId = routesId;
 	}
 
 	public void setArriving(Vector arriving) {
@@ -68,5 +89,13 @@ public class Stop extends Place{
 		int result = super.hashCode();
 		result = 31 * result + id;
 		return result;
+	}
+
+	public String toString() {
+		return "Stop{" +
+				"transportType=" + transportType +
+				", id=" + id +
+				", isDirect=" + isDirect +
+				'}';
 	}
 }

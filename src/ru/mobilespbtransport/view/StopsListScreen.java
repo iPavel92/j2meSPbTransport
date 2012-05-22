@@ -46,43 +46,41 @@ public class StopsListScreen extends List implements CommandListener{
 		while(size() > 0){
 			delete(0);
 		}
+		isLoaded = true;
 		this.stops = stops;
 		if(stops == null){
 			return;
 		}
 		for(int i = 0; i<stops.size(); i++){
 			Stop stop = (Stop)stops.elementAt(i);
-			addStop(stop, true);
+			Image image = null;
+			try {
+				if(stop.isDirect()){
+					image = Image.createImage("/direct.png");
+				} else {
+					image = Image.createImage("/return.png");
+				}
+			} catch (IOException e) {
+				//TODO
+				e.printStackTrace();
+			}
+			append(stop.getName(), image);
 		}
 	} 
-	
-	public void addStop(Stop stop, boolean isDirect){
-		if(!isLoaded){
-			delete(0);
-			isLoaded = true;
-		}
-		stops.addElement(stop);
-		Image image = null;
-		try {
-			if(isDirect){
-				image = Image.createImage("/direct.png");
-			} else {
-				image = Image.createImage("/return.png");
-			}
-		} catch (IOException e) {
-			//TODO
-			e.printStackTrace();
-		}
-		append(stop.getName(), image);
-	}
 
 	public void commandAction(Command command, Displayable displayable) {
 		if(command == List.SELECT_COMMAND && isLoaded){
+			if(getSelectedIndex() < 0){
+				return;
+			}
 			Stop stop = (Stop) stops.elementAt(getSelectedIndex());
 			ArrivingScreen arrivingScreen = new ArrivingScreen(stop);
 			ScreenStack.push(arrivingScreen);
 			Controller.updateArrivingScreen(stop, arrivingScreen);
-		} else if(command == showOnMap){
+		} else if(command == showOnMap && isLoaded){
+			if(getSelectedIndex() < 0){
+				return;
+			}
 			Stop stop = (Stop) stops.elementAt(getSelectedIndex());
 			Place place = new Place(stop.getName(), stop.getCoordinate());
 			Controller.setCurrentPlace(place);

@@ -2,7 +2,10 @@ package ru.mobilespbtransport.view;
 
 
 
+import ru.mobilespbtransport.controller.Controller;
+
 import javax.microedition.lcdui.*;
+import javax.microedition.lcdui.game.GameCanvas;
 import java.util.Vector;
 
 /**
@@ -43,7 +46,11 @@ public class ScreenStack {
 		if (display == null) {
 			throw new IllegalStateException("Display not setted.");
 		}
-		display.setCurrent(peek());
+		Displayable displayable = peek();
+		display.setCurrent(displayable);
+		if(displayable instanceof GameCanvas){
+			((GameCanvas)displayable).setFullScreenMode(true);
+		}
 	}
 
 	//deleting duplicating and heavy for memory screens from stack
@@ -51,6 +58,7 @@ public class ScreenStack {
 		for(int i = 0; i < screens.size(); ++i){
 			if(displayable instanceof MapScreen && screens.elementAt(i) instanceof MapScreen){
 				screens.removeElementAt(i);
+				Controller.zoomOut();
 				return;
 			}
 			if(displayable instanceof ArrivingScreen && screens.elementAt(i) instanceof ArrivingScreen){
@@ -61,6 +69,9 @@ public class ScreenStack {
 				screens.removeElementAt(i);
 				return;
 			}
+		}
+		if(displayable instanceof GameCanvas){
+			((GameCanvas)displayable).setFullScreenMode(true);
 		}
 	}
 	

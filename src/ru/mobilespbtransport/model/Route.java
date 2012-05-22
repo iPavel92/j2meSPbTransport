@@ -1,5 +1,7 @@
 package ru.mobilespbtransport.model;
 
+import java.util.Vector;
+
 /**
  * Created by IntelliJ IDEA.
  * User: Павел
@@ -11,6 +13,8 @@ public class Route {
 	private final TransportType transportType;
 	private final String routeNumber;
 	private final int id;
+	private Vector stopsId = new Vector(); //Vector<Int(id)>
+	private boolean isStopsLoaded = false;
 
 	public Route(TransportType transportType, String routeNumber, int id) {
 		this.transportType = transportType;
@@ -18,12 +22,31 @@ public class Route {
 		this.id = id;
 	}
 
+	public void addStopId(int stopId){
+		Integer id = new Integer(stopId);
+		if(!stopsId.contains(id)){
+			stopsId.addElement(id);
+		}
+	}
+	
 	public TransportType getTransportType() {
 		return transportType;
 	}
 
+	public boolean isStopsLoaded() {
+		return isStopsLoaded;
+	}
+
+	public void setStopsLoaded(boolean stopsLoaded) {
+		isStopsLoaded = stopsLoaded;
+	}
+
 	public String getRouteNumber() {
 		return routeNumber;
+	}
+
+	public Vector getStopsId() {
+		return stopsId;
 	}
 
 	public int getId() {
@@ -43,5 +66,14 @@ public class Route {
 
 	public int hashCode() {
 		return id;
+	}
+
+	public String toString() {
+		return "Route{" +
+				"transportType=" + transportType +
+				", routeNumber='" + routeNumber + '\'' +
+				", id=" + id +
+				", isStopsLoaded=" + isStopsLoaded +
+				'}';
 	}
 }

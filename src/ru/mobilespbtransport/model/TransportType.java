@@ -71,4 +71,10 @@ public class TransportType {
 		}
 		return 0x000000;
 	}
+
+	public String toString() {
+		return "TransportType{" +
+				"type=" + (type == BUS ? "bus" : (type == TROLLEY ? "trolley" : "tram"))+
+				'}';
+	}
 }

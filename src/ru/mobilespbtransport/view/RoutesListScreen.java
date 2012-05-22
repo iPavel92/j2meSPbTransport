@@ -55,7 +55,10 @@ public class RoutesListScreen extends List implements CommandListener{
 
 	public void commandAction(Command command, Displayable displayable) {
 		if(command == List.SELECT_COMMAND && isLoaded){
-			Controller.findStops((Route) routes.elementAt(getSelectedIndex()));
+			if(getSelectedIndex() < 0){
+				return;
+			}
+			Controller.findStops(Controller.getRoute(((Route) routes.elementAt(getSelectedIndex())).getId()));
 		} else if (command == backCommand){
 			ScreenStack.pop();
 		}

@@ -23,7 +23,7 @@ import java.util.Vector;
  */
 public class Controller {
 	private static Main main; //for destroy app
-	private static Model model;
+	private static Model model = new Model();
 	private static MapScreen mapScreen;
 	private static FavouritesScreen favouritesScreen;
 
@@ -58,41 +58,41 @@ public class Controller {
 		favouritesScreen.update();
 	}
 
-	public static void addStop(Stop stop){
+	public static void addStop(Stop stop) {
 		Integer key = new Integer(stop.getId());
-		if(!model.getStops().containsKey(key)){
+		if (!model.getStops().containsKey(key)) {
 			model.getStops().put(key, stop);
 		}
 	}
 
-	public static void addRoute(Route route){
+	public static void addRoute(Route route) {
 		Integer key = new Integer(route.getId());
-		if(!model.getRoutes().containsKey(key)){
+		if (!model.getRoutes().containsKey(key)) {
 			model.getRoutes().put(key, route);
 		}
 	}
 
-	public static Route getRoute(int id){
+	public static Route getRoute(int id) {
 		Integer key = new Integer(id);
-		return (Route)model.getRoutes().get(key);
+		return (Route) model.getRoutes().get(key);
 	}
 
-	public static Stop getStop(int id){
+	public static Stop getStop(int id) {
 		Integer key = new Integer(id);
-		return (Stop)model.getStops().get(key);
+		return (Stop) model.getStops().get(key);
 	}
 
 	public static void setLayers(boolean showBus, boolean showTrolley, boolean showTram) {
 		model.setShowBus(showBus);
 		model.setShowTrolley(showTrolley);
 		model.setShowTram(showTram);
-		Cache.saveModel(model);
+		Cache.saveModel();
 		loadTransportLayer();
 	}
 
 	public static void setAutoUpdate(boolean isAutoUpdate) {
 		model.setUseAutoUpdate(isAutoUpdate);
-		Cache.saveModel(model);
+		Cache.saveModel();
 	}
 
 	public static void setCurrentPlace(Place place) {
@@ -113,26 +113,26 @@ public class Controller {
 		if (!model.getFavourites().contains(place)) {
 			model.getFavourites().addElement(place);
 			favouritesScreen.update();
-			Cache.saveModel(model);
+			Cache.saveModel();
 		}
 	}
 
 	public static void removeFavourite(Place place) {
 		model.getFavourites().removeElement(place);
 		favouritesScreen.update();
-		Cache.saveModel(model);
+		Cache.saveModel();
 	}
 
 	public static void loadMap() {
 		new Thread() {
 			public void run() {
-					if (model.getCurrentPlace() == null) {
-						return;
-					}
-					String url = RequestGenerator.getMapUrl(model.getCurrentPlace(), mapScreen.getWidth(), mapScreen.getHeight(), zoom);
-					Image map = getMapImage(model.getCurrentPlace(), url, zoom);
-					mapScreen.setMap(map);
-					mapScreen.repaint();
+				if (model.getCurrentPlace() == null) {
+					return;
+				}
+				String url = RequestGenerator.getMapUrl(model.getCurrentPlace(), mapScreen.getWidth(), mapScreen.getHeight(), zoom);
+				Image map = getMapImage(model.getCurrentPlace(), url, zoom);
+				mapScreen.setMap(map);
+				mapScreen.repaint();
 			}
 		}.start();
 	}
@@ -164,6 +164,11 @@ public class Controller {
 				String request = RequestGenerator.getRequestForStopsOnMap(bBox);
 				String response = HttpClient.sendPost(url, request);
 				Vector stops = ResponseParser.parseStopsToMap(response);
+				for (Enumeration e = stops.elements(); e.hasMoreElements(); ) {
+					addStop((Stop) e.nextElement()); //to cached stops
+				}
+				Cache.saveStops();
+				Cache.saveRoutes();
 				mapScreen.setStops(stops);
 				mapScreen.repaint();
 			}
@@ -240,6 +245,7 @@ public class Controller {
 					addRoute(route);
 				}
 				routesList.setRoutes(routes);
+				//Cache.saveRoutes();
 			}
 		}.start();
 	}
@@ -261,28 +267,63 @@ public class Controller {
 		}.start();
 	}
 
+	public static Vector getRoutes(final Stop stop) {
+		Vector routes = new Vector();
+		for (Enumeration e = stop.getRoutesId().elements(); e.hasMoreElements(); ) {
+			Integer routeId = (Integer) e.nextElement();
+			routes.addElement(Controller.getRoute(routeId.intValue()));
+		}
+		return routes;
+	}
+
 	public static void findStops(final Route route) {
 		final StopsListScreen stopsScreen = new StopsListScreen();
 		ScreenStack.push(stopsScreen);
 		new Thread() {
 			public void run() {
-				String request = RequestGenerator.getRequestForSearchStopsByRoute();
+				Vector stops = new Vector();
+				if (route.isStopsLoaded()) {
+					//found in cache
+					stops = new Vector(route.getStopsId().size());
+					for (Enumeration e = route.getStopsId().elements(); e.hasMoreElements(); ) {
+						Integer stopId = (Integer) e.nextElement();
+						stops.addElement(getStop(stopId.intValue()));
+					}
+				} else {
+					//no found in cache
+					//loading from inet
+					String request = RequestGenerator.getRequestForSearchStopsByRoute();
 
-				String urlDirect = RequestGenerator.getUrlForDirectStops(route);
-				String responseDirect = HttpClient.sendPost(urlDirect, request);
-				Vector stopsDirect = ResponseParser.parseStopsByRoute(responseDirect, route.getTransportType());
-				for (Enumeration e = stopsDirect.elements(); e.hasMoreElements(); ) {
-					stopsScreen.addStop((Stop) e.nextElement(), true);
-				}
+					String urlDirect = RequestGenerator.getUrlForDirectStops(route);
+					String responseDirect = HttpClient.sendPost(urlDirect, request);
+					Vector stopsDirect = ResponseParser.parseStopsByRoute(responseDirect, route.getTransportType());
+					for (Enumeration e = stopsDirect.elements(); e.hasMoreElements(); ) {
+						Stop stop = (Stop) e.nextElement();
+						stop.setDirect(true);
+						stops.addElement(stop); //to result
 
-				String urlReturn = RequestGenerator.getUrlForReturnStops(route);
-				String responseReturn = HttpClient.sendPost(urlReturn, request);
-				Vector stopsReturn = ResponseParser.parseStopsByRoute(responseReturn, route.getTransportType());
-				for (Enumeration e = stopsReturn.elements(); e.hasMoreElements(); ) {
-					Stop stop = (Stop) e.nextElement();
-					addStop(stop);
-					stopsScreen.addStop(stop, false);
+						addStop(stop); //to cached stops
+						route.addStopId(stop.getId()); //lining stops and routes
+						stop.addRouteId(route.getId());
+					}
+
+					String urlReturn = RequestGenerator.getUrlForReturnStops(route);
+					String responseReturn = HttpClient.sendPost(urlReturn, request);
+					Vector stopsReturn = ResponseParser.parseStopsByRoute(responseReturn, route.getTransportType());
+					for (Enumeration e = stopsReturn.elements(); e.hasMoreElements(); ) {
+						Stop stop = (Stop) e.nextElement();
+						stop.setDirect(false);
+						stops.addElement(stop); //to result
+
+						addStop(stop); //to cached stops
+						route.addStopId(stop.getId()); //lining stops and routes
+						stop.addRouteId(route.getId());
+					}
+					route.setStopsLoaded(true);
+					Cache.saveStops();
+					Cache.saveRoutes();
 				}
+				stopsScreen.setStops(stops);
 			}
 		}.start();
 	}
@@ -294,11 +335,11 @@ public class Controller {
 				String request = RequestGenerator.getRequestForArriving();
 
 				String response = HttpClient.sendPost(url, request);
-				Vector arriving = ResponseParser.parseArriving(response, stop.getRoutes());
+				Vector arriving = ResponseParser.parseArriving(response, stop.getRoutesId());
 
 				stop.setArriving(arriving);
 
-				arrivingScreen.repaint();
+				arrivingScreen.updateRoutes();
 			}
 		}.start();
 	}
