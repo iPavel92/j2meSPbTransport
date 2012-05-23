@@ -16,7 +16,7 @@ public class Model {
 	private boolean showTrolley = true;
 	private boolean showTram = true;
 	private boolean useAutoUpdate = false;
-	private Vector favourites = new Vector(); //Vector<Place, Stop>
+	private Vector favourites = new Vector(); //Vector<Favourite>
 	private Hashtable stops = new Hashtable(); //Hashtable<Int(id)->Stop>
 	private Hashtable routes = new Hashtable(); //Hashtable<Int(id)->Route>
 

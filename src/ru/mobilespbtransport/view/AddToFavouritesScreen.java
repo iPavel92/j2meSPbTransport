@@ -1,6 +1,7 @@
 package ru.mobilespbtransport.view;
 
 import ru.mobilespbtransport.controller.Controller;
+import ru.mobilespbtransport.model.Favourite;
 import ru.mobilespbtransport.model.Place;
 import ru.mobilespbtransport.model.Stop;
 
@@ -17,12 +18,12 @@ public class AddToFavouritesScreen extends Form implements CommandListener {
 	private TextField placeName;
 	private Command ok = new Command("Добавить", Command.OK, 1);
 	private Command cancel = new Command("Назад", Command.CANCEL, 2);
-	private final Place place;
+	private final Favourite favourite;
 
-	public AddToFavouritesScreen(Place place) {
+	public AddToFavouritesScreen(Favourite favourite) {
 		super("Добавить в закладки");
-		this.place = place;
-		placeName = new TextField("Название:", place.getName(), 200, TextField.ANY);
+		this.favourite = favourite;
+		placeName = new TextField("Название:", favourite.getName(), 200, TextField.ANY);
 		append(placeName);
 		addCommand(ok);
 		addCommand(cancel);
@@ -31,11 +32,7 @@ public class AddToFavouritesScreen extends Form implements CommandListener {
 
 	public void commandAction(Command command, Displayable displayable) {
 		if (command == ok) {
-			Place placeToAdd = place;
-			if(!(place instanceof Stop)){
-				placeToAdd = new Place(placeName.getString(), place.getCoordinate());
-			}
-			Controller.addFavourite(placeToAdd);
+			Controller.addFavourite(favourite);
 			ScreenStack.pop();
 		} else if (command == cancel) {
 			ScreenStack.pop();

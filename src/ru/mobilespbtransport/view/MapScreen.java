@@ -30,12 +30,15 @@ public class MapScreen extends GameCanvas implements CommandListener {
 	private final Command exitCommand = new Command("Выход", Command.EXIT, 5);
 
 	private final static String LOADING = "Загрузка...";
+	private final static String LOCKED = "* для разблокировки";
 
 	private final static int CURSOR_DELTA = 5;
-	private final static int CROSS_SISE = 10;
 	private final static int STOP_RADIUS = 6;
 	private final static int SELECTED_STOP_RADIUS = 10;
-	private final static int MAX_RADIUS_TO_SELECT_STOP = 15;
+	private final static int MAX_RADIUS_TO_SELECT_STOP = 30;
+	Vector selectedStops;
+	int[] stopsX;
+	int[] stopsY;
 
 	private Stop selectedStop = null;
 	private int cursorX;
@@ -45,6 +48,9 @@ public class MapScreen extends GameCanvas implements CommandListener {
 	private static final long MAX_DOUBLECLICK_TIME = 600;
 
 	private final static int TOUCH_BORDER_TO_SLIDE = 50;
+
+	private boolean isLocked = false;
+
 
 	public MapScreen() {
 		super(false);
@@ -62,6 +68,47 @@ public class MapScreen extends GameCanvas implements CommandListener {
 
 	public void setStops(Vector stops) {
 		this.stops = stops;
+		calculateStopsCoordinates();
+	}
+
+	public boolean isLocked() {
+		return isLocked;
+	}
+	
+	private void calculateStopsCoordinates(){
+		stopsX = new int[stops.size()];
+		stopsY = new int[stops.size()];
+		int i = 0;
+		
+		for (Enumeration e = stops.elements(); e.hasMoreElements(); i++) {
+			Stop stop = (Stop) e.nextElement();
+
+			stopsX[i] = GeoConverter.getXPixelFromCoordinate(Controller.getCurrentPlace().getCoordinate(),
+					stop.getCoordinate(),
+					getWidth(),
+					Controller.getZoom());
+			stopsY[i] = GeoConverter.getYPixelFromCoordinate(Controller.getCurrentPlace().getCoordinate(),
+					stop.getCoordinate(),
+					getHeight(),
+					Controller.getZoom());
+			
+		}
+	}
+
+	private void calculateSelectedStops(){
+		if(!Controller.isZoomedIn()){
+			return;
+		}
+		selectedStops = new Vector();
+		int i = 0;
+		for (Enumeration e = stops.elements(); e.hasMoreElements(); i++) {
+			Stop stop = (Stop) e.nextElement();
+			int difX = cursorX - stopsX[i];
+			int difY = cursorY - stopsY[i];
+			if (Math.sqrt(difX * difX + difY * difY) < MAX_RADIUS_TO_SELECT_STOP && selectedStop == null) {
+				selectedStops.addElement(stop);
+			}
+		}
 	}
 
 	public void paint(Graphics graphics) {
@@ -69,39 +116,36 @@ public class MapScreen extends GameCanvas implements CommandListener {
 		graphics.fillRect(0, 0, getWidth(), getHeight());
 
 		graphics.setColor(0x000000);
-		graphics.drawString(LOADING, getWidth(), getHeight(), Graphics.HCENTER | Graphics.TOP);
 
-		if (map != null) {
-			graphics.drawImage(map, 0, 0, Graphics.TOP | Graphics.LEFT);
+		if (isLocked) {
+			graphics.drawString(LOCKED, getWidth() / 2, getHeight() / 2, Graphics.HCENTER | Graphics.TOP);
+			return;
 		}
+
+		graphics.drawString(LOADING, getWidth() / 2, getHeight() / 2, Graphics.HCENTER | Graphics.TOP);
+
+		if (map == null) {
+			return;
+		}
+
+		graphics.drawImage(map, 0, 0, Graphics.TOP | Graphics.LEFT);
 
 		if (Controller.isZoomedIn()) {
 			if (stops != null) {
-				selectedStop = null; //yes, logic in paint o_O get mad!!!
-				for (Enumeration e = stops.elements(); e.hasMoreElements(); ) {
+				int i = 0;
+				for (Enumeration e = stops.elements(); e.hasMoreElements(); i++) {
 					Stop stop = (Stop) e.nextElement();
 
-					//pixel coordinates
-					final int stopX = GeoConverter.getXPixelFromCoordinate(Controller.getCurrentPlace().getCoordinate(),
-							stop.getCoordinate(),
-							getWidth(),
-							Controller.getZoom());
-					final int stopY = GeoConverter.getYPixelFromCoordinate(Controller.getCurrentPlace().getCoordinate(),
-							stop.getCoordinate(),
-							getHeight(),
-							Controller.getZoom());
+					int stopX = stopsX[i];
+					int stopY = stopsY[i];
 
 					//selection
-					int difX = cursorX - stopX;
-					int difY = cursorY - stopY;
-					if (Math.sqrt(difX * difX + difY * difY) < MAX_RADIUS_TO_SELECT_STOP && selectedStop == null) {
-						selectedStop = stop;
-						graphics.setColor(0x000000);
+					graphics.setColor(0x000000);
+					if(selectedStops != null && selectedStops.contains(stop)){
 						graphics.fillArc(stopX - SELECTED_STOP_RADIUS, stopY - SELECTED_STOP_RADIUS, 2 * SELECTED_STOP_RADIUS, 2 * SELECTED_STOP_RADIUS, 0, 360);
 					}
 
 					//border
-					graphics.setColor(0x000000);
 					graphics.fillArc(stopX - STOP_RADIUS - 1, stopY - STOP_RADIUS - 1, 2 * STOP_RADIUS + 2, 2 * STOP_RADIUS + 2, 0, 360);
 
 					//filling
@@ -111,8 +155,9 @@ public class MapScreen extends GameCanvas implements CommandListener {
 			}
 
 			graphics.setColor(0x000000);
-			graphics.drawLine(cursorX - CROSS_SISE, cursorY, cursorX + CROSS_SISE, cursorY);
-			graphics.drawLine(cursorX, cursorY - CROSS_SISE, cursorX, cursorY + CROSS_SISE);
+			/*graphics.drawLine(cursorX - CROSS_SISE, cursorY, cursorX + CROSS_SISE, cursorY);
+			graphics.drawLine(cursorX, cursorY - CROSS_SISE, cursorX, cursorY + CROSS_SISE);  */
+			graphics.drawArc(cursorX - MAX_RADIUS_TO_SELECT_STOP, cursorY - MAX_RADIUS_TO_SELECT_STOP - 26, 2*MAX_RADIUS_TO_SELECT_STOP, 2*MAX_RADIUS_TO_SELECT_STOP, 0, 360);
 		} else {
 			if (transportLayer != null) {
 				graphics.drawImage(transportLayer, 0, 0, Graphics.TOP | Graphics.LEFT);
@@ -134,6 +179,15 @@ public class MapScreen extends GameCanvas implements CommandListener {
 	}
 
 	protected void keyPressed(int keyCode) {
+		if (isLocked) {
+			if (keyCode == KEY_STAR) {
+				isLocked = false;
+				repaint();
+				return;
+			} else {
+				return;
+			}
+		}
 		switch (keyCode) {
 			case KEY_NUM2:
 				Controller.moveMapUp();
@@ -150,15 +204,20 @@ public class MapScreen extends GameCanvas implements CommandListener {
 			case KEY_NUM5:
 				update();
 				return;
+			case KEY_STAR:
+				isLocked = true;
+				repaint();
+				return;
 		}
 		int gameAction = getGameAction(keyCode);
 		switch (gameAction) {
 			case FIRE:
 				if (Controller.isZoomedIn()) {
-					if (selectedStop != null) {
-						ArrivingScreen arrivingScreen = new ArrivingScreen(selectedStop);
+					if (selectedStops.size() > 0) {
+						ArrivingScreen arrivingScreen = new ArrivingScreen(new StopsGroup(selectedStops));
 						ScreenStack.push(arrivingScreen);
 						Controller.updateArrivingScreen(selectedStop, arrivingScreen);
+						return;
 					}
 				} else {
 					Controller.zoomIn();
@@ -171,6 +230,7 @@ public class MapScreen extends GameCanvas implements CommandListener {
 					Controller.moveMapUp();
 					cursorY = getHeight();
 				}
+				calculateSelectedStops();
 				break;
 			case DOWN:
 				if (cursorY < getHeight()) {
@@ -179,6 +239,7 @@ public class MapScreen extends GameCanvas implements CommandListener {
 					Controller.moveMapDown();
 					cursorY = 0;
 				}
+				calculateSelectedStops();
 				break;
 			case LEFT:
 				if (cursorX > 0) {
@@ -187,6 +248,7 @@ public class MapScreen extends GameCanvas implements CommandListener {
 					Controller.moveMapLeft();
 					cursorX = getWidth();
 				}
+				calculateSelectedStops();
 				break;
 			case RIGHT:
 				if (cursorX < getWidth()) {
@@ -195,6 +257,7 @@ public class MapScreen extends GameCanvas implements CommandListener {
 					Controller.moveMapRight();
 					cursorX = 0;
 				}
+				calculateSelectedStops();
 				break;
 		}
 		repaint();
@@ -205,6 +268,9 @@ public class MapScreen extends GameCanvas implements CommandListener {
 	}
 
 	protected void pointerPressed(int x, int y) {
+		if (isLocked) {
+			return;
+		}
 		if (!Controller.isZoomedIn()) {
 			if (System.currentTimeMillis() - lastClickTime < MAX_DOUBLECLICK_TIME) {
 				cursorX = x;
@@ -215,14 +281,15 @@ public class MapScreen extends GameCanvas implements CommandListener {
 			}
 		} else {
 			if (System.currentTimeMillis() - lastClickTime < MAX_DOUBLECLICK_TIME) {
-				if (selectedStop != null) {
-					ArrivingScreen arrivingScreen = new ArrivingScreen(selectedStop);
+				if (selectedStops.size() > 0) {
+					ArrivingScreen arrivingScreen = new ArrivingScreen(new StopsGroup(selectedStops));
 					ScreenStack.push(arrivingScreen);
 					Controller.updateArrivingScreen(selectedStop, arrivingScreen);
 				}
 			} else {
 				cursorX = x;
 				cursorY = y;
+				calculateSelectedStops();
 				lastClickTime = System.currentTimeMillis();
 				repaint();
 			}

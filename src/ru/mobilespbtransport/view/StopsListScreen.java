@@ -3,6 +3,7 @@ package ru.mobilespbtransport.view;
 import ru.mobilespbtransport.controller.Controller;
 import ru.mobilespbtransport.model.Place;
 import ru.mobilespbtransport.model.Stop;
+import ru.mobilespbtransport.model.StopsGroup;
 
 
 import javax.microedition.lcdui.*;
@@ -74,7 +75,7 @@ public class StopsListScreen extends List implements CommandListener{
 				return;
 			}
 			Stop stop = (Stop) stops.elementAt(getSelectedIndex());
-			ArrivingScreen arrivingScreen = new ArrivingScreen(stop);
+			ArrivingScreen arrivingScreen = new ArrivingScreen(new StopsGroup(stop));
 			ScreenStack.push(arrivingScreen);
 			Controller.updateArrivingScreen(stop, arrivingScreen);
 		} else if(command == showOnMap && isLoaded){

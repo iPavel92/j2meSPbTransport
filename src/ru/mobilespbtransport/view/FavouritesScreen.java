@@ -2,7 +2,9 @@ package ru.mobilespbtransport.view;
 
 import ru.mobilespbtransport.controller.Controller;
 import ru.mobilespbtransport.model.Place;
+import ru.mobilespbtransport.model.Route;
 import ru.mobilespbtransport.model.Stop;
+import ru.mobilespbtransport.model.StopsGroup;
 
 
 import javax.microedition.lcdui.*;
@@ -21,7 +23,7 @@ public class FavouritesScreen extends List implements CommandListener {
 	private final Command deletePlaceCommand = new Command("Удалить", Command.ITEM, 1);
 	private final Command exitCommand = new Command("Выход", Command.EXIT, 2);
 
-	private Vector favourites;
+	private Vector favourites; //Vector<Favourite>
 
 	public FavouritesScreen() {
 		super("Закладки", IMPLICIT);
@@ -72,14 +74,16 @@ public class FavouritesScreen extends List implements CommandListener {
 				return;
 			}
 			Object obj = favourites.elementAt(getSelectedIndex());
-			if (obj instanceof Stop) {
-				Stop stop = (Stop) obj;
-				ArrivingScreen arrivingScreen = new ArrivingScreen(stop);
+			if (obj instanceof StopsGroup) {
+				StopsGroup stops = (StopsGroup) obj;
+				ArrivingScreen arrivingScreen = new ArrivingScreen(stops);
 				ScreenStack.push(arrivingScreen);
-				Controller.updateArrivingScreen(stop, arrivingScreen);
+				Controller.updateArrivingScreen(arrivingScreen.getCurrentStop(), arrivingScreen);
 			} else if (obj instanceof Place) {
 				Controller.setCurrentPlace((Place) obj);
 				ScreenStack.push(Controller.getMapScreen());
+			} else if (obj instanceof Route){
+
 			}
 		} else if (command == searchCommand) {
 			ScreenStack.push(new SearchPlaceMenu());

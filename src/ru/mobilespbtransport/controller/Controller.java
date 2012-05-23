@@ -109,16 +109,16 @@ public class Controller {
 		return model.getCurrentPlace();
 	}
 
-	public static void addFavourite(Place place) {
-		if (!model.getFavourites().contains(place)) {
-			model.getFavourites().addElement(place);
+	public static void addFavourite(Favourite favourite) {
+		if (!model.getFavourites().contains(favourite)) {
+			model.getFavourites().addElement(favourite);
 			favouritesScreen.update();
 			Cache.saveModel();
 		}
 	}
 
-	public static void removeFavourite(Place place) {
-		model.getFavourites().removeElement(place);
+	public static void removeFavourite(Favourite favourite) {
+		model.getFavourites().removeElement(favourite);
 		favouritesScreen.update();
 		Cache.saveModel();
 	}
@@ -187,18 +187,16 @@ public class Controller {
 		return mapScreen;
 	}
 
-	public static boolean isLocationSupported() {
-		boolean isItTrue = true;
+	/*public static boolean isLocationSupported() {
 		try {
 			Class.forName("javax.microedition.location.Location");
+			return true;
 		} catch (Exception e) {
-			isItTrue = false;
+			return false;
 		}
-		return isItTrue;
-	}
+	}    */
 
 	public static Place getMyLocation() {
-		if (isLocationSupported()) {
 			try {
 				Criteria cr = new Criteria();
 				cr.setHorizontalAccuracy(500);
@@ -207,15 +205,11 @@ public class Controller {
 				Location l = lp.getLocation(10);
 				QualifiedCoordinates qc = l.getQualifiedCoordinates();
 				return new Place("", new Coordinate(qc.getLatitude(), qc.getLongitude(), Coordinate.WGS84));
-			} catch (LocationException e) {
+			} catch (Exception e) {
 				ScreenStack.showAlert("Не удалось получить координаты GPS");
 				e.printStackTrace();
-			} catch (InterruptedException e) {
-				ScreenStack.showAlert("Не удалось получить координаты GPS");
-				e.printStackTrace();
+				return null;
 			}
-		}
-		return null;
 	}
 
 	public static void locateMe() {
@@ -259,6 +253,7 @@ public class Controller {
 				String request = RequestGenerator.getUrlForGeocoding(address);
 
 				String response = HttpClient.sendGET(request);
+
 
 				Vector places = ResponseParser.parseGeocoderResponse(response);
 

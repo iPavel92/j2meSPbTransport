@@ -21,7 +21,7 @@ public class RequestGenerator {
 				"http://maps.googleapis.com/maps/api/geocode/json?" +
 						"address=" + encodedAddress +
 						"&bounds=59.661,29.518|60.270,30.757" +  //SPB only
-						"&sensor=" + Controller.isLocationSupported() + //fair play
+						"&sensor=false" + // + (Controller.isLocationSupported() ? "true" : "false") +
 						"&language=ru";
 	}
 
@@ -33,15 +33,15 @@ public class RequestGenerator {
 		return "sEcho=1&iColumns=7&sColumns=id%2Cname%2Cimages%2CnearestStreets%2Croutes%2ClonLat%2Cfinish&iDisplayStart=0&iDisplayLength=-1&sNames=id%2Cname%2Cimages%2CnearestStreets%2Croutes%2ClonLat%2Cfinish";
 	}
 
-	public static String getUrlForDirectStops(Route route){
+	public static String getUrlForDirectStops(Route route) {
 		return "http://transport.orgp.spb.ru/Portal/transport/route/" + route.getId() + "/stops/direct";
 	}
 
-	public static String getUrlForReturnStops(Route route){
+	public static String getUrlForReturnStops(Route route) {
 		return "http://transport.orgp.spb.ru/Portal/transport/route/" + route.getId() + "/stops/return";
 	}
 
-	public static String getUrlForArriving(Stop stop){
+	public static String getUrlForArriving(Stop stop) {
 		return "http://transport.orgp.spb.ru/Portal/transport/stop/" + stop.getId() + "/arriving";
 	}
 
@@ -69,14 +69,14 @@ public class RequestGenerator {
 
 	public static String getMapUrl(Place center, int screenWidth, int screenHeight, int zoom) {
 		return "http://maps.google.com/maps/api/staticmap?zoom=" + zoom +
-				"&sensor=" + Controller.isLocationSupported() +
+				"&sensor=false" + // + (Controller.isLocationSupported() ? "true" : "false") +
 				"&size=" + screenWidth +
 				"x" + screenHeight +
 				"&center=" + center.getCoordinate().toWGS84().getLat() +
 				"," + center.getCoordinate().toWGS84().getLon();
 	}
-	
-	public static String getRequestForStopsOnMap(String bbox){
+
+	public static String getRequestForStopsOnMap(String bbox) {
 		return "sEcho=31&iColumns=7&sColumns=id%2CtransportType%2Cname%2Cimages%2CnearestStreets%2Croutes%2ClonLat&iDisplayStart=0&iDisplayLength=25&sNames=id%2CtransportType%2Cname%2Cimages%2CnearestStreets%2Croutes%2ClonLat&iSortingCols=1&iSortCol_0=0&sSortDir_0=asc&bSortable_0=true&bSortable_1=true&bSortable_2=true&bSortable_3=false&bSortable_4=true&bSortable_5=false&bSortable_6=false&transport-type=0&transport-type=2&transport-type=1&use-bbox=true&bbox-value=" + bbox; //3379151.668188%2C8411310.270772%2C3379587.053501%2C8411787.237829";
 	}
 }

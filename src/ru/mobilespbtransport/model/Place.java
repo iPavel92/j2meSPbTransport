@@ -7,13 +7,17 @@ package ru.mobilespbtransport.model;
  * Time: 19:04
  * To change this template use File | SettingsScreen | File Templates.
  */
-public class Place {
-	protected final String name;
+public class Place implements Favourite {
+	protected String name;
 	protected Coordinate coordinate;
 
 	public Place(String name, Coordinate coordinate) {
 		this.name = name;
 		this.coordinate = coordinate;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getName() {

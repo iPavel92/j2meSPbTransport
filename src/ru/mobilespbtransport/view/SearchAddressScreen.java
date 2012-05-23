@@ -12,7 +12,7 @@ import javax.microedition.lcdui.*;
  * Time: 14:04
  * To change this template use File | Settings | File Templates.
  */
-public class SearchAddressScreen extends Form implements CommandListener{
+public class SearchAddressScreen extends Form implements CommandListener {
 	private TextField address = new TextField("Введите адрес:", "", 30, TextField.ANY);
 	private Command ok = new Command("Найти", Command.OK, 1);
 	private Command cancel = new Command("Назад", Command.CANCEL, 2);
@@ -27,13 +27,9 @@ public class SearchAddressScreen extends Form implements CommandListener{
 	}
 
 	public void commandAction(Command command, Displayable displayable) {
-		if(command == ok){
-			new Thread() {
-				public void run() {
-					Controller.findPlaces(address.getString());
-				}
-			}.start();
-		} else if(command == cancel){
+		if (command == ok) {
+			Controller.findPlaces(address.getString());
+		} else if (command == cancel) {
 			ScreenStack.pop();
 		}
 	}

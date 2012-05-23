@@ -5,7 +5,6 @@ import ru.mobilespbtransport.model.*;
 
 import javax.microedition.lcdui.*;
 import javax.microedition.lcdui.game.GameCanvas;
-import java.util.Enumeration;
 import java.util.Vector;
 
 /**
@@ -24,19 +23,22 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 	private final Command backCommand = new Command("Назад", Command.CANCEL, 5);
 	private final Command exitCommand = new Command("Выход", Command.EXIT, 6);
 
-	private final Stop stop;
-	private Vector routes = new Vector();
-	private final Image arrivingImage;
+	private final StopsGroup stops;
+	private Stop currentStop;
+	private int currentStopIndex = 0;
+	private Vector currentRoutes;
+	private Image arrivingImage;
 	private int selectedIndex = 0;
 
 	private final static int TOUCH_BORDER_TO_SLIDE = 50;
 
-	public ArrivingScreen(Stop stop) {
+	public ArrivingScreen(StopsGroup stops) {
 		super(false);
 		setFullScreenMode(true);
-		this.stop = stop;
-		updateRoutes();
-		arrivingImage = stop.getTransportType().getArrivingImage();
+
+		this.stops = stops;
+		setCurrentStop((Stop)stops.getStops().elementAt(0));
+
 		addCommand(viewPlacesCommand);
 		addCommand(addToFavourites);
 		addCommand(updateCommand);
@@ -46,12 +48,20 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 		setCommandListener(this);
 	}
 
-	public Stop getStop() {
-		return stop;
+	private void setCurrentStop(Stop stop) {
+		currentStop = stop;
+		arrivingImage = currentStop.getTransportType().getArrivingImage();
+		selectedIndex = 0;
+		updateRoutes();
+		Controller.updateArrivingScreen(currentStop, this);
+	}
+
+	public Stop getCurrentStop() {
+		return currentStop;
 	}
 
 	public void updateRoutes(){
-		routes = Controller.getRoutes(stop);
+		currentRoutes = Controller.getRoutes(currentStop);
 		repaint();
 	}
 
@@ -64,16 +74,16 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 		graphics.fillRect(0, 0, getWidth(), getHeight());
 
 		//transport type image
-		graphics.setColor(stop.getTransportType().getColor());
+		graphics.setColor(currentStop.getTransportType().getColor());
 		graphics.fillRect(ELEMENTS_PADDING, ELEMENTS_PADDING, getWidth() - 2 * ELEMENTS_PADDING, 4 * ELEMENTS_PADDING + FONT_HEIGHT + arrivingImage.getHeight());
 		graphics.drawImage(arrivingImage, ELEMENTS_PADDING, 4 * ELEMENTS_PADDING + FONT_HEIGHT, Graphics.LEFT | Graphics.TOP);
 
-		//stop name
+		//currentStop name
 		graphics.setColor(0xFFFFFF);
 		graphics.fillRect(2 * ELEMENTS_PADDING, 2 * ELEMENTS_PADDING, getWidth() - 4 * ELEMENTS_PADDING, FONT_HEIGHT + 2 * ELEMENTS_PADDING);
 
 		graphics.setColor(0x1C2125);
-		String stopName = stop.getName();
+		String stopName = currentStop.getName();
 		Font.getDefaultFont().stringWidth(stopName);
 		int maxLength = stopName.length();
 		while (Font.getDefaultFont().substringWidth(stopName, 0, maxLength) > getWidth() - 4 * ELEMENTS_PADDING) {
@@ -90,7 +100,7 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 		final int ARRIVING_X_COL3 = ARRIVING_X_COL2 + ELEMENTS_PADDING + 50;
 		final int ARRIVING_Y = 5 * ELEMENTS_PADDING + FONT_HEIGHT + arrivingImage.getHeight();
 
-		if (routes == null) {
+		if (currentRoutes == null) {
 			graphics.drawString("Загрузка...", getWidth() / 2, getHeight() / 2, Graphics.HCENTER | Graphics.TOP);
 			return;
 		} else {
@@ -104,9 +114,9 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 		graphics.drawLine(ARRIVING_X_COL3, ARRIVING_Y + ELEMENTS_PADDING, ARRIVING_X_COL3, getHeight() - ELEMENTS_PADDING);
 
 		int yIndex = 0;
-		for (int i = selectedIndex; i < routes.size(); ++i, yIndex++) {
-			Route route = (Route) routes.elementAt(i);
-			Arriving arriving = stop.getArriving(route);
+		for (int i = selectedIndex; i < currentRoutes.size(); ++i, yIndex++) {
+			Route route = (Route) currentRoutes.elementAt(i);
+			Arriving arriving = currentStop.getArriving(route);
 
 			String routeNumber = route.getRouteNumber();
 			String arrivingTime = arriving == null ? "  -" : arriving.getArrivingTime();
@@ -127,17 +137,29 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 			graphics.drawLine(getWidth() - 10, ARRIVING_Y + 4, getWidth() - 15, ARRIVING_Y + 9);
 			graphics.drawLine(getWidth() - 10, ARRIVING_Y + 4, getWidth() - 5, ARRIVING_Y + 9);
 		}
-		if (selectedIndex < routes.size()) {
+		if (selectedIndex < currentRoutes.size()) {
 			graphics.drawLine(getWidth() - 10, getHeight() - 5, getWidth() - 15, getHeight() - 10);
 			graphics.drawLine(getWidth() - 10, getHeight() - 5, getWidth() - 5, getHeight() - 10);
 			graphics.drawLine(getWidth() - 10, getHeight() - 4, getWidth() - 15, getHeight() - 9);
 			graphics.drawLine(getWidth() - 10, getHeight() - 4, getWidth() - 5, getHeight() - 9);
 		}
+
+		if(stops.getStops().size() > 1){
+			graphics.drawLine(getWidth() - 5, 2*ELEMENTS_PADDING + 5, getWidth() - 10, 2*ELEMENTS_PADDING);
+			graphics.drawLine(getWidth() - 5, 2*ELEMENTS_PADDING + 5, getWidth() - 10, 2*ELEMENTS_PADDING + 10);
+			graphics.drawLine(getWidth() - 4, 2*ELEMENTS_PADDING + 5, getWidth() - 9, 2*ELEMENTS_PADDING);
+			graphics.drawLine(getWidth() - 4, 2*ELEMENTS_PADDING + 5, getWidth() - 9, 2*ELEMENTS_PADDING + 10);
+
+			graphics.drawLine(getWidth() - 15, 2*ELEMENTS_PADDING + 5, getWidth() - 20, 2*ELEMENTS_PADDING);
+			graphics.drawLine(getWidth() - 15, 2*ELEMENTS_PADDING + 5, getWidth() - 20, 2*ELEMENTS_PADDING + 10);
+			graphics.drawLine(getWidth() - 14, 2*ELEMENTS_PADDING + 5, getWidth() - 19, 2*ELEMENTS_PADDING);
+			graphics.drawLine(getWidth() - 14, 2*ELEMENTS_PADDING + 5, getWidth() - 19, 2*ELEMENTS_PADDING + 10);
+		}
 	}
 
 	protected void keyPressed(int keyCode) {
 		if (keyCode == KEY_NUM5) {
-			Controller.updateArrivingScreen(stop, this);
+			Controller.updateArrivingScreen(currentStop, this);
 			return;
 		}
 		int gameAction = getGameAction(keyCode);
@@ -148,9 +170,29 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 			case DOWN:
 				slideDown();
 				break;
+			case LEFT:
+				if(stops.getStops().size() > 1){
+					 if(currentStopIndex == 0){
+						 currentStopIndex = stops.getStops().size() - 1;
+					 } else {
+						 currentStopIndex--;
+					 }
+					 setCurrentStop((Stop)stops.getStops().elementAt(currentStopIndex));
+				}
+				break;
+			case RIGHT:
+				if(stops.getStops().size() > 1){
+					if(currentStopIndex == stops.getStops().size() - 1){
+						currentStopIndex = 0;
+					} else {
+						currentStopIndex++;
+					}
+					setCurrentStop((Stop)stops.getStops().elementAt(currentStopIndex));
+				}
+				break;
 			case FIRE:
-				if (routes != null) {
-					Controller.findStops(Controller.getRoute(((Route) routes.elementAt(selectedIndex)).getId()));
+				if (currentRoutes != null) {
+					Controller.findStops(Controller.getRoute(((Route) currentRoutes.elementAt(selectedIndex)).getId()));
 				}
 				break;
 		}
@@ -176,7 +218,7 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 	}
 
 	private void slideDown() {
-		if (selectedIndex < routes.size() - 1) {
+		if (selectedIndex < currentRoutes.size() - 1) {
 			selectedIndex++;
 			repaint();
 		}
@@ -184,22 +226,22 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 
 	public void commandAction(Command command, Displayable displayable) {
 		if (command == updateCommand) {
-			Controller.updateArrivingScreen(stop, this);
+			Controller.updateArrivingScreen(currentStop, this);
 		} else if (command == viewPlacesCommand) {
 			ScreenStack.push(Controller.getFavouritesScreen());
 		} else if (command == addToFavourites) {
-			ScreenStack.push(new AddToFavouritesScreen(stop));
+			ScreenStack.push(new AddToFavouritesScreen(currentStop));
 		} else if (command == backCommand) {
 			ScreenStack.pop();
 		} else if (command == exitCommand) {
 			Controller.exit();
 		} else if (command == showOnMap) {
-			Coordinate q = stop.getCoordinate();
-			Place place = new Place(stop.getName(), stop.getCoordinate());
+			Coordinate q = currentStop.getCoordinate();
+			Place place = new Place(currentStop.getName(), currentStop.getCoordinate());
 			Controller.setCurrentPlace(place);
 			ScreenStack.push(Controller.getMapScreen());
-		} else if (command == showRoute && routes != null) {
-			Controller.findStops(Controller.getRoute(((Route) routes.elementAt(selectedIndex)).getId()));
+		} else if (command == showRoute && currentRoutes != null) {
+			Controller.findStops(Controller.getRoute(((Route) currentRoutes.elementAt(selectedIndex)).getId()));
 		}
 	}
 }

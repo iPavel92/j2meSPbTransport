@@ -44,12 +44,12 @@ public class SearchPlaceMenu extends List implements CommandListener {
 					ScreenStack.push(new SearchCoordinateScreen());
 					break;
 				case 3: //gps
-					if(Controller.isLocationSupported()){
-						Controller.locateMe();
-						ScreenStack.push(Controller.getMapScreen());
-					} else {
+					//if(Controller.isLocationSupported()){
+					ScreenStack.push(Controller.getMapScreen());
+					Controller.locateMe();
+					/*} else {
 						ScreenStack.showAlert("Ваш телефон не поддерживает GPS");
-					}
+					}      */
 					break;
 			}
 			//TODO

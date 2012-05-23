@@ -2,7 +2,6 @@ package ru.mobilespbtransport;
 
 import ru.mobilespbtransport.cache.Cache;
 import ru.mobilespbtransport.controller.Controller;
-import ru.mobilespbtransport.model.*;
 import ru.mobilespbtransport.view.*;
 
 import javax.microedition.lcdui.Display;
@@ -44,11 +43,13 @@ public class Main extends MIDlet {
 					sleep(SLEEP_INTERVAL);
 					if(Controller.getModel().isUseAutoUpdate()){
 						if (ScreenStack.peek() == mapCanvas) {
-							Controller.loadTransportLayer();
+							if(!Controller.isZoomedIn() && !mapCanvas.isLocked()){
+								Controller.loadTransportLayer();
+							}
 						}
 						if(ScreenStack.peek() instanceof ArrivingScreen){
 							ArrivingScreen arrivingScreen = (ArrivingScreen)ScreenStack.peek();
-							Controller.updateArrivingScreen(arrivingScreen.getStop(), arrivingScreen);
+							Controller.updateArrivingScreen(arrivingScreen.getCurrentStop(), arrivingScreen);
 						}
 					}
 				}

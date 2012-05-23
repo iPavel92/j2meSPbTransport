@@ -9,11 +9,11 @@ import java.util.Vector;
  * Time: 17:26
  * To change this template use File | Settings | File Templates.
  */
-public class Route {
+public class Route implements Favourite {
 	private final TransportType transportType;
-	private final String routeNumber;
+	private String routeNumber;  // == name in Favourite interface
 	private final int id;
-	private Vector stopsId = new Vector(); //Vector<Int(id)>
+	private Vector stopsId = new Vector(); //Vector<Int> - id's
 	private boolean isStopsLoaded = false;
 
 	public Route(TransportType transportType, String routeNumber, int id) {
@@ -66,6 +66,14 @@ public class Route {
 
 	public int hashCode() {
 		return id;
+	}
+
+	public String getName() {
+		return routeNumber;
+	}
+
+	public void setName(String name) {
+		this.routeNumber = name;
 	}
 
 	public String toString() {
