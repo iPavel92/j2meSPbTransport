@@ -155,9 +155,7 @@ public class MapScreen extends GameCanvas implements CommandListener {
 			}
 
 			graphics.setColor(0x000000);
-			/*graphics.drawLine(cursorX - CROSS_SISE, cursorY, cursorX + CROSS_SISE, cursorY);
-			graphics.drawLine(cursorX, cursorY - CROSS_SISE, cursorX, cursorY + CROSS_SISE);  */
-			graphics.drawArc(cursorX - MAX_RADIUS_TO_SELECT_STOP, cursorY - MAX_RADIUS_TO_SELECT_STOP - 26, 2*MAX_RADIUS_TO_SELECT_STOP, 2*MAX_RADIUS_TO_SELECT_STOP, 0, 360);
+			graphics.drawArc(cursorX - MAX_RADIUS_TO_SELECT_STOP, cursorY - MAX_RADIUS_TO_SELECT_STOP, 2*MAX_RADIUS_TO_SELECT_STOP, 2*MAX_RADIUS_TO_SELECT_STOP, 0, 360);
 		} else {
 			if (transportLayer != null) {
 				graphics.drawImage(transportLayer, 0, 0, Graphics.TOP | Graphics.LEFT);

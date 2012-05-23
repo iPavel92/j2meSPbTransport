@@ -11,7 +11,7 @@ import java.util.Vector;
  */
 public class StopsGroup implements Favourite{
 	private String name;
-	private Vector stops = new Vector(); //Vector<int>
+	private Vector stops = new Vector(); //Vector<Stop>
 
 	public StopsGroup(String name, Vector stops) {
 		this.name = name;

@@ -64,7 +64,25 @@
       <file leaf-file-name="MapScreen.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/view/MapScreen.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="249" column="40" selection-start="7130" selection-end="7130" vertical-scroll-proportion="0.76269186">
+            <state line="167" column="79" selection-start="5307" selection-end="5307" vertical-scroll-proportion="0.66233766">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ArrivingScreen.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/view/ArrivingScreen.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="25" column="22" selection-start="1068" selection-end="1068" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="StopsGroup.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/model/StopsGroup.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="23" column="50" selection-start="535" selection-end="535" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -108,10 +126,10 @@
         <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/controller/Controller.java" />
         <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/model/Model.java" />
         <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/model/Route.java" />
-        <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/view/ArrivingScreen.java" />
         <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/view/FavouritesScreen.java" />
-        <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/model/StopsGroup.java" />
         <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/view/StopsListScreen.java" />
+        <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/view/ArrivingScreen.java" />
+        <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/model/StopsGroup.java" />
         <option value="$PROJECT_DIR$/src/ru/mobilespbtransport/view/MapScreen.java" />
       </list>
     </option>
@@ -618,23 +636,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/view/ArrivingScreen.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="34" column="19" selection-start="1309" selection-end="1309" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/view/FavouritesScreen.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="78" column="57" selection-start="2073" selection-end="2073" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/model/StopsGroup.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="25" column="21" selection-start="544" selection-end="554" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -653,9 +657,23 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/view/ArrivingScreen.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="25" column="22" selection-start="1068" selection-end="1068" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/model/StopsGroup.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="23" column="50" selection-start="535" selection-end="535" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/ru/mobilespbtransport/view/MapScreen.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="249" column="40" selection-start="7130" selection-end="7130" vertical-scroll-proportion="0.76269186">
+        <state line="167" column="79" selection-start="5307" selection-end="5307" vertical-scroll-proportion="0.66233766">
           <folding />
         </state>
       </provider>

@@ -145,15 +145,15 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 		}
 
 		if(stops.getStops().size() > 1){
-			graphics.drawLine(getWidth() - 5, 2*ELEMENTS_PADDING + 5, getWidth() - 10, 2*ELEMENTS_PADDING);
-			graphics.drawLine(getWidth() - 5, 2*ELEMENTS_PADDING + 5, getWidth() - 10, 2*ELEMENTS_PADDING + 10);
-			graphics.drawLine(getWidth() - 4, 2*ELEMENTS_PADDING + 5, getWidth() - 9, 2*ELEMENTS_PADDING);
-			graphics.drawLine(getWidth() - 4, 2*ELEMENTS_PADDING + 5, getWidth() - 9, 2*ELEMENTS_PADDING + 10);
+			graphics.drawLine(getWidth() - 10, ARRIVING_Y - 10, getWidth() - 15, ARRIVING_Y - 5);
+			graphics.drawLine(getWidth() - 10, ARRIVING_Y - 10, getWidth() - 15, ARRIVING_Y - 15);
+			graphics.drawLine(getWidth() - 9, ARRIVING_Y - 10, getWidth() - 14, ARRIVING_Y - 5);
+			graphics.drawLine(getWidth() - 9, ARRIVING_Y - 10, getWidth() - 14, ARRIVING_Y - 15);
 
-			graphics.drawLine(getWidth() - 15, 2*ELEMENTS_PADDING + 5, getWidth() - 20, 2*ELEMENTS_PADDING);
-			graphics.drawLine(getWidth() - 15, 2*ELEMENTS_PADDING + 5, getWidth() - 20, 2*ELEMENTS_PADDING + 10);
-			graphics.drawLine(getWidth() - 14, 2*ELEMENTS_PADDING + 5, getWidth() - 19, 2*ELEMENTS_PADDING);
-			graphics.drawLine(getWidth() - 14, 2*ELEMENTS_PADDING + 5, getWidth() - 19, 2*ELEMENTS_PADDING + 10);
+			graphics.drawLine(getWidth() - 30, ARRIVING_Y - 10, getWidth() - 25, ARRIVING_Y - 5);
+			graphics.drawLine(getWidth() - 30, ARRIVING_Y - 10, getWidth() - 25, ARRIVING_Y - 15);
+			graphics.drawLine(getWidth() - 29, ARRIVING_Y - 10, getWidth() - 24, ARRIVING_Y - 5);
+			graphics.drawLine(getWidth() - 29, ARRIVING_Y - 10, getWidth() - 24, ARRIVING_Y - 15);
 		}
 	}
 
