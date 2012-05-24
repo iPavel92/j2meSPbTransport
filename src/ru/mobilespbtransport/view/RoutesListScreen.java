@@ -69,7 +69,7 @@ public class RoutesListScreen extends List implements CommandListener{
 				return;
 			}
 			//adding without input name of route number
-			Controller.addFavourite((Route) routes.elementAt(getSelectedIndex()));
+			Controller.addFavourite((Route)routes.elementAt(getSelectedIndex()));
 		}
 	}
 }

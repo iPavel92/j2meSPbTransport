@@ -1,10 +1,7 @@
 package ru.mobilespbtransport.view;
 
 import ru.mobilespbtransport.controller.Controller;
-import ru.mobilespbtransport.model.Place;
-import ru.mobilespbtransport.model.Route;
-import ru.mobilespbtransport.model.Stop;
-import ru.mobilespbtransport.model.StopsGroup;
+import ru.mobilespbtransport.model.*;
 
 
 import javax.microedition.lcdui.*;
@@ -92,9 +89,7 @@ public class FavouritesScreen extends List implements CommandListener {
 			ScreenStack.push(new SearchPlaceMenu());
 		} else if (command == deletePlaceCommand) {
 			Object obj = favourites.elementAt(getSelectedIndex());
-			if (obj instanceof Place) {
-				Controller.removeFavourite((Place) obj);
-			}
+			Controller.removeFavourite((Favourite) obj);
 		} else if (command == exitCommand) {
 			Controller.exit();
 		} else if(command == settings){

@@ -33,6 +33,8 @@ public class Main extends MIDlet {
 		Cache.loadStops();
 		Cache.loadRoutes();
 
+		favouritesList.update();
+
 		updater.start();
 
 		ScreenStack.push(favouritesList);

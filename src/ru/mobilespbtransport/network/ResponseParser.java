@@ -65,6 +65,7 @@ public class ResponseParser {
 				TransportType transportType = getTransportTypeFromJson(transportTypeJson);
 				String routeNumber = record.getString(2);
 				Route route = new Route(transportType, routeNumber, routeId);
+				Controller.addRoute(route);
 				result.addElement(route);
 			}
 			answer = null;

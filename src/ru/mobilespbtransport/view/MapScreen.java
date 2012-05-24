@@ -217,6 +217,7 @@ public class MapScreen extends GameCanvas implements CommandListener {
 						return;
 					}
 				} else {
+					map = null;
 					Controller.zoomIn();
 				}
 				break;
@@ -272,6 +273,7 @@ public class MapScreen extends GameCanvas implements CommandListener {
 			if (System.currentTimeMillis() - lastClickTime < MAX_DOUBLECLICK_TIME) {
 				cursorX = x;
 				cursorY = y;
+				map = null;
 				Controller.zoomIn();
 			} else {
 				lastClickTime = System.currentTimeMillis();

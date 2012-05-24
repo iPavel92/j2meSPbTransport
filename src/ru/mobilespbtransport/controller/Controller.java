@@ -193,15 +193,6 @@ public class Controller {
 		return mapScreen;
 	}
 
-	/*public static boolean isLocationSupported() {
-		try {
-			Class.forName("javax.microedition.location.Location");
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}    */
-
 	public static Place getMyLocation() {
 		try {
 			Criteria cr = new Criteria();
@@ -211,7 +202,13 @@ public class Controller {
 			Location l = lp.getLocation(10);
 			QualifiedCoordinates qc = l.getQualifiedCoordinates();
 			return new Place("", new Coordinate(qc.getLatitude(), qc.getLongitude(), Coordinate.WGS84));
+		} catch (NoClassDefFoundError e) {
+			ScreenStack.pop(); //removing map screen
+			ScreenStack.showAlert("Телефон не поддерживает GPS");
+			e.printStackTrace();
+			return null;
 		} catch (Exception e) {
+			ScreenStack.pop(); //removing map screen
 			ScreenStack.showAlert("Не удалось получить координаты GPS");
 			e.printStackTrace();
 			return null;
@@ -224,8 +221,6 @@ public class Controller {
 				Place place = getMyLocation();
 				if (place != null) {
 					setCurrentPlace(place);
-				} else {
-					ScreenStack.showAlert("Не удалось получить координаты GPS");
 				}
 			}
 		});
@@ -238,16 +233,10 @@ public class Controller {
 			public void run() {
 				String url = "http://transport.orgp.spb.ru/Portal/transport/routes/list";
 				String request = RequestGenerator.getRequestForSearchRoutes(routeNumber);
-
 				String response = HttpClient.sendPost(url, request);
-
 				Vector routes = ResponseParser.parseRoutes(response);
-				for (Enumeration e = routes.elements(); e.hasMoreElements(); ) {
-					Route route = (Route) e.nextElement();
-					addRoute(route);
-				}
 				routesList.setRoutes(routes);
-				//Cache.saveRoutes();
+				Cache.saveRoutes();
 			}
 		});
 	}
@@ -259,12 +248,8 @@ public class Controller {
 		tasks.push(new Runnable() {
 			public void run() {
 				String request = RequestGenerator.getUrlForGeocoding(address);
-
 				String response = HttpClient.sendGET(request);
-
-
 				Vector places = ResponseParser.parseGeocoderResponse(response);
-
 				placesList.setPlaces(places);
 			}
 		});
