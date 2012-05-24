@@ -16,7 +16,9 @@ import java.util.Vector;
  * To change this template use File | SettingsScreen | File Templates.
  */
 public class RoutesListScreen extends List implements CommandListener{
-	private final Command backCommand = new Command("Назад", Command.CANCEL, 2);
+	private final Command backCommand = new Command("Назад", Command.CANCEL, 1);
+	private final Command addToFavourites = new Command("Добавить в закладки", Command.ITEM, 2);
+
 	private Vector routes;
 	private boolean isLoaded = false;
 
@@ -29,6 +31,7 @@ public class RoutesListScreen extends List implements CommandListener{
 		setRoutes(routes);
 
 		addCommand(backCommand);
+		addCommand(addToFavourites);
 		setCommandListener(this);
 
 		try {
@@ -61,6 +64,12 @@ public class RoutesListScreen extends List implements CommandListener{
 			Controller.findStops(Controller.getRoute(((Route) routes.elementAt(getSelectedIndex())).getId()));
 		} else if (command == backCommand){
 			ScreenStack.pop();
+		} else if(command == addToFavourites){
+			if(getSelectedIndex() < 0){
+				return;
+			}
+			//adding without input name of route number
+			Controller.addFavourite((Route) routes.elementAt(getSelectedIndex()));
 		}
 	}
 }

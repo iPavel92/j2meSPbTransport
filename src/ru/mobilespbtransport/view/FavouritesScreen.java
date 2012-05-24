@@ -50,20 +50,31 @@ public class FavouritesScreen extends List implements CommandListener {
 		}
 		for (int i = 0; i < favourites.size(); i++) {
 			Object item = favourites.elementAt(i);
-			if (item instanceof Stop) {
-				Stop stop = (Stop) item;
-				append(stop.getName(), stop.getTransportType().getIcon());
+			if (item instanceof StopsGroup) {
+				StopsGroup stopsGroup = (StopsGroup) item;
+				if(stopsGroup.getStops().size() == 1){
+					append(stopsGroup.getName(), ((Stop) stopsGroup.getStops().elementAt(0)).getTransportType().getIcon());
+				} else {
+					Image ico = null;
+					try {
+						ico = Image.createImage("/transport.png");
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					append(stopsGroup.getName(), ico);
+				}
 			} else if (item instanceof Place) {
-				Place c = (Place) item;
+				Place place = (Place) item;
 				Image ico = null;
 				try {
 					ico = Image.createImage("/place.png");
 				} catch (IOException e) {
-					//TODO
 					e.printStackTrace();
-
 				}
-				append(c.getName(), ico);
+				append(place.getName(), ico);
+			} else if (item instanceof Route) {
+				Route route = (Route) item;
+				append(route.getName(), route.getTransportType().getIcon());
 			}
 		}
 	}
@@ -83,7 +94,7 @@ public class FavouritesScreen extends List implements CommandListener {
 				Controller.setCurrentPlace((Place) obj);
 				ScreenStack.push(Controller.getMapScreen());
 			} else if (obj instanceof Route){
-
+				Controller.findStops(Controller.getRoute(((Route)obj).getId()));
 			}
 		} else if (command == searchCommand) {
 			ScreenStack.push(new SearchPlaceMenu());

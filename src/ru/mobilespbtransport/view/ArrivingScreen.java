@@ -38,7 +38,6 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 
 		this.stops = stops;
 		setCurrentStop((Stop)stops.getStops().elementAt(0));
-
 		addCommand(viewPlacesCommand);
 		addCommand(addToFavourites);
 		addCommand(updateCommand);
@@ -230,7 +229,7 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 		} else if (command == viewPlacesCommand) {
 			ScreenStack.push(Controller.getFavouritesScreen());
 		} else if (command == addToFavourites) {
-			ScreenStack.push(new AddToFavouritesScreen(currentStop));
+			ScreenStack.push(new AddToFavouritesScreen(stops));
 		} else if (command == backCommand) {
 			ScreenStack.pop();
 		} else if (command == exitCommand) {

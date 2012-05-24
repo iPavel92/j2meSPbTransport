@@ -8,6 +8,7 @@ import javax.microedition.rms.RecordStore;
 import javax.microedition.rms.RecordStoreException;
 import java.io.*;
 import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  * Created by IntelliJ IDEA.
@@ -18,13 +19,14 @@ import java.util.Enumeration;
  */
 public class Cache {
 	private static RecordStore recordStore;
-	private static final int VERSION = 2;
+	private static final int VERSION = 3;
 	private static final String MODEL = "model_" + VERSION;
 	private static final String STOPS = "stops_" + VERSION;
 	private static final String ROUTES = "routes_" + VERSION;
 
 	private static final int PLACE = 0;
-	private static final int STOP = 1;
+	private static final int STOP_GROUP = 1;
+	private static final int ROUTE = 2;
 
 	public static void saveModel() {
 		try {
@@ -44,16 +46,25 @@ public class Cache {
 			writer.writeInt(n);
 			for (int i = 0; i < n; i++) {
 				Object obj = model.getFavourites().elementAt(i);
-				if (obj instanceof Stop) {
-					writer.writeInt(STOP);
-					Stop stop = (Stop) obj;
-					saveStop(stop, writer);
+				if (obj instanceof StopsGroup) {
+					writer.writeInt(STOP_GROUP);
+					StopsGroup stopsGroup = (StopsGroup) obj;
+					writer.writeUTF(stopsGroup.getName());
+					int m = stopsGroup.getStops().size();
+					writer.writeInt(m);
+					for (int j = 0; j < m; j++) {
+						saveStop((Stop)stopsGroup.getStops().elementAt(j), writer);
+					}
 				} else if (obj instanceof Place) {
 					writer.writeInt(PLACE);
 					Place place = (Place) obj;
 					writer.writeUTF(place.getName());
 					writer.writeDouble(place.getCoordinate().toWGS84().getLat());
 					writer.writeDouble(place.getCoordinate().toWGS84().getLon());
+				} else if (obj instanceof Route){
+					writer.writeInt(ROUTE);
+					Route route = (Route) obj;
+					saveRoute(route, writer);
 				}
 			}
 			writer.flush();
@@ -97,9 +108,16 @@ public class Cache {
 			int n = reader.readInt();
 			for (int i = 0; i < n; i++) {
 				int type = reader.readInt();
-				if (type == STOP) {
-					Stop stop = loadStop(reader);
-					model.getFavourites().addElement(stop);
+				if (type == STOP_GROUP) {
+					String name = reader.readUTF();
+					int m = reader.readInt();
+					Vector stops = new Vector(m);
+					for(int j = 0; j < m; j++){
+						Stop stop = loadStop(reader);
+						stops.addElement(stop);
+					}
+					StopsGroup stopsGroup = new StopsGroup(name ,stops);
+					model.getFavourites().addElement(stopsGroup);
 				} else if (type == PLACE) {
 					String name = reader.readUTF();
 					double lat = reader.readDouble();
@@ -107,6 +125,9 @@ public class Cache {
 					Coordinate coordinate = new Coordinate(lat, lon, Coordinate.WGS84);
 					Place place = new Place(name, coordinate);
 					model.getFavourites().addElement(place);
+				} else if (type == ROUTE){
+					Route route = loadRoute(reader);
+					model.getFavourites().addElement(route);
 				}
 			}
 
@@ -135,17 +156,7 @@ public class Cache {
 			while (e.hasMoreElements()) {
 				int key = ((Integer) e.nextElement()).intValue();
 				Route route = Controller.getRoute(key);
-				writer.writeInt(route.getId());
-				writer.writeUTF(route.getRouteNumber());
-				writer.writeInt(route.getTransportType().getType());
-				writer.writeBoolean(route.isStopsLoaded());
-
-				int m = route.getStopsId().size();
-				writer.writeInt(m);
-				for (int j = 0; j < m; j++) {
-					writer.writeInt(((Integer) route.getStopsId().elementAt(j)).intValue());
-				}
-				//System.out.println(route + " stops: " + m);
+				saveRoute(route, writer);				
 			}
 			writer.flush();
 
@@ -181,18 +192,7 @@ public class Cache {
 
 			int n = reader.readInt();
 			for (int i = 0; i < n; i++) {
-				int id = reader.readInt();
-				String routeNumber = reader.readUTF();
-				TransportType transportType = new TransportType(reader.readInt());
-				boolean isStopsLoaded = reader.readBoolean();
-
-				Route route = new Route(transportType, routeNumber, id);
-				route.setStopsLoaded(isStopsLoaded);
-				
-				int m = reader.readInt();
-				for (int j = 0; j < m; j++) {
-					route.addStopId(reader.readInt());
-				}
+				Route route = loadRoute(reader);
 				Controller.addRoute(route);
 			}
 			recordStore.closeRecordStore();
@@ -201,6 +201,35 @@ public class Cache {
 		} catch (IOException e) {
 			e.printStackTrace();  //TODO
 		}
+	}
+
+	private static void saveRoute(Route route, DataOutputStream writer) throws IOException {
+		writer.writeInt(route.getId());
+		writer.writeUTF(route.getRouteNumber());
+		writer.writeInt(route.getTransportType().getType());
+		writer.writeBoolean(route.isStopsLoaded());
+
+		int m = route.getStopsId().size();
+		writer.writeInt(m);
+		for (int j = 0; j < m; j++) {
+			writer.writeInt(((Integer) route.getStopsId().elementAt(j)).intValue());
+		}
+	}
+
+	private static Route loadRoute(DataInputStream reader) throws IOException {
+		int id = reader.readInt();
+		String routeNumber = reader.readUTF();
+		TransportType transportType = new TransportType(reader.readInt());
+		boolean isStopsLoaded = reader.readBoolean();
+
+		Route route = new Route(transportType, routeNumber, id);
+		route.setStopsLoaded(isStopsLoaded);
+
+		int m = reader.readInt();
+		for (int j = 0; j < m; j++) {
+			route.addStopId(reader.readInt());
+		}
+		return route;
 	}
 
 	////////////////////////////////////////////////
@@ -266,8 +295,6 @@ public class Cache {
 		}
 	}
 
-	////////////////////////////////////////////////
-
 	private static void saveStop(Stop stop, DataOutputStream writer) throws IOException {
 		writer.writeInt(stop.getId());
 		writer.writeUTF(stop.getName());
@@ -301,6 +328,7 @@ public class Cache {
 		return stop;
 	}
 
+	
 	////////////////////////////////////////////////
 
 	private static String composeImageKey(Place place, int zoom) {

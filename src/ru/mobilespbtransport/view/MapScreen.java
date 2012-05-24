@@ -214,7 +214,6 @@ public class MapScreen extends GameCanvas implements CommandListener {
 					if (selectedStops.size() > 0) {
 						ArrivingScreen arrivingScreen = new ArrivingScreen(new StopsGroup(selectedStops));
 						ScreenStack.push(arrivingScreen);
-						Controller.updateArrivingScreen(selectedStop, arrivingScreen);
 						return;
 					}
 				} else {

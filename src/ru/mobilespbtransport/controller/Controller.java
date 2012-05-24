@@ -328,10 +328,8 @@ public class Controller {
 			public void run() {
 				String url = RequestGenerator.getUrlForArriving(stop);
 				String request = RequestGenerator.getRequestForArriving();
-
 				String response = HttpClient.sendPost(url, request);
 				Vector arriving = ResponseParser.parseArriving(response, stop.getRoutesId());
-
 				stop.setArriving(arriving);
 
 				arrivingScreen.updateRoutes();

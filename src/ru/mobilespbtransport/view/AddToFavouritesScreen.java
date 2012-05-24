@@ -2,8 +2,6 @@ package ru.mobilespbtransport.view;
 
 import ru.mobilespbtransport.controller.Controller;
 import ru.mobilespbtransport.model.Favourite;
-import ru.mobilespbtransport.model.Place;
-import ru.mobilespbtransport.model.Stop;
 
 import javax.microedition.lcdui.*;
 
@@ -15,7 +13,7 @@ import javax.microedition.lcdui.*;
  * To change this template use File | Settings | File Templates.
  */
 public class AddToFavouritesScreen extends Form implements CommandListener {
-	private TextField placeName;
+	private TextField favouriteName;
 	private Command ok = new Command("Добавить", Command.OK, 1);
 	private Command cancel = new Command("Назад", Command.CANCEL, 2);
 	private final Favourite favourite;
@@ -23,8 +21,8 @@ public class AddToFavouritesScreen extends Form implements CommandListener {
 	public AddToFavouritesScreen(Favourite favourite) {
 		super("Добавить в закладки");
 		this.favourite = favourite;
-		placeName = new TextField("Название:", favourite.getName(), 200, TextField.ANY);
-		append(placeName);
+		favouriteName = new TextField("Название:", favourite.getName(), 200, TextField.ANY);
+		append(favouriteName);
 		addCommand(ok);
 		addCommand(cancel);
 		setCommandListener(this);
@@ -32,6 +30,7 @@ public class AddToFavouritesScreen extends Form implements CommandListener {
 
 	public void commandAction(Command command, Displayable displayable) {
 		if (command == ok) {
+			favourite.setName(favouriteName.getString());
 			Controller.addFavourite(favourite);
 			ScreenStack.pop();
 		} else if (command == cancel) {
