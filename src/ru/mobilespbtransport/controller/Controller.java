@@ -32,8 +32,14 @@ public class Controller {
 	private static boolean isZoomedIn = false;
 	private static int zoom = DEFAULT_ZOOM;
 
+	private static final TaskQueue tasks = new TaskQueue();
+
 	public static void setMain(Main main) {
 		Controller.main = main;
+	}
+
+	public static TaskQueue getTasks() {
+		return tasks;
 	}
 
 	public static Model getModel() {
@@ -124,7 +130,7 @@ public class Controller {
 	}
 
 	public static void loadMap() {
-		new Thread() {
+		sheduleTask(new Runnable() {
 			public void run() {
 				if (model.getCurrentPlace() == null) {
 					return;
@@ -134,11 +140,11 @@ public class Controller {
 				mapScreen.setMap(map);
 				mapScreen.repaint();
 			}
-		}.start();
+		});
 	}
 
 	public static void loadTransportLayer() {
-		new Thread() {
+		sheduleTask(new Runnable() {
 			public void run() {
 				try {
 					if (model.getCurrentPlace() == null) {
@@ -153,11 +159,11 @@ public class Controller {
 					e.printStackTrace();  //TODO
 				}
 			}
-		}.start();
+		});
 	}
 
 	public static void loadStopsToMap() {
-		new Thread() {
+		sheduleTask(new Runnable() {
 			public void run() {
 				String url = "http://transport.orgp.spb.ru/Portal/transport/stops/list";
 				String bBox = GeoConverter.buildBBox(model.getCurrentPlace().getCoordinate(), mapScreen.getWidth(), mapScreen.getHeight(), zoom);
@@ -172,7 +178,7 @@ public class Controller {
 				mapScreen.setStops(stops);
 				mapScreen.repaint();
 			}
-		}.start();
+		});
 	}
 
 
@@ -197,23 +203,23 @@ public class Controller {
 	}    */
 
 	public static Place getMyLocation() {
-			try {
-				Criteria cr = new Criteria();
-				cr.setHorizontalAccuracy(500);
-				LocationProvider lp = null;
-				lp = LocationProvider.getInstance(cr);
-				Location l = lp.getLocation(10);
-				QualifiedCoordinates qc = l.getQualifiedCoordinates();
-				return new Place("", new Coordinate(qc.getLatitude(), qc.getLongitude(), Coordinate.WGS84));
-			} catch (Exception e) {
-				ScreenStack.showAlert("Не удалось получить координаты GPS");
-				e.printStackTrace();
-				return null;
-			}
+		try {
+			Criteria cr = new Criteria();
+			cr.setHorizontalAccuracy(500);
+			LocationProvider lp = null;
+			lp = LocationProvider.getInstance(cr);
+			Location l = lp.getLocation(10);
+			QualifiedCoordinates qc = l.getQualifiedCoordinates();
+			return new Place("", new Coordinate(qc.getLatitude(), qc.getLongitude(), Coordinate.WGS84));
+		} catch (Exception e) {
+			ScreenStack.showAlert("Не удалось получить координаты GPS");
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	public static void locateMe() {
-		new Thread() {
+		sheduleTask(new Runnable() {
 			public void run() {
 				Place place = getMyLocation();
 				if (place != null) {
@@ -222,13 +228,13 @@ public class Controller {
 					ScreenStack.showAlert("Не удалось получить координаты GPS");
 				}
 			}
-		}.start();
+		});
 	}
 
 	public static void findRoutes(final String routeNumber) {
 		final RoutesListScreen routesList = new RoutesListScreen();
 		ScreenStack.push(routesList);
-		new Thread() {
+		sheduleTask(new Runnable() {
 			public void run() {
 				String url = "http://transport.orgp.spb.ru/Portal/transport/routes/list";
 				String request = RequestGenerator.getRequestForSearchRoutes(routeNumber);
@@ -243,14 +249,14 @@ public class Controller {
 				routesList.setRoutes(routes);
 				//Cache.saveRoutes();
 			}
-		}.start();
+		});
 	}
 
 	public static void findPlaces(final String address) {
 		final PlacesListScreen placesList = new PlacesListScreen();
 		ScreenStack.push(placesList);
 
-		new Thread() {
+		tasks.push(new Runnable() {
 			public void run() {
 				String request = RequestGenerator.getUrlForGeocoding(address);
 
@@ -261,7 +267,7 @@ public class Controller {
 
 				placesList.setPlaces(places);
 			}
-		}.start();
+		});
 	}
 
 	public static Vector getRoutes(final Stop stop) {
@@ -276,7 +282,7 @@ public class Controller {
 	public static void findStops(final Route route) {
 		final StopsListScreen stopsScreen = new StopsListScreen();
 		ScreenStack.push(stopsScreen);
-		new Thread() {
+		sheduleTask(new Runnable() {
 			public void run() {
 				Vector stops = new Vector();
 				if (route.isStopsLoaded()) {
@@ -304,7 +310,7 @@ public class Controller {
 						route.addStopId(stop.getId()); //lining stops and routes
 						stop.addRouteId(route.getId());
 					}
-					
+
 					//clearing memory
 					urlDirect = null;
 					stopsDirect = null;
@@ -329,11 +335,11 @@ public class Controller {
 				}
 				stopsScreen.setStops(stops);
 			}
-		}.start();
+		});
 	}
 
 	public static void updateArrivingScreen(final Stop stop, final ArrivingScreen arrivingScreen) {
-		new Thread() {
+		sheduleTask(new Runnable() {
 			public void run() {
 				String url = RequestGenerator.getUrlForArriving(stop);
 				String request = RequestGenerator.getRequestForArriving();
@@ -343,7 +349,7 @@ public class Controller {
 
 				arrivingScreen.updateRoutes();
 			}
-		}.start();
+		});
 	}
 
 	public static void zoomIn() {
@@ -383,6 +389,13 @@ public class Controller {
 		}
 	}
 
+	public static void sheduleTask(Runnable task){
+		synchronized (tasks) {
+			tasks.push(task);
+			tasks.notify();
+		}
+	}
+	
 	public static void moveMapLeft() {
 		setCurrentPlace(GeoConverter.moveMapLeft(getCurrentPlace(), mapScreen.getWidth(), zoom));
 	}

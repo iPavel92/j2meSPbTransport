@@ -152,7 +152,7 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 			graphics.drawLine(getWidth() - 10, ARRIVING_Y + 4, getWidth() - 15, ARRIVING_Y + 9);
 			graphics.drawLine(getWidth() - 10, ARRIVING_Y + 4, getWidth() - 5, ARRIVING_Y + 9);
 		}
-		if (selectedIndex < currentRoutes.size()) {
+		if (selectedIndex < currentRoutes.size() && currentStop.getRoutesId().size() > 1) {
 			graphics.drawLine(getWidth() - 10, getHeight() - 5, getWidth() - 15, getHeight() - 10);
 			graphics.drawLine(getWidth() - 10, getHeight() - 5, getWidth() - 5, getHeight() - 10);
 			graphics.drawLine(getWidth() - 10, getHeight() - 4, getWidth() - 15, getHeight() - 9);

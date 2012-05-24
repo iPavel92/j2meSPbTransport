@@ -21,12 +21,10 @@ public class SearchCoordinateScreen extends Form implements CommandListener{
 
 	public SearchCoordinateScreen() {
 		super("Посмотреть место");
-		name = new TextField("Название", "", 30, TextField.ANY);
 		lat = new TextField("Широта (lat):", "", 30, TextField.DECIMAL);
 		lon = new TextField("Долгота (lon):", "", 30, TextField.DECIMAL);
 		ok = new Command("ОК", Command.OK, 1);
 		cancel = new Command("Назад", Command.CANCEL, 2);
-		append(name);
 		append(lat);
 		append(lon);
 		addCommand(ok);
@@ -39,7 +37,7 @@ public class SearchCoordinateScreen extends Form implements CommandListener{
 			try {
 				double latValue = Double.parseDouble(lat.getString());
 				double lonValue = Double.parseDouble(lon.getString());
-				Place place = new Place(name.getString(), new Coordinate(latValue, lonValue, Coordinate.WGS84));
+				Place place = new Place("", new Coordinate(latValue, lonValue, Coordinate.WGS84));
 				Controller.setCurrentPlace(place);
 				ScreenStack.push(Controller.getMapScreen());
 			} catch (NumberFormatException e) {

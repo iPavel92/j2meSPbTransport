@@ -13,7 +13,7 @@ import javax.microedition.lcdui.*;
  * To change this template use File | Settings | File Templates.
  */
 public class SearchRouteScreen extends Form implements CommandListener{
-	private TextField routeNumber = new TextField("Введите номер маршрута:", "", 5, TextField.ANY);
+	private TextField routeNumber = new TextField("Введите номер маршрута:", "", 3, TextField.NUMERIC);
 	private Command ok = new Command("Найти", Command.OK, 1);
 	private Command cancel = new Command("Назад", Command.CANCEL, 2);
 
