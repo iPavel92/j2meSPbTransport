@@ -18,22 +18,17 @@ public class SearchPlaceMenu extends List implements CommandListener {
 
 	public SearchPlaceMenu() {
 		super("Поиск", IMPLICIT);
-		try{
-			append("по адресу", Image.createImage("/address.png"));
-			append("по № маршрута", Image.createImage("/transport.png"));
-			append("по координатам", Image.createImage("/place.png"));
-			append("моё расположение (GPS)", Image.createImage("/gps.png"));
-		} catch (IOException e) {
-			//TODO
-			e.printStackTrace();
-		}
+		append("по адресу", ImagePool.getImage("/address.png"));
+		append("по № маршрута", ImagePool.getImage("/transport.png"));
+		append("по координатам", ImagePool.getImage("/place.png"));
+		append("моё расположение (GPS)", ImagePool.getImage("/gps.png"));
 		addCommand(backCommand);
 		setCommandListener(this);
 	}
 
 	public void commandAction(Command command, Displayable displayable) {
 		if (command == List.SELECT_COMMAND) {
-			switch(getSelectedIndex()){
+			switch (getSelectedIndex()) {
 				case 0: //address
 					ScreenStack.push(new SearchAddressScreen());
 					break;

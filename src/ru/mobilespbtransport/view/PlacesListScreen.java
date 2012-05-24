@@ -30,11 +30,7 @@ public class PlacesListScreen extends List implements CommandListener {
 		addCommand(backCommand);
 		setCommandListener(this);
 
-		try {
-			append("Загрузка...", Image.createImage("/autoupdate.png"));
-		} catch (IOException e) {
-			//ignoring
-		}
+		append("Загрузка...", ImagePool.getImage("/autoupdate.png"));
 	}
 
 	public void setPlaces(Vector places) {
@@ -46,13 +42,8 @@ public class PlacesListScreen extends List implements CommandListener {
 			return;
 		}
 		isLoaded = true;
-		Image placeIco = null;
-		try {
-			placeIco = Image.createImage("/place.png");
-		} catch (IOException e) {
-			//TODO
-			e.printStackTrace();
-		}
+		Image placeIco = ImagePool.getImage("/place.png");
+
 		for (int i = 0; i < places.size(); i++) {
 			Place c = (Place) places.elementAt(i);
 			append(c.getName(), placeIco);

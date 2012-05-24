@@ -1,5 +1,7 @@
 package ru.mobilespbtransport.model;
 
+import ru.mobilespbtransport.view.ImagePool;
+
 import javax.microedition.lcdui.Image;
 import java.io.IOException;
 
@@ -27,35 +29,25 @@ public class TransportType {
 	}
 
 	public Image getIcon() {
-		try {
-			switch (type) {
-				case BUS:
-					return Image.createImage("/bus.png");
-				case TROLLEY:
-					return Image.createImage("/trolley.png");
-				case TRAM:
-					return Image.createImage("/tram.png");
-			}
-		} catch (IOException e) {
-			//TODO:
-			e.printStackTrace();
+		switch (type) {
+			case BUS:
+				return ImagePool.getImage("/bus.png");
+			case TROLLEY:
+				return ImagePool.getImage("/trolley.png");
+			case TRAM:
+				return ImagePool.getImage("/tram.png");
 		}
 		return null;
 	}
 
 	public Image getArrivingImage() {
-		try {
-			switch (type) {
-				case BUS:
-					return Image.createImage("/arriving_bus.png");
-				case TROLLEY:
-					return Image.createImage("/arriving_trolley.png");
-				case TRAM:
-					return Image.createImage("/arriving_tram.png");
-			}
-		} catch (IOException e) {
-			//TODO:
-			e.printStackTrace();
+		switch (type) {
+			case BUS:
+				return ImagePool.getImage("/arriving_bus.png");
+			case TROLLEY:
+				return ImagePool.getImage("/arriving_trolley.png");
+			case TRAM:
+				return ImagePool.getImage("/arriving_tram.png");
 		}
 		return null;
 	}
@@ -74,7 +66,7 @@ public class TransportType {
 
 	public String toString() {
 		return "TransportType{" +
-				"type=" + (type == BUS ? "bus" : (type == TROLLEY ? "trolley" : "tram"))+
+				"type=" + (type == BUS ? "bus" : (type == TROLLEY ? "trolley" : "tram")) +
 				'}';
 	}
 }

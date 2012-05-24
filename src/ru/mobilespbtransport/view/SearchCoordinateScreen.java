@@ -43,7 +43,7 @@ public class SearchCoordinateScreen extends Form implements CommandListener{
 				Controller.setCurrentPlace(place);
 				ScreenStack.push(Controller.getMapScreen());
 			} catch (NumberFormatException e) {
-				//TODO
+				ScreenStack.showAlert("Введены неправельные значения");
 				e.printStackTrace();
 			}
 		} else if (command == cancel){

@@ -55,22 +55,12 @@ public class FavouritesScreen extends List implements CommandListener {
 				if(stopsGroup.getStops().size() == 1){
 					append(stopsGroup.getName(), ((Stop) stopsGroup.getStops().elementAt(0)).getTransportType().getIcon());
 				} else {
-					Image ico = null;
-					try {
-						ico = Image.createImage("/transport.png");
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+					Image ico = ImagePool.getImage("/transport.png");
 					append(stopsGroup.getName(), ico);
 				}
 			} else if (item instanceof Place) {
 				Place place = (Place) item;
-				Image ico = null;
-				try {
-					ico = Image.createImage("/place.png");
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				Image ico = ImagePool.getImage("/place.png");
 				append(place.getName(), ico);
 			} else if (item instanceof Route) {
 				Route route = (Route) item;
