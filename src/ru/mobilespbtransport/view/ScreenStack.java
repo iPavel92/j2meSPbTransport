@@ -81,7 +81,6 @@ public class ScreenStack {
 				null,
 				AlertType.INFO);
 		alert.setTimeout(Alert.FOREVER);
-		alert.addCommand(new Command("OK", Command.BACK, 0));
 		alert.setCommandListener(new CommandListener() {
 			public void commandAction(Command command, Displayable displayable) {
 				ScreenStack.pop();
