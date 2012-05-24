@@ -10,6 +10,7 @@ import java.util.Vector;
  * To change this template use File | Settings | File Templates.
  */
 public class TaskQueue extends Vector{
+
 	public synchronized void push(Runnable task){
 		addElement(task);
 	}

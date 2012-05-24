@@ -67,7 +67,7 @@ public class HttpClient {
 			e.printStackTrace();
 			return null;
 		} catch (SecurityException e){
-			ScreenStack.showAlert("Для работы нужен Интернет. Пожалуйста, дайте разрешите доступ к сети");
+			ScreenStack.showAlert("Для работы нужен Интернет. Пожалуйста, разрешите доступ к сети");
 			e.printStackTrace();
 			return null;
 		} finally {
@@ -134,7 +134,7 @@ public class HttpClient {
 			ScreenStack.showAlert("Не удалось подключиться к Интернету");
 			e.printStackTrace();
 		} catch (SecurityException e) {
-			ScreenStack.showAlert("Для работы нужен Интернет. Пожалуйста, дайте разрешите доступ к сети");
+			ScreenStack.showAlert("Для работы нужен Интернет. Пожалуйста, разрешите доступ к сети");
 			e.printStackTrace();
 		} finally {
 			try {
@@ -197,7 +197,7 @@ public class HttpClient {
 			ScreenStack.showAlert("Не удалось подключиться к Интернету");
 			return null;
 		} catch (SecurityException e) {
-			ScreenStack.showAlert("Для работы нужен Интернет. Пожалуйста, дайте разрешите доступ к сети");
+			ScreenStack.showAlert("Для работы нужен Интернет. Пожалуйста, разрешите доступ к сети");
 			return null;
 		} finally {
 			try {

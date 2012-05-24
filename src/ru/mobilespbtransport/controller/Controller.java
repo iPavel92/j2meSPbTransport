@@ -245,7 +245,7 @@ public class Controller {
 		final PlacesListScreen placesList = new PlacesListScreen();
 		ScreenStack.push(placesList);
 
-		tasks.push(new Runnable() {
+		sheduleTask(new Runnable() {
 			public void run() {
 				String request = RequestGenerator.getUrlForGeocoding(address);
 				String response = HttpClient.sendGET(request);
