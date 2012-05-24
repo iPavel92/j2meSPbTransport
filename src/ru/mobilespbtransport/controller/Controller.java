@@ -103,6 +103,7 @@ public class Controller {
 
 	public static void setCurrentPlace(Place place) {
 		model.setCurrentPlace(place);
+		mapScreen.setLoading(true);
 		loadMap();
 		if (isZoomedIn) {
 			loadStopsToMap();
@@ -152,6 +153,7 @@ public class Controller {
 					}
 					String bBox = GeoConverter.buildBBox(model.getCurrentPlace().getCoordinate(), mapScreen.getWidth(), mapScreen.getHeight(), zoom);
 					String url = RequestGenerator.getTransportMapUrl(bBox, model.isShowBus(), model.isShowTrolley(), model.isShowTram(), mapScreen.getWidth(), mapScreen.getHeight());
+					System.out.println(url);
 					Image transportLayer = HttpClient.loadImage(url);
 					mapScreen.setTransportLayer(transportLayer);
 					mapScreen.repaint();

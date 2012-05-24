@@ -88,6 +88,9 @@ public class FavouritesScreen extends List implements CommandListener {
 		} else if (command == searchCommand) {
 			ScreenStack.push(new SearchPlaceMenu());
 		} else if (command == deletePlaceCommand) {
+			if(getSelectedIndex() < 0){
+				return;
+			}
 			Object obj = favourites.elementAt(getSelectedIndex());
 			Controller.removeFavourite((Favourite) obj);
 		} else if (command == exitCommand) {

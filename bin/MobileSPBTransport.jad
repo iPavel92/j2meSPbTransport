@@ -1,7 +1,7 @@
 MIDlet-1: SPB Transport, icon.png, ru.mobilespbtransport.Main
 MIDlet-Description: real-time spb transport map
 MIDlet-Icon: icon.png
-MIDlet-Jar-Size: 90840
+MIDlet-Jar-Size: 90990
 MIDlet-Jar-URL: MobileSPBTransport.jar
 MIDlet-Name: MobileSPBTransport
 MIDlet-Permissions: javax.microedition.io.Connector.http

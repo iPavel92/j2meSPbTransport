@@ -20,7 +20,7 @@ import java.io.*;
 public class HttpClient {
 	public static int BUFFER_LENGTH = 1024;
 
-	public static String sendGET(String request) {
+	public static synchronized String sendGET(String request) {
 		HttpConnection httpConn = null;
 
 		InputStream in = null;
@@ -57,6 +57,9 @@ public class HttpClient {
 				baos.flush();
 				baos.close();
 				String response = new String(baos.toByteArray(), "UTF-8");
+				if(response == null){
+					throw new IOException();
+				}
 				return response;
 			} else {
 				//ignoring
@@ -85,7 +88,7 @@ public class HttpClient {
 	}
 
 
-	public static String sendPost(String url, String message) {
+	public static synchronized String sendPost(String url, String message) {
 		HttpConnection httpConn = null;
 		InputStream in = null;
 		OutputStream os = null;
@@ -126,6 +129,9 @@ public class HttpClient {
 			baos.flush();
 			baos.close();
 			String response = new String(baos.toByteArray(), "UTF-8");
+			if(response == null){
+				throw new IOException();
+			}
 			return response;
 		} catch (UnsupportedEncodingException e) {
 			//ignoring
@@ -151,7 +157,7 @@ public class HttpClient {
 		return null;
 	}
 
-	public static Image loadImage(String url) throws IOException {
+	public static synchronized Image loadImage(String url) throws IOException {
 		byte[] imageData = loadImageBytes(url);
 		Image im = null;
 		im = Image.createImage(imageData, 0, imageData.length);

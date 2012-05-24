@@ -50,7 +50,11 @@ public class MapScreen extends GameCanvas implements CommandListener {
 
 	private final static String LOCKED = "* для разблокировки";
 	private boolean isLocked = false;
+	private boolean isLoading = true;
 
+	public void setLoading(boolean loading) {
+		isLoading = loading;
+	}
 
 	public MapScreen() {
 		super(false);
@@ -122,9 +126,8 @@ public class MapScreen extends GameCanvas implements CommandListener {
 			return;
 		}
 
-		graphics.drawString(LOADING, getWidth() / 2, getHeight() / 2, Graphics.HCENTER | Graphics.TOP);
-
-		if (map == null) {
+		if (isLoading) {
+			graphics.drawString(LOADING, getWidth() / 2, getHeight() / 2, Graphics.HCENTER | Graphics.TOP);
 			return;
 		}
 
@@ -170,6 +173,9 @@ public class MapScreen extends GameCanvas implements CommandListener {
 
 	public void setMap(Image map) {
 		this.map = map;
+		if(map != null){
+			setLoading(false);
+		}
 	}
 
 	public void setTransportLayer(Image transportLayer) {

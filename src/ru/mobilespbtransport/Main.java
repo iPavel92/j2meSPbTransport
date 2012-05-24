@@ -24,17 +24,15 @@ public class Main extends MIDlet {
 	}
 
 	public void startApp() {
-		worker.start();
-		Controller.setMain(this);
-		Controller.setMapScreen(mapCanvas);
-		Controller.setFavouritesScreen(favouritesList);
-
 		Cache.loadModel();
 		Cache.loadStops();
 		Cache.loadRoutes();
 
-		favouritesList.update();
+		Controller.setMain(this);
+		Controller.setMapScreen(mapCanvas);
+		Controller.setFavouritesScreen(favouritesList);
 
+		worker.start();
 		updater.start();
 
 		ScreenStack.push(favouritesList);
