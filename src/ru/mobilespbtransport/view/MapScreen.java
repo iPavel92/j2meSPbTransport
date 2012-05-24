@@ -30,7 +30,6 @@ public class MapScreen extends GameCanvas implements CommandListener {
 	private final Command exitCommand = new Command("Выход", Command.EXIT, 5);
 
 	private final static String LOADING = "Загрузка...";
-	private final static String LOCKED = "* для разблокировки";
 
 	private final static int CURSOR_DELTA = 5;
 	private final static int STOP_RADIUS = 6;
@@ -49,6 +48,7 @@ public class MapScreen extends GameCanvas implements CommandListener {
 
 	private final static int TOUCH_BORDER_TO_SLIDE = 50;
 
+	private final static String LOCKED = "* для разблокировки";
 	private boolean isLocked = false;
 
 

@@ -218,6 +218,8 @@ public class Controller {
 				Place place = getMyLocation();
 				if (place != null) {
 					setCurrentPlace(place);
+				} else {
+					ScreenStack.showAlert("Не удалось получить координаты GPS");
 				}
 			}
 		}.start();
@@ -292,6 +294,7 @@ public class Controller {
 					String urlDirect = RequestGenerator.getUrlForDirectStops(route);
 					String responseDirect = HttpClient.sendPost(urlDirect, request);
 					Vector stopsDirect = ResponseParser.parseStopsByRoute(responseDirect, route.getTransportType());
+					responseDirect = null; //clearing memory
 					for (Enumeration e = stopsDirect.elements(); e.hasMoreElements(); ) {
 						Stop stop = (Stop) e.nextElement();
 						stop.setDirect(true);
@@ -301,10 +304,16 @@ public class Controller {
 						route.addStopId(stop.getId()); //lining stops and routes
 						stop.addRouteId(route.getId());
 					}
+					
+					//clearing memory
+					urlDirect = null;
+					stopsDirect = null;
+					System.gc();
 
 					String urlReturn = RequestGenerator.getUrlForReturnStops(route);
 					String responseReturn = HttpClient.sendPost(urlReturn, request);
 					Vector stopsReturn = ResponseParser.parseStopsByRoute(responseReturn, route.getTransportType());
+					responseReturn = null; //clearing memory
 					for (Enumeration e = stopsReturn.elements(); e.hasMoreElements(); ) {
 						Stop stop = (Stop) e.nextElement();
 						stop.setDirect(false);

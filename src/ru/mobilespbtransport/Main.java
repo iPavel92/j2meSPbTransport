@@ -15,7 +15,7 @@ public class Main extends MIDlet {
 		ScreenStack.setDisplay(Display.getDisplay(this));
 	}
 
-	public void exit(){
+	public void exit() {
 		destroyApp(false);
 		notifyDestroyed();
 	}
@@ -41,15 +41,17 @@ public class Main extends MIDlet {
 			try {
 				while (true) {
 					sleep(SLEEP_INTERVAL);
-					if(Controller.getModel().isUseAutoUpdate()){
+					if (Controller.getModel().isUseAutoUpdate()) {
 						if (ScreenStack.peek() == mapCanvas) {
-							if(!Controller.isZoomedIn() && !mapCanvas.isLocked()){
+							if (!Controller.isZoomedIn() && !mapCanvas.isLocked()) {
 								Controller.loadTransportLayer();
 							}
 						}
-						if(ScreenStack.peek() instanceof ArrivingScreen){
-							ArrivingScreen arrivingScreen = (ArrivingScreen)ScreenStack.peek();
-							Controller.updateArrivingScreen(arrivingScreen.getCurrentStop(), arrivingScreen);
+						if (ScreenStack.peek() instanceof ArrivingScreen) {
+							ArrivingScreen arrivingScreen = (ArrivingScreen) ScreenStack.peek();
+							if (!arrivingScreen.isLocked()) {
+								Controller.updateArrivingScreen(arrivingScreen.getCurrentStop(), arrivingScreen);
+							}
 						}
 					}
 				}

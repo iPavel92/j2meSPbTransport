@@ -41,7 +41,9 @@ public class ResponseParser {
 					e.printStackTrace();
 				}
 			}
-
+			answer = null;
+			jt = null;
+			System.gc();
 			return result;
 		} catch (JSONException e) {
 			return null;
@@ -65,6 +67,9 @@ public class ResponseParser {
 				Route route = new Route(transportType, routeNumber, routeId);
 				result.addElement(route);
 			}
+			answer = null;
+			jt = null;
+			System.gc();
 			return result;
 		} catch (JSONException e) {
 			return null;
@@ -118,6 +123,9 @@ public class ResponseParser {
 
 				result.addElement(stop);
 			}
+			answer = null;
+			jt = null;
+			System.gc();
 			return result;
 		} catch (JSONException e) {
 			return null;
@@ -151,6 +159,9 @@ public class ResponseParser {
 				Arriving arriving = new Arriving(route, minutesToArrive);
 				result.addElement(arriving);
 			}
+			answer = null;
+			jt = null;
+			System.gc();
 			return result;
 		} catch (JSONException e) {
 			return null;
@@ -194,6 +205,9 @@ public class ResponseParser {
 
 				result.addElement(stop);
 			}
+			answer = null;
+			jt = null;
+			System.gc();
 			return result;
 		} catch (JSONException e) {
 			return null;

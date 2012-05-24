@@ -20,8 +20,9 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 	private final Command updateCommand = new Command("Обновить", Command.ITEM, 2);
 	private final Command showOnMap = new Command("На карте", Command.ITEM, 3);
 	private final Command showRoute = new Command("Посмотреть маршрут", Command.ITEM, 4);
-	private final Command backCommand = new Command("Назад", Command.CANCEL, 5);
-	private final Command exitCommand = new Command("Выход", Command.EXIT, 6);
+	private final Command settings = new Command("Настройки", Command.ITEM, 5);
+	private final Command backCommand = new Command("Назад", Command.CANCEL, 6);
+	private final Command exitCommand = new Command("Выход", Command.EXIT, 7);
 
 	private final StopsGroup stops;
 	private Stop currentStop;
@@ -32,19 +33,28 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 
 	private final static int TOUCH_BORDER_TO_SLIDE = 50;
 
+	private final static String LOCKED = "* для разблокировки";
+	private boolean isLocked = false;
+
+
 	public ArrivingScreen(StopsGroup stops) {
 		super(false);
 		setFullScreenMode(true);
 
 		this.stops = stops;
-		setCurrentStop((Stop)stops.getStops().elementAt(0));
+		setCurrentStop((Stop) stops.getStops().elementAt(0));
 		addCommand(viewPlacesCommand);
 		addCommand(addToFavourites);
 		addCommand(updateCommand);
 		addCommand(showOnMap);
+		addCommand(settings);
 		addCommand(backCommand);
 		addCommand(exitCommand);
 		setCommandListener(this);
+	}
+
+	public boolean isLocked() {
+		return isLocked;
 	}
 
 	private void setCurrentStop(Stop stop) {
@@ -59,7 +69,7 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 		return currentStop;
 	}
 
-	public void updateRoutes(){
+	public void updateRoutes() {
 		currentRoutes = Controller.getRoutes(currentStop);
 		repaint();
 	}
@@ -71,6 +81,12 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 		//background
 		graphics.setColor(0xF3C854);
 		graphics.fillRect(0, 0, getWidth(), getHeight());
+
+		if (isLocked) {
+			graphics.setColor(0x000000);
+			graphics.drawString(LOCKED, getWidth() / 2, getHeight() / 2, Graphics.HCENTER | Graphics.TOP);
+			return;
+		}
 
 		//transport type image
 		graphics.setColor(currentStop.getTransportType().getColor());
@@ -143,7 +159,7 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 			graphics.drawLine(getWidth() - 10, getHeight() - 4, getWidth() - 5, getHeight() - 9);
 		}
 
-		if(stops.getStops().size() > 1){
+		if (stops.getStops().size() > 1) {
 			graphics.drawLine(getWidth() - 10, ARRIVING_Y - 10, getWidth() - 15, ARRIVING_Y - 5);
 			graphics.drawLine(getWidth() - 10, ARRIVING_Y - 10, getWidth() - 15, ARRIVING_Y - 15);
 			graphics.drawLine(getWidth() - 9, ARRIVING_Y - 10, getWidth() - 14, ARRIVING_Y - 5);
@@ -157,8 +173,21 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 	}
 
 	protected void keyPressed(int keyCode) {
+		if (isLocked) {
+			if (keyCode == KEY_STAR) {
+				isLocked = false;
+				repaint();
+				return;
+			} else {
+				return;
+			}
+		}
 		if (keyCode == KEY_NUM5) {
 			Controller.updateArrivingScreen(currentStop, this);
+			return;
+		} else if (keyCode == KEY_STAR) {
+			isLocked = true;
+			repaint();
 			return;
 		}
 		int gameAction = getGameAction(keyCode);
@@ -170,23 +199,23 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 				slideDown();
 				break;
 			case LEFT:
-				if(stops.getStops().size() > 1){
-					 if(currentStopIndex == 0){
-						 currentStopIndex = stops.getStops().size() - 1;
-					 } else {
-						 currentStopIndex--;
-					 }
-					 setCurrentStop((Stop)stops.getStops().elementAt(currentStopIndex));
+				if (stops.getStops().size() > 1) {
+					if (currentStopIndex == 0) {
+						currentStopIndex = stops.getStops().size() - 1;
+					} else {
+						currentStopIndex--;
+					}
+					setCurrentStop((Stop) stops.getStops().elementAt(currentStopIndex));
 				}
 				break;
 			case RIGHT:
-				if(stops.getStops().size() > 1){
-					if(currentStopIndex == stops.getStops().size() - 1){
+				if (stops.getStops().size() > 1) {
+					if (currentStopIndex == stops.getStops().size() - 1) {
 						currentStopIndex = 0;
 					} else {
 						currentStopIndex++;
 					}
-					setCurrentStop((Stop)stops.getStops().elementAt(currentStopIndex));
+					setCurrentStop((Stop) stops.getStops().elementAt(currentStopIndex));
 				}
 				break;
 			case FIRE:
@@ -202,6 +231,9 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 	}
 
 	protected void pointerPressed(int x, int y) {
+		if (isLocked) {
+			return;
+		}
 		if (y < TOUCH_BORDER_TO_SLIDE) {
 			slideUp();
 		} else if (y > getHeight() - TOUCH_BORDER_TO_SLIDE) {
@@ -241,6 +273,8 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 			ScreenStack.push(Controller.getMapScreen());
 		} else if (command == showRoute && currentRoutes != null) {
 			Controller.findStops(Controller.getRoute(((Route) currentRoutes.elementAt(selectedIndex)).getId()));
+		} else if(command == settings){
+			ScreenStack.push(new SettingsScreen());
 		}
 	}
 }

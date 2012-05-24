@@ -21,7 +21,8 @@ import java.util.Vector;
 public class FavouritesScreen extends List implements CommandListener {
 	private final Command searchCommand = new Command("Поиск места", Command.ITEM, 0);
 	private final Command deletePlaceCommand = new Command("Удалить", Command.ITEM, 1);
-	private final Command exitCommand = new Command("Выход", Command.EXIT, 2);
+	private final Command settings = new Command("Настройки", Command.ITEM, 2);
+	private final Command exitCommand = new Command("Выход", Command.EXIT, 3);
 
 	private Vector favourites; //Vector<Favourite>
 
@@ -30,6 +31,7 @@ public class FavouritesScreen extends List implements CommandListener {
 
 		addCommand(searchCommand);
 		addCommand(deletePlaceCommand);
+		addCommand(settings);
 		addCommand(exitCommand);
 		setCommandListener(this);
 
@@ -95,6 +97,8 @@ public class FavouritesScreen extends List implements CommandListener {
 			}
 		} else if (command == exitCommand) {
 			Controller.exit();
+		} else if(command == settings){
+			ScreenStack.push(new SettingsScreen());
 		}
 	}
 }
