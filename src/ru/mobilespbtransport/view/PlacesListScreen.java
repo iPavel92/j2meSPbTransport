@@ -5,7 +5,6 @@ import ru.mobilespbtransport.model.Place;
 
 
 import javax.microedition.lcdui.*;
-import java.io.IOException;
 import java.util.Vector;
 
 /**
@@ -56,7 +55,7 @@ public class PlacesListScreen extends List implements CommandListener {
 				return;
 			}
 			Controller.setCurrentPlace((Place) places.elementAt(getSelectedIndex()));
-			ScreenStack.push(Controller.getMapScreen());
+			ScreenStack.push(Controller.getMapView());
 		} else if (command == backCommand) {
 			ScreenStack.pop();
 		}

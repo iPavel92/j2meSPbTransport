@@ -17,8 +17,12 @@ import java.util.Vector;
  * Time: 20:44
  * To change this template use File | SettingsScreen | File Templates.
  */
-public class MapScreen extends GameCanvas implements CommandListener {
-	private Image map;
+public class MapScreen extends GameCanvas {
+    protected MapScreen(boolean suppressKeyEvents) {
+        super(suppressKeyEvents);
+    }
+	/*
+    private Image map;
 	private Image transportLayer;
 	private Vector stops; //Vector<Stop>
 
@@ -95,7 +99,6 @@ public class MapScreen extends GameCanvas implements CommandListener {
 					stop.getCoordinate(),
 					getHeight(),
 					Controller.getZoom());
-			
 		}
 	}
 
@@ -340,7 +343,7 @@ public class MapScreen extends GameCanvas implements CommandListener {
 			Controller.zoomOut();
 			ScreenStack.pop();
 		}
-	}
+	}            */
 }
 
 

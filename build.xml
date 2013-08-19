@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="TransportSPB" default="make-debug-build">
+    <!--
+    Версия приложения. По этой версии телефон определяет, заменить или обновить приложение.
+    Каждая часть версии (major.minor.micro) должна быть в интервале [0-99]
+    см. http://www.oracle.com/technetwork/systems/index-155459.html-->
+    <property name="midlet-version" value="2.0"/>
+
+    <property name="app-filename" value="TransportSPB"/>
+    <property name="jar-name" value="${app-filename}.jar"/>
+    <property name="jad-name" value="${app-filename}.jad"/>
+    <property name="jad-name-touch" value="${app-filename}-touch.jad"/>
+
+    <!--Что нужно для сборки?
+    Файлы local.properties и build.properties должны находиться в папке проекта.
+    Подробнее см. j2me-build.xml
+    It should *NOT* be checked into Version Control Systems.
+
+    Пример содержания local.properties:
+        javame-sdk=C:/Java_ME_platform_SDK_3.0
+        proguard=C:/proguard4.4/lib/proguard.jar
+        microemulator = microemulator
+
+    Пример содержания build.properties:
+        obfuscate=true
+    -->
+    <loadproperties srcFile="local.properties"/>
+
+    <!-- extension targets. Uncomment the ones where you want to do custom work
+    in between standard targets -->
+    <target name="-pre-build" depends="update-manifest">
+    </target>
+
+    <!-- Import the actual build file.
+         To customize existing targets, there are two options:
+         - Customize only one target:
+             - copy/paste the target into this file, *before* the
+               <import> task.
+             - customize it to your needs.
+         - Customize the whole content of j2me-build.xml
+             - copy/paste the content of the rules files (minus the top node)
+               into this file, replacing the <import> task.
+             - customize to your needs.
+    -->
+    <import file="j2me-build.xml"/>
+
+    <property name="manifest" location="${res-dir}/MANIFEST.MF"/>
+    <target name="update-manifest">
+        <replaceregexp file="${manifest}" byline="true"
+                       match="MIDlet-Version: ?(.+)"
+                       replace="MIDlet-Version: ${midlet-version}"/>
+        <replaceregexp file="${manifest}" byline="true"
+                       match="MIDlet-Jar-URL: ?(.+)"
+                       replace="MIDlet-Jar-URL: ${jar-name}"/>
+    </target>
+
+    <!--Cобирает дебажный билд, подставляя ресурсы кинг бара-->
+    <target name="make-debug-build">
+        <antcall target="dist"/>
+        <antcall target="install-to-emulator"/>
+    </target>
+
+    <!--Быстро cобирает дебажный билд, подставляя ресурсы кинг бара-->
+    <target name="make-debug-fast-build">
+        <antcall target="fastbuild"/>
+        <antcall target="install-to-emulator"/>
+    </target>
+
+    <target name="install-to-emulator">
+        <fail message="microemulator property is missing. Make sure to create local.properties"
+              unless="microemulator"/>
+
+        <exec executable="java" spawn="true">
+            <arg value="-jar"/>
+            <arg value="${microemulator}/microemulator.jar"/>
+            <arg value="${dist-dir}/${jad-name}"/>
+        </exec>
+    </target>
+</project>

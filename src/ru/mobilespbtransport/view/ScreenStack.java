@@ -56,16 +56,15 @@ public class ScreenStack {
 	//deleting duplicating and heavy for memory screens from stack
 	public static void clearOldHeavyScreens(Displayable displayable){
 		for(int i = 0; i < screens.size(); ++i){
-			if(displayable instanceof MapScreen && screens.elementAt(i) instanceof MapScreen){
-				screens.removeElementAt(i);
-				Controller.zoomOut();
-				return;
-			}
 			if(displayable instanceof ArrivingScreen && screens.elementAt(i) instanceof ArrivingScreen){
 				screens.removeElementAt(i);
 				return;
 			}
 			if(displayable instanceof StopsListScreen && screens.elementAt(i) instanceof StopsListScreen){
+				screens.removeElementAt(i);
+				return;
+			}
+			if(displayable instanceof FavouritesScreen && screens.elementAt(i) instanceof FavouritesScreen){
 				screens.removeElementAt(i);
 				return;
 			}

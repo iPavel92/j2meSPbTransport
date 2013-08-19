@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="j2me" default="dist">
+    <!--Что нужно для сборки?-->
+    <!--1. Файл "local.properties" в папке проекта
+    Содержит пути к используемым библиотекам
+    Пример содержания local.properties:
+        javame-sdk=C:/Java_ME_platform_SDK_3.0
+        proguard=C:/proguard4.4/lib/proguard.jar
+    -->
+    <property file="local.properties"/>
+    <!-- quick check on sdk.dir -->
+    <fail message="javame-sdk is missing. Make sure to create local.properties"
+          unless="javame-sdk"/>
+
+    <!--2. Файл "build.properties" в папке проекта.
+    Cожержит настройки сборки. Необязателен.
+    Пример содержания build.properties:
+        obfuscate=true
+    -->
+    <property file="build.properties"/>
+    <!--Значения по-умолчанию, если build.properties отсутствует-->
+    <property name="obfuscate" value="false"/>
+
+    <!--Названия полученных приложений-->
+    <property name="jar-name" value="${ant.project.name}.jar"/>
+    <property name="jad-name" value="${ant.project.name}.jad"/>
+    <property name="jad-name-touch" value="${ant.project.name}-touch.jad"/>
+
+    <!--Пути-->
+    <property name="lib-dir" location="lib"/>
+    <property name="src-dir" location="src"/>
+    <property name="res-dir" location="res"/>
+    <property name="dist-dir" location="dist"/>
+    <property name="libs" location="${javame-sdk}/lib/cldc_1.1.jar${path.separator}${javame-sdk}/lib/midp_2.0.jar"/>
+
+    <property name="designCreator" value="util/DesignCreator/out/production/DesignCreator/"/>
+    <property name="designCreatorMainClass" value="ru.loyaltyplant.designcreator.DesignTemplateParser"/>
+
+    <property name="build-dir" location="build"/>
+    <property name="build/compiled-dir" location="${build-dir}/compiled"/>
+    <property name="build/obfuscated-dir" location="${build-dir}/obfuscated"/>
+    <property name="build/preverified-dir" location="${build-dir}/preverified"/>
+
+    <property name="util-dir" location="util"/>
+    <property name="doc-dir" location="doc"/>
+    <property name="doc/javadoc-dir" location="${doc-dir}/javadoc"/>
+
+    <property name="manifest" location="${res-dir}/MANIFEST.MF"/>
+
+    <path id="classpath">
+        <fileset dir="lib" includes="*.jar"/>
+    </path>
+
+    <target name="clean">
+        <delete dir="${build-dir}"/>
+        <delete dir="${dist-dir}"/>
+    </target>
+
+    <!-- empty default pre-build target. Create a similar target in
+    your build.xml and it'll be called instead of this one. -->
+    <target name="-pre-build"/>
+
+    <target name="init" depends="clean, -pre-build"/>
+
+    <!--Компиляция-->
+    <target name="compile" depends="init">
+        <mkdir dir="${build/compiled-dir}"/>
+        <javac srcdir="${src-dir}"
+               destdir="${build/compiled-dir}"
+               target="1.3"
+               source="1.3"
+               encoding="utf-8"
+               includeantruntime="false">
+            <classpath refid="classpath"/>
+        </javac>
+    </target>
+
+    <!--Проверка на то, надо ли обфусцировать (см. build.properties)-->
+    <target name="check-obfuscate-status">
+        <condition property="mustObfuscate">
+            <contains string="${obfuscate}" substring="true"/>
+        </condition>
+    </target>
+
+    <!--если велено обфусцировать, то делаем это-->
+    <target name="obfuscate" depends="check-obfuscate-status, compile" if="mustObfuscate">
+        <fail message="proguard property is missing. Make sure to create local.properties"
+              unless="proguard"/>
+
+        <delete dir="${build/obfuscated-dir}"/>
+        <mkdir dir="${build/obfuscated-dir}"/>
+        <taskdef name="proguard" classname="proguard.ant.ProGuardTask" classpath="${proguard}"/>
+        <proguard note="off" defaultpackage="" usemixedcaseclassnames="off"
+                  overloadaggressively="on" obfuscate="true" optimize="true"
+                  allowaccessmodification="true" microedition="true" repackageclasses=""
+                  forceprocessing="true" optimizationpasses="4" printmapping="obfuscation.map">
+            <injar name="${build/compiled-dir}"/>
+            <outjar name="${build/obfuscated-dir}"/>
+            <libraryjar path="${lib-dir}"/>
+            <keep access="public" type="class" extends="javax.microedition.midlet.MIDlet"/>
+        </proguard>
+    </target>
+
+    <!--если не надо, то просто скопируем-->
+    <target name="skip-obfuscate" depends="check-obfuscate-status, compile" unless="mustObfuscate">
+        <delete dir="${build/obfuscated-dir}"/>
+        <mkdir dir="${build/obfuscated-dir}"/>
+        <copy todir="${build/obfuscated-dir}">
+            <fileset dir="${build/compiled-dir}" includes="**/*"/>
+        </copy>
+    </target>
+
+    <!--Проверим, что код соответствует спеке CLDC. После этого в build/preverified лежат скомпилированные классы-->
+    <target name="preverify" depends="obfuscate, skip-obfuscate">
+        <delete dir="${build/preverified-dir}"/>
+        <mkdir dir="${build/preverified-dir}"/>
+        <exec executable="${javame-sdk}/bin/preverify" failonerror="true">
+            <arg line="-classpath '${libs}'"/>
+            <arg line="-d '${build/preverified-dir}'"/>
+            <arg line="'${build/obfuscated-dir}'"/>
+            <arg line="-cldc"/>
+        </exec>
+    </target>
+
+    <!--собственно протаскивание кода по конвейеру компиляции-->
+    <target name="build" depends="preverify"/>
+
+    <!--оптимизирует все ресурсы-картинки-->
+    <target name="optimize-resources">
+        <!--
+        Эта штука может возвращать код ошибки 2. Это просто означает, что сжать сильнее не получается.
+        Поэтому тут стоит ключик failonerror = false
+        -->
+        <apply executable="${util-dir}/pngout" failonerror="false">
+            <fileset dir="${res-dir}" includes="*.png"/>
+            <arg line="/s0"/>
+            <arg line="/f0"/>
+            <arg line="/k0"/>
+            <arg line="/q"/>
+            <arg line="/y"/>
+        </apply>
+    </target>
+
+    <!--собирает jar и jad файлы на основе готовых класс-файлов и ресурсов.
+    ресурсы берутся из папки build/res, а скомпилированные классы из build/preverified
+    -->
+    <target name="dist-unsigned" depends="build, optimize-resources">
+        <delete dir="${dist-dir}"/>
+        <mkdir dir="${dist-dir}"/>
+
+        <jar destfile="${dist-dir}/${jar-name}" manifest="${manifest}">
+            <fileset dir="${build/preverified-dir}"/>
+            <fileset dir="${res-dir}" excludes="MANIFEST.MF"/>
+        </jar>
+
+        <copy file="${manifest}" tofile="${dist-dir}/${jad-name}"/>
+
+        <length file="${dist-dir}/${jar-name}" property="jar-size"/>
+        <echo message="MIDlet-Jar-Size: ${jar-size}${line.separator}" file="${dist-dir}/${jad-name}" append="true"/>
+
+        <copy file="${dist-dir}/${jad-name}" tofile="${dist-dir}/${jad-name-touch}"/>
+        <echo file="${dist-dir}/${jad-name-touch}" append="true" message="MIDlet-Touch-Support: True${line.separator}"/>
+    </target>
+
+    <target name="dist" depends="dist-unsigned, optimize-resources"/>
+
+    <!--Супербыстрая сборка без обфускации, ужимок и проверок-->
+    <target name="fastbuild" depends="compile">
+        <delete dir="${build/preverified-dir}"/>
+        <mkdir dir="${build/preverified-dir}"/>
+        <copy todir="${build/preverified-dir}">
+            <fileset dir="${build/compiled-dir}" includes="**/*"/>
+        </copy>
+
+        <delete dir="${dist-dir}"/>
+        <mkdir dir="${dist-dir}"/>
+
+        <jar destfile="${dist-dir}/${jar-name}" manifest="${manifest}">
+            <fileset dir="${build/preverified-dir}"/>
+            <fileset dir="${res-dir}" excludes="MANIFEST.MF"/>
+        </jar>
+
+        <copy file="${manifest}" tofile="${dist-dir}/${jad-name}"/>
+
+        <length file="${dist-dir}/${jar-name}" property="jar-size"/>
+        <echo message="MIDlet-Jar-Size: ${jar-size}${line.separator}" file="${dist-dir}/${jad-name}" append="true"/>
+
+        <copy file="${dist-dir}/${jad-name}" tofile="${dist-dir}/${jad-name-touch}"/>
+        <echo file="${dist-dir}/${jad-name-touch}" append="true" message="MIDlet-Touch-Support: True${line.separator}"/>
+    </target>
+
+    <target name="javadoc">
+        <delete dir="${doc/javadoc-dir}"/>
+        <javadoc destdir="${doc/javadoc-dir}"
+                 encoding="UTF-8"
+                 docencoding="UTF-8"
+                 bootclasspath="${libs}"
+                 useexternalfile="yes">
+            <fileset dir="${src-dir}" defaultexcludes="yes">
+                <include name="**/*.java"/>
+            </fileset>
+        </javadoc>
+    </target>
+
+</project>
+

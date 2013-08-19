@@ -2,15 +2,16 @@ package ru.mobilespbtransport.controller;
 
 import ru.mobilespbtransport.Main;
 import ru.mobilespbtransport.cache.Cache;
+import ru.mobilespbtransport.location.Locator;
 import ru.mobilespbtransport.model.*;
 import ru.mobilespbtransport.network.HttpClient;
 import ru.mobilespbtransport.network.RequestGenerator;
 import ru.mobilespbtransport.network.ResponseParser;
 import ru.mobilespbtransport.view.*;
+import ru.mobilespbtransport.view.mapview.MapView;
 
 
 import javax.microedition.lcdui.Image;
-import javax.microedition.location.*;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -24,13 +25,8 @@ import java.util.Vector;
 public class Controller {
 	private static Main main; //for destroy app
 	private static Model model = new Model();
-	private static MapScreen mapScreen;
+    private static MapView mapView;
 	private static FavouritesScreen favouritesScreen;
-
-	public final static int DEFAULT_ZOOM = 13;
-	public final static int SELECT_STOP_ZOOM = 16;
-	private static boolean isZoomedIn = false;
-	private static int zoom = DEFAULT_ZOOM;
 
 	private static final TaskQueue tasks = new TaskQueue();
 
@@ -50,11 +46,15 @@ public class Controller {
 		Controller.model = model;
 	}
 
-	public static void setMapScreen(MapScreen mapScreen) {
-		Controller.mapScreen = mapScreen;
-	}
+    public static void setMapView(MapView mapView) {
+        Controller.mapView = mapView;
+    }
 
-	public static FavouritesScreen getFavouritesScreen() {
+    public static MapView getMapView() {
+        return mapView;
+    }
+
+    public static FavouritesScreen getFavouritesScreen() {
 		return favouritesScreen;
 	}
 
@@ -88,12 +88,11 @@ public class Controller {
 		return (Stop) model.getStops().get(key);
 	}
 
-	public static void setLayers(boolean showBus, boolean showTrolley, boolean showTram) {
+	public static void setFilters(boolean showBus, boolean showTrolley, boolean showTram) {
 		model.setShowBus(showBus);
 		model.setShowTrolley(showTrolley);
 		model.setShowTram(showTram);
 		Cache.saveModel();
-		loadTransportLayer();
 	}
 
 	public static void setAutoUpdate(boolean isAutoUpdate) {
@@ -102,18 +101,7 @@ public class Controller {
 	}
 
 	public static void setCurrentPlace(Place place) {
-		model.setCurrentPlace(place);
-		mapScreen.setLoading(true);
-		loadMap();
-		if (isZoomedIn) {
-			loadStopsToMap();
-		} else {
-			loadTransportLayer();
-		}
-	}
-
-	public static Place getCurrentPlace() {
-		return model.getCurrentPlace();
+		mapView.setMapCenter(place.getCoordinate());
 	}
 
 	public static void addFavourite(Favourite favourite) {
@@ -130,99 +118,27 @@ public class Controller {
 		Cache.saveModel();
 	}
 
-	public static void loadMap() {
-		sheduleTask(new Runnable() {
-			public void run() {
-				if (model.getCurrentPlace() == null) {
-					return;
-				}
-				String url = RequestGenerator.getMapUrl(model.getCurrentPlace(), mapScreen.getWidth(), mapScreen.getHeight(), zoom);
-				Image map = getMapImage(model.getCurrentPlace(), url, zoom);
-				mapScreen.setMap(map);
-				mapScreen.repaint();
-			}
-		});
-	}
-
-	public static void loadTransportLayer() {
-		sheduleTask(new Runnable() {
-			public void run() {
-				try {
-					if (model.getCurrentPlace() == null) {
-						return;
-					}
-					String bBox = GeoConverter.buildBBox(model.getCurrentPlace().getCoordinate(), mapScreen.getWidth(), mapScreen.getHeight(), zoom);
-					String url = RequestGenerator.getTransportMapUrl(bBox, model.isShowBus(), model.isShowTrolley(), model.isShowTram(), mapScreen.getWidth(), mapScreen.getHeight());
-					System.out.println(url);
-					Image transportLayer = HttpClient.loadImage(url);
-					mapScreen.setTransportLayer(transportLayer);
-					mapScreen.repaint();
-				} catch (Exception e) {
-					e.printStackTrace();  //TODO
-				}
-			}
-		});
-	}
-
-	public static void loadStopsToMap() {
-		sheduleTask(new Runnable() {
-			public void run() {
-				String url = "http://transport.orgp.spb.ru/Portal/transport/stops/list";
-				String bBox = GeoConverter.buildBBox(model.getCurrentPlace().getCoordinate(), mapScreen.getWidth(), mapScreen.getHeight(), zoom);
-				String request = RequestGenerator.getRequestForStopsOnMap(bBox);
-				String response = HttpClient.sendPost(url, request);
-				Vector stops = ResponseParser.parseStopsToMap(response);
-				for (Enumeration e = stops.elements(); e.hasMoreElements(); ) {
-					addStop((Stop) e.nextElement()); //to cached stops
-				}
-				Cache.saveStops();
-				Cache.saveRoutes();
-				mapScreen.setStops(stops);
-				mapScreen.repaint();
-			}
-		});
-	}
-
-
 	public static void exit() {
 		if (main == null) {
 			throw new IllegalStateException("main midlet class not setted");
 		}
-		main.exit();
-	}
-
-	public static MapScreen getMapScreen() {
-		return mapScreen;
-	}
-
-	public static Place getMyLocation() {
-		try {
-			Criteria cr = new Criteria();
-			cr.setHorizontalAccuracy(500);
-			LocationProvider lp = null;
-			lp = LocationProvider.getInstance(cr);
-			Location l = lp.getLocation(10);
-			QualifiedCoordinates qc = l.getQualifiedCoordinates();
-			return new Place("", new Coordinate(qc.getLatitude(), qc.getLongitude(), Coordinate.WGS84));
-		} catch (NoClassDefFoundError e) {
-			ScreenStack.pop(); //removing map screen
-			ScreenStack.showAlert("Телефон не поддерживает GPS");
-			e.printStackTrace();
-			return null;
-		} catch (Exception e) {
-			ScreenStack.pop(); //removing map screen
-			ScreenStack.showAlert("Не удалось получить координаты GPS");
-			e.printStackTrace();
-			return null;
-		}
+		if(mapView != null && mapView.getMapCenter() != null){
+            model.setLastCoordinate(mapView.getMapCenter());
+            model.setLastZoom(mapView.getZoom());
+        }
+        Cache.saveModel();
+        main.exit();
 	}
 
 	public static void locateMe() {
 		sheduleTask(new Runnable() {
 			public void run() {
-				Place place = getMyLocation();
-				if (place != null) {
+				Coordinate coordinate = Locator.getLocation();
+				if (coordinate != null) {
+					Place place = new Place(null, coordinate);
 					setCurrentPlace(place);
+				} else {
+					ScreenStack.push(favouritesScreen);
 				}
 			}
 		});
@@ -339,67 +255,10 @@ public class Controller {
 		});
 	}
 
-	public static void zoomIn() {
-		isZoomedIn = true;
-		zoom = SELECT_STOP_ZOOM;
-		Coordinate coordinate = GeoConverter.getZoomedInCoordinate(getCurrentPlace().getCoordinate(),
-				mapScreen.getCursorX(), mapScreen.getCursorY(),
-				mapScreen.getWidth(), mapScreen.getHeight(),
-				DEFAULT_ZOOM);
-		Place zoomedPlace = new Place(Controller.getCurrentPlace().getName(), coordinate);
-		setCurrentPlace(zoomedPlace);
-	}
-
-	public static void zoomOut() {
-		isZoomedIn = false;
-		zoom = DEFAULT_ZOOM;
-	}
-
-	public static boolean isZoomedIn() {
-		return isZoomedIn;
-	}
-
-	//load image from cache or inet
-	//save downloaded image to cache
-	public static Image getMapImage(Place place, String url, int zoom) {
-		if (Cache.isImageExists(place, zoom)) {
-			System.out.println("found in cache");
-			return Cache.loadImage(place, zoom);
-		} else {
-			System.out.println("not found in cache");
-			byte[] imageData = HttpClient.loadImageBytes(url);
-			System.out.println("image loaded");
-			Cache.saveImage(place, imageData, zoom);
-			System.out.println("image saved");
-			Image im = Image.createImage(imageData, 0, imageData.length);
-			return (im == null ? null : im);
-		}
-	}
-
 	public static void sheduleTask(Runnable task){
 		synchronized (tasks) {
 			tasks.push(task);
 			tasks.notify();
 		}
-	}
-	
-	public static void moveMapLeft() {
-		setCurrentPlace(GeoConverter.moveMapLeft(getCurrentPlace(), mapScreen.getWidth(), zoom));
-	}
-
-	public static void moveMapRight() {
-		setCurrentPlace(GeoConverter.moveMapRight(getCurrentPlace(), mapScreen.getWidth(), zoom));
-	}
-
-	public static void moveMapUp() {
-		setCurrentPlace(GeoConverter.moveMapUp(getCurrentPlace(), mapScreen.getHeight(), zoom));
-	}
-
-	public static void moveMapDown() {
-		setCurrentPlace(GeoConverter.moveMapDown(getCurrentPlace(), mapScreen.getHeight(), zoom));
-	}
-
-	public static int getZoom() {
-		return zoom;
 	}
 }

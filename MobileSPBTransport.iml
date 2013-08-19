@@ -7,6 +7,9 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="cldc_1.1" level="project" />
+    <orderEntry type="library" name="proguard" level="project" />
+    <orderEntry type="library" name="locationLBS" level="project" />
   </component>
 </module>
 

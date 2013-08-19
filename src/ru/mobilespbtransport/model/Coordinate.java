@@ -19,6 +19,15 @@ public class Coordinate {
 
 	private final static double ORIGIN_SHIFT = Math.PI * 6378137;
 
+	/**
+	 * Creates default WGS84 (gps) lat/long coordinate
+	 * @param lat
+	 * @param lon
+	 */
+	public Coordinate(double lat, double lon) {
+		this(lat, lon, WGS84);
+	}
+
 	public Coordinate(double lat, double lon, int type) {
 		this.lat = lat;
 		this.lon = lon;
@@ -61,5 +70,13 @@ public class Coordinate {
 		newlat = 180 / Math.PI * (2 * MathUtil.atan(MathUtil.exp(newlat * Math.PI / 180.0)) - Math.PI / 2.0);
 
 		return new Coordinate(newlat, newlon, WGS84);
+	}
+
+	public String toString() {
+		return "Coordinate{" +
+				lat +
+				", " + lon +
+				" (" + (type == WGS84 ? "WGS84" : "EPSG") +
+				")}";
 	}
 }

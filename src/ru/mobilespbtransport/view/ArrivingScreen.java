@@ -270,7 +270,7 @@ public class ArrivingScreen extends GameCanvas implements CommandListener {
 			Coordinate q = currentStop.getCoordinate();
 			Place place = new Place(currentStop.getName(), currentStop.getCoordinate());
 			Controller.setCurrentPlace(place);
-			ScreenStack.push(Controller.getMapScreen());
+			ScreenStack.push(Controller.getMapView());
 		} else if (command == showRoute && currentRoutes != null) {
 			Controller.findStops(Controller.getRoute(((Route) currentRoutes.elementAt(selectedIndex)).getId()));
 		} else if(command == settings){

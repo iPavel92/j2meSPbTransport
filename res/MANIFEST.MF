@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Created-By: LoyaltyPlant
+MicroEdition-Profile: MIDP-2.0
+MicroEdition-Configuration: CLDC-1.1
+MIDlet-Name: SPB Transport
+MIDlet-Version: 2.0
+MIDlet-Vendor: LoyaltyPlant
+MIDlet-Jar-URL: TransportSPB.jar
+MIDlet-Icon: icon.png
+MIDlet-Description: King Bar application
+MIDlet-Info-URL: http://loyaltyplant.ru/
+MIDlet-1: SPB Transport, icon.png, ru.mobilespbtransport.Main
+Nokia-MIDlet-No-Exit: true
+Nokia-MIDlet-Category: Application
+Nokia-MIDlet-On-Screen-Keypad: no
+MIDlet-Permissions: javax.microedition.io.Connector.http
+MIDlet-Permissions-Opt: javax.microedition.io.Connector.socket
+Partner-Id: 6

@@ -25,6 +25,47 @@ public class GeoConverter {
 	private static final Hashtable zoomLonCoeff = new Hashtable(); //int -> double
 
 	static {
+
+		zoomLonCoeff.put(new Integer(6), new Double(2.197265625));
+		zoomLatCoeff.put(new Integer(6), new Double(1.1863940222813008));
+
+		zoomLonCoeff.put(new Integer(7), new Double(1.0986328125));
+		zoomLatCoeff.put(new Integer(7), new Double(0.5338223442919371));
+
+		zoomLonCoeff.put(new Integer(8), new Double(0.54931640625));
+		zoomLatCoeff.put(new Integer(8), new Double(0.27558326910285813));
+
+		zoomLonCoeff.put(new Integer(9), new Double(0.274658203125));
+		zoomLatCoeff.put(new Integer(9), new Double(0.13852300612118562));
+
+		zoomLonCoeff.put(new Integer(10), new Double(0.1373291015625));
+		zoomLatCoeff.put(new Integer(10), new Double(0.0687123294291686));
+
+		zoomLonCoeff.put(new Integer(11), new Double(0.06866455078125));
+		zoomLatCoeff.put(new Integer(11), new Double(0.034310534339260235));
+
+		zoomLonCoeff.put(new Integer(12), new Double(0.034332275390625));
+		zoomLatCoeff.put(new Integer(12), new Double(0.017166664668757936));
+
+		zoomLonCoeff.put(new Integer(13), new Double(0.0171661376953125));
+		zoomLatCoeff.put(new Integer(13), new Double(0.008574782946729753));
+
+		zoomLonCoeff.put(new Integer(14), new Double(0.00858306884765625));
+		zoomLatCoeff.put(new Integer(14), new Double(0.004286679287518469));
+
+		zoomLonCoeff.put(new Integer(15), new Double(0.004291534423828125));
+		zoomLatCoeff.put(new Integer(15), new Double(0.0021431616170408674));
+
+		zoomLonCoeff.put(new Integer(16), new Double(0.0021457672119140625));
+		zoomLatCoeff.put(new Integer(16), new Double(0.0010716253127290853));
+
+		zoomLonCoeff.put(new Integer(17), new Double(0.0010728836059570312));
+		zoomLatCoeff.put(new Integer(17), new Double(5.357792778964976E-4));
+
+		zoomLonCoeff.put(new Integer(18), new Double(5.364418029785156E-4));
+		zoomLatCoeff.put(new Integer(18), new Double(2.678812946049769E-4));
+				
+		/*
 		zoomLatCoeff.put(new Integer(13), new Double(0.00879));
 		zoomLonCoeff.put(new Integer(13), new Double(0.01741));
 
@@ -41,7 +82,7 @@ public class GeoConverter {
 		zoomLonCoeff.put(new Integer(18), new Double(0.00052));
 
 		zoomLatCoeff.put(new Integer(19), new Double(0.000199));
-		zoomLonCoeff.put(new Integer(19), new Double(0.000258));
+		zoomLonCoeff.put(new Integer(19), new Double(0.000258)); */
 	}
 
 	public static String buildBBox(Coordinate coordinate, int screenWidth, int screenHeight, int zoom) {
@@ -117,7 +158,7 @@ public class GeoConverter {
 		double lat = coordinate.toWGS84().getLat() + getLatDiff(screenHeight / 2 - cursorY, zoom);
 		return new Coordinate(lat, lon, Coordinate.WGS84);
 	}
-	
+
 	public static int getXPixelFromCoordinate(Coordinate centerCoordinate, Coordinate coordinate, int screenWidth, int zoom){
 		double lonDiff = coordinate.toWGS84().getLon() - centerCoordinate.toWGS84().getLon();
 		double zoomCoeff = ((Double)zoomLonCoeff.get(new Integer(zoom))).doubleValue();

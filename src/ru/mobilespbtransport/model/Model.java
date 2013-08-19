@@ -11,7 +11,6 @@ import java.util.Vector;
  * To change this template use File | SettingsScreen | File Templates.
  */
 public class Model {
-	private Place currentPlace;
 	private boolean showBus = true;
 	private boolean showTrolley = true;
 	private boolean showTram = true;
@@ -19,17 +18,11 @@ public class Model {
 	private Vector favourites = new Vector(); //Vector<Favourite>
 	private Hashtable stops = new Hashtable(); //Hashtable<Int(id)->Stop>
 	private Hashtable routes = new Hashtable(); //Hashtable<Int(id)->Route>
+    private Coordinate lastCoordinate;
+    private int lastZoom;
 
-	public Vector getFavourites() {
+    public Vector getFavourites() {
 		return favourites;
-	}
-
-	public Place getCurrentPlace() {
-		return currentPlace;
-	}
-
-	public void setCurrentPlace(Place currentPlace) {
-		this.currentPlace = currentPlace;
 	}
 
 	public boolean isShowBus() {
@@ -71,4 +64,20 @@ public class Model {
 	public Hashtable getRoutes() {
 		return routes;
 	}
+
+    public void setLastCoordinate(Coordinate lastCoordinate) {
+        this.lastCoordinate = lastCoordinate;
+    }
+
+    public Coordinate getLastCoordinate() {
+        return lastCoordinate;
+    }
+
+    public int getLastZoom() {
+        return lastZoom;
+    }
+
+    public void setLastZoom(int lastZoom) {
+        this.lastZoom = lastZoom;
+    }
 }

@@ -4,7 +4,6 @@ import ru.mobilespbtransport.controller.Controller;
 
 
 import javax.microedition.lcdui.*;
-import java.io.IOException;
 
 /**
  * Created by IntelliJ IDEA.
@@ -45,10 +44,10 @@ public class SettingsScreen extends Form implements CommandListener {
 
 	public void commandAction(Command command, Displayable displayable) {
 		if (command == save) {
-			Controller.setLayers(
-					layers.isSelected(0),
-					layers.isSelected(1),
-					layers.isSelected(2));
+			Controller.setFilters(
+                    layers.isSelected(0),
+                    layers.isSelected(1),
+                    layers.isSelected(2));
 			Controller.setAutoUpdate(settings.isSelected(0));
 			ScreenStack.pop();
 		}

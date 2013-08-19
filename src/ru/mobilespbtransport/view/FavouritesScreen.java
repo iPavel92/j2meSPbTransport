@@ -5,7 +5,6 @@ import ru.mobilespbtransport.model.*;
 
 
 import javax.microedition.lcdui.*;
-import java.io.IOException;
 import java.util.Vector;
 
 /**
@@ -81,7 +80,7 @@ public class FavouritesScreen extends List implements CommandListener {
 				Controller.updateArrivingScreen(arrivingScreen.getCurrentStop(), arrivingScreen);
 			} else if (obj instanceof Place) {
 				Controller.setCurrentPlace((Place) obj);
-				ScreenStack.push(Controller.getMapScreen());
+				ScreenStack.push(Controller.getMapView());
 			} else if (obj instanceof Route){
 				Controller.findStops(Controller.getRoute(((Route)obj).getId()));
 			}

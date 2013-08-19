@@ -7,7 +7,6 @@ import ru.mobilespbtransport.model.StopsGroup;
 
 
 import javax.microedition.lcdui.*;
-import java.io.IOException;
 import java.util.Vector;
 
 /**
@@ -76,7 +75,7 @@ public class StopsListScreen extends List implements CommandListener {
 			Stop stop = (Stop) stops.elementAt(getSelectedIndex());
 			Place place = new Place(stop.getName(), stop.getCoordinate());
 			Controller.setCurrentPlace(place);
-			ScreenStack.push(Controller.getMapScreen());
+			ScreenStack.push(Controller.getMapView());
 		} else if (command == backCommand) {
 			ScreenStack.pop();
 		}

@@ -39,7 +39,7 @@ public class SearchCoordinateScreen extends Form implements CommandListener{
 				double lonValue = Double.parseDouble(lon.getString());
 				Place place = new Place("", new Coordinate(latValue, lonValue, Coordinate.WGS84));
 				Controller.setCurrentPlace(place);
-				ScreenStack.push(Controller.getMapScreen());
+				ScreenStack.push(Controller.getMapView());
 			} catch (NumberFormatException e) {
 				ScreenStack.showAlert("Введены неправельные значения");
 				e.printStackTrace();

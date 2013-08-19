@@ -21,7 +21,9 @@ public class HttpClient {
 	public static int BUFFER_LENGTH = 1024;
 
 	public static synchronized String sendGET(String request) {
-		HttpConnection httpConn = null;
+        System.out.println("GET " + request);
+
+        HttpConnection httpConn = null;
 
 		InputStream in = null;
 		OutputStream os = null;
@@ -87,9 +89,19 @@ public class HttpClient {
 		}
 	}
 
-
 	public static synchronized String sendPost(String url, String message) {
-		HttpConnection httpConn = null;
+        System.out.println("POST " + url + " " + message);
+        try {
+			byte[] response = sendPost(url, message.getBytes());
+			return new String(response, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			return null;
+		}
+	}
+
+	public static synchronized byte[] sendPost(String url, byte[] request) {
+        System.out.println("POST " + url);
+        HttpConnection httpConn = null;
 		InputStream in = null;
 		OutputStream os = null;
 
@@ -107,7 +119,7 @@ public class HttpClient {
 			httpConn.setRequestProperty("Accept-Charset", "utf-8");
 
 			os = httpConn.openOutputStream();
-			os.write(message.getBytes());
+			os.write(request);
 
 			/*
 			Caution: os.flush() is controversial. It may create unexpected behavior
@@ -128,19 +140,15 @@ public class HttpClient {
 			}
 			baos.flush();
 			baos.close();
-			String response = new String(baos.toByteArray(), "UTF-8");
-			if(response == null){
-				throw new IOException();
-			}
-			return response;
+			return baos.toByteArray();
 		} catch (UnsupportedEncodingException e) {
 			//ignoring
 			e.printStackTrace();
 		} catch (IOException e) {
-			ScreenStack.showAlert("Не удалось подключиться к Интернету");
+			//ScreenStack.showAlert("Не удалось подключиться к Интернету");
 			e.printStackTrace();
 		} catch (SecurityException e) {
-			ScreenStack.showAlert("Для работы нужен Интернет. Пожалуйста, разрешите доступ к сети");
+			//ScreenStack.showAlert("Для работы нужен Интернет. Пожалуйста, разрешите доступ к сети");
 			e.printStackTrace();
 		} finally {
 			try {
@@ -156,6 +164,7 @@ public class HttpClient {
 		}
 		return null;
 	}
+
 
 	public static synchronized Image loadImage(String url) throws IOException {
 		byte[] imageData = loadImageBytes(url);

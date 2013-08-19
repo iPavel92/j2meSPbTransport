@@ -4,7 +4,6 @@ import ru.mobilespbtransport.controller.Controller;
 
 
 import javax.microedition.lcdui.*;
-import java.io.IOException;
 
 /**
  * Created by IntelliJ IDEA.
@@ -40,7 +39,7 @@ public class SearchPlaceMenu extends List implements CommandListener {
 					break;
 				case 3: //gps
 					//if(Controller.isLocationSupported()){
-					ScreenStack.push(Controller.getMapScreen());
+					ScreenStack.push(Controller.getMapView());
 					Controller.locateMe();
 					/*} else {
 						ScreenStack.showAlert("Ваш телефон не поддерживает GPS");
